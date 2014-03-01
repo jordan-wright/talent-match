@@ -1,6 +1,6 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash
-from flask.ext.login import login_user, login_required
+from flask.ext.login import login_user, login_required, logout_user
 from models import User
 from forms import LoginForm, RegisterForm
 
