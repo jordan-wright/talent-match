@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+    body {
+        background-color:#3498db;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container" id="headerwrap" style="padding-top:80px;">
+        <div class="row">
+            <h1 style="text-align:center;">
+                <span class="glyphicon glyphicon-star"></span> <b>TALENT-MATCH</b>
+            </h1>
+            <form class="form-signin" action="/register" method="POST">
+                <h2 class="form-signin-heading" style="color:#FFFFFF">Registration</h2>
+                <input type="text" name="name" class="form-control" placeholder="Name" required autofocus>
+                <input type="text" name="username" class="form-control" placeholder="Username" required>
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+                <button class="btn btn-lg btn-success btn-block" type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
