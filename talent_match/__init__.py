@@ -11,6 +11,11 @@ bcrypt = Bcrypt(app)
 
 from talent_match import views, models, forms
 
+# Provide the user loader to the login manager
+@login_manager.user_loader
+def user_loader(user_id):
+    return models.User.query.get(int(user_id))
+
 # Preprocessing
 @app.before_request
 def before_request():

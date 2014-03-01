@@ -1,5 +1,5 @@
 from talent_match import app, db, bcrypt
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from flask.ext.login import login_user, login_required
 from models import User
 from forms import LoginForm, RegisterForm
@@ -24,7 +24,7 @@ def login():
             # Redirect to the URL for the index page (will change to profile later)
             return redirect(url_for('index'))
         else:
-            flash('Invalid Username/Password')
+            flash('Invalid Username/Password', 'danger')
     return render_template('login.html', form=form)
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -41,6 +41,6 @@ def register():
         user = User(form.username.data, form.email.data, bcrypt.generate_password_hash(form.password.data))
         db.session.add(user)
         db.session.commit()
-        flash('Registration Successful!')
-        redirect(url_for('login'))
+        flash('Registration Successful!', 'success')
+        return redirect(url_for('login'))
     return render_template('register.html', form=form)

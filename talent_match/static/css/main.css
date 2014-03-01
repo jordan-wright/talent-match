@@ -183,3 +183,7 @@ i {
 .form-signin .form-control {
   margin-bottom: 10px;
 }
+
+.alert {
+  text-align: center;
+}
