@@ -16,11 +16,14 @@
             </h1>
             <form class="form-signin" action="/login" method="POST">
                 <h2 class="form-signin-heading" style="color:#FFFFFF">Please sign in</h2>
-                <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+                {{ form.email(class="form-control", placeholder="Email Address") }}
+                {{ form.password(class="form-control", placeholder="Password") }}
+                <!-- <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
                 <input type="password" name="password" class="form-control" placeholder="Password" required>
                 <label class="checkbox" style="color:#FFFFFF">
                     <input type="checkbox" value="remember-me">Remember me</input>
-                </label>
+                </label> -->
+                {{ form.hidden_tag() }}
                 <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
             </form>
         </div>
