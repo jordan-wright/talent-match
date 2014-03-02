@@ -37,19 +37,6 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-<<<<<<< HEAD
-    if request.method == "GET":
-        return render_template("register.html")
-    else:
-        # Validate the form
-        # Register a user
-        pass
-
-
-@app.route('/profile', methods=['GET', 'POST'])
-def prfile():
-    return render_template("profile.html")        
-=======
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(form.username.data, form.email.data, bcrypt.generate_password_hash(form.password.data))
@@ -58,9 +45,7 @@ def prfile():
         flash('Registration Successful!', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
->>>>>>> FETCH_HEAD
-
 
 @app.route('/profile', methods=['GET', 'POST'])
-def prfile():
+def profile():
     return render_template("profile.html") 
