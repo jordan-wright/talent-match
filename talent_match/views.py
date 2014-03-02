@@ -20,3 +20,8 @@ def register():
         # Validate the form
         # Register a user
         pass
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+def prfile():
+    return render_template("profile.html")        

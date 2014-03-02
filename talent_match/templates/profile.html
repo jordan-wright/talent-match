@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block head %}
+    {{ super() }}
+    <!--
+    <style type="text/css">
+    body {
+        background-color:#3498db;
+    }
+    </style>
+    -->
+{% endblock %}
+{% block content %}
+    <div class="container" id="profileHeader">
+        <div class="row">
+            <h1 style="text-align:center;">
+                <span class="glyphicon glyphicon-star"></span> <b>Michael Robson</b>
+            </h1>
+            <div class="row mt centered">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <img class="img-circle" src="/static/img/pic1.jpg" width="180" alt="" style="padding-bottom:20px;">
+                    <p>My lighting techniques and design are considered cutting edge in the industry. My friendly Australian demeanor seems to make models and non-professional subjects alike feel very comfortable in front of the camera.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="about" >
+        <div class="row mt centered">
+            <h1>Background</h1>
+            <hr>
+            <div class="col-lg-8 col-lg-offset-2">
+                <p>A native of North Eastern Australia, I am one of those photographers who can make any shot work. I have a perfectionist when it comes to getting the shot right. I have been known to build complicated sets, brave all kinds of weather, and tether himself hundreds of feet off the ground in order to get the perfect photograph. As a former professional athlete I am very comfortable doing what it takes to get the job done.</p>
+                <b></b>
+
+                <p>Besides working all over the United States, I have worked in Scotland, Malysia, Tahiti, Australia, Thailand and the European Continent. I have worked in fashion, sport, outdoor, publishing, editorial and myriad other industries.</p>
+            </div>    
+        </div>
+    </div>
+    <div class="container" id="about-2" >
+        <div class="row mt centered">
+            <h1>Skills</h1>
+            <hr>
+            <div class="col-lg-8 col-lg-offset-2">
+                <p>I am fluent with 35 mm, large and medium format in film or digital.</p>
+            </div>    
+        </div>
+    </div>
+    <div class="container" id="about" >
+        <div class="row mt centered">
+            <h1>Contact</h1>
+            <hr>
+            <div id="contact-row-6" class="row">
+                <div class="col-12 col-sm-4 with-hover-text">
+                    <p><h6><i class="glyphicon glyphicon-send"></i></h6></p>
+                    <h3>michael@michaelrobson.com</h3>
+                </div>
+                <div class="col-12 col-sm-4 with-hover-text">
+                    <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
+                    <h3>(303)641-0895</h3>
+                </div>
+                <div class="col-12 col-sm-4 with-hover-text">
+                    <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
+                    <h3>http://michaelrobson.com/</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

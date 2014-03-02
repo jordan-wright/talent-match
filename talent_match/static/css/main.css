@@ -18,6 +18,7 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+
 /* Titles */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Lato', sans-serif;
@@ -38,6 +39,12 @@ h4 {
 	color: #95a5a6;
 	font-weight: 400;
 	font-size: 20px;
+}
+
+h6 {
+    color: #95a5a6;
+  font-weight: 400;
+  font-size: 80px;
 }
 
 /* Paragraph & Typographic */
@@ -143,13 +150,75 @@ i {
 }
 
 #headerwrap h1 {
-	margin-top: 60px;
-	margin-bottom: 15px;
-	color: white;
-	font-size: 45px;
-	font-weight: 300;
-	letter-spacing: 1px;
+  margin-top: 60px;
+  margin-bottom: 15px;
+  color: white;
+  font-size: 45px;
+  font-weight: 300;
+  letter-spacing: 1px;
 }
+
+#profileHeader {
+  /* background: url(../img/bg01.jpg) no-repeat center top; */
+  background-color: white;
+  margin-top: -20px;
+  padding-top:100px;
+  background-attachment: relative;
+  background-position: center center;
+  width: 100%;
+
+    -webkit-background-size: 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+
+#profileHeader h1 {
+  margin-top: 60px;
+  margin-bottom: 15px;
+  color: black;
+  font-size: 45px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+#profileHeader p {
+    line-height: 28px;
+    margin-bottom: 25px;
+    font-size: 24px;
+    color: black;
+}
+
+/* about2 */
+#about-2 {
+  /* background: url(../img/bg01.jpg) no-repeat center top; */
+  background-color: white;
+  margin-top: -20px;
+  padding-top:10px;
+  background-attachment: relative;
+  background-position: center center;
+  width: 100%;
+  
+    -webkit-background-size: 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+} 
+
+#contact-row-4 {
+padding-top: 125px;
+}
+
 .form-signin {
   max-width: 330px;
   padding: 15px;
@@ -189,4 +258,48 @@ i {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+@media (max-width: 767px) {
+  .with-hover-text{
+    margin-bottom: 2em;
+    margin-top: 1em;
+  }
+}
+
+  #contact-row-6 {
+    padding-top: 20px;
+  }
+  
+  #contact-row-6 .col-12 {
+    height: 170px;
+    overflow: hidden;
+    padding-top: 20px;
+    transition: all ease-in .5s;
+  }
+  
+  #contact-row-6 img {
+    display: block;
+    margin: 0 auto;
+    max-height: 100%;
+    max-width: 100%;
+  }
+  
+  #contact-row-6 .col-12:hover {
+    height: 200px;
+    padding-top: 0;
+  }
+  
+  #contact-row-6 .col-12 .hover-text {
+    display: none;
+    font-size: 20px;
+  }
+
+  .with-hover-text span {
+  display: none;
+}
+
+.font-light {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
 }
