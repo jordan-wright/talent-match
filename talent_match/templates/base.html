@@ -48,9 +48,24 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/login">
+                    	{% if g.user.is_authenticated() %}
+                    	<div class="btn-group">
+							<button type="button" style="margin:15px 0px 15px 0px; " class="btn btn-success btn-lg"><span class="glyphicon glyphicon-user"></span> {{g.user.username}}</button>
+							<button type="button" style="margin:15px 0px 15px 0px;" class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown">
+						    <span class="caret"></span>
+						    <span class="sr-only">Toggle Dropdown</span>
+						  </button>
+						  <ul class="dropdown-menu" role="menu">
+								<li><a href="/settings">Settings</a></li>
+								<li class="divider"></li>
+								<li><a href="/logout">Logout</a></li>
+						 	</ul>
+						</div>
+                    	{% else %}
+                    	<a href="/login">
                             <button style="margin-top:0px;" class="btn btn-success btn-lg">Sign in</button>
                         </a>
+                    	{% endif %}
                     </li>
                 </ul>
             </div>

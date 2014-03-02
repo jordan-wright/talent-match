@@ -16,11 +16,16 @@
             </h1>
             <form class="form-signin" action="/login" method="POST">
                 <h2 class="form-signin-heading" style="color:#FFFFFF">Please sign in</h2>
-                <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-                <label class="checkbox" style="color:#FFFFFF">
-                    <input type="checkbox" value="remember-me">Remember me</input>
-                </label>
+                {% with flashes = get_flashed_messages(with_categories=true) %}
+                    {% if flashes %}
+                        {% for category, message in flashes %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {{ form.email(class="form-control", required=true, autofocus=true, placeholder="Email Address") }}
+                {{ form.password(class="form-control", required=true, placeholder="Password") }}
+                {{ form.hidden_tag() }}
                 <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
             </form>
         </div>
