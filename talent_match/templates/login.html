@@ -23,8 +23,8 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                {{ form.email(class="form-control", placeholder="Email Address") }}
-                {{ form.password(class="form-control", placeholder="Password") }}
+                {{ form.email(class="form-control", required=true, autofocus=true, placeholder="Email Address") }}
+                {{ form.password(class="form-control", required=true, placeholder="Password") }}
                 {{ form.hidden_tag() }}
                 <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
             </form>
