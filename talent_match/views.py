@@ -21,7 +21,10 @@ def login():
         if user and bcrypt.check_password_hash(user.pwd_hash, form.password.data):
             # Log the user in
             login_user(user, remember=True)
-            # Redirect to the URL for the index page (will change to profile later)
+            next = request.args.get('next')
+            if next:
+                return redirect(next)
+            # Redirect to the URL for the profile page
             return redirect(url_for('index'))
         else:
             flash('Invalid Username/Password', 'danger')
