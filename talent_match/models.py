@@ -36,6 +36,7 @@ class Provider(db.Model):
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     is_available = db.Column(db.Boolean, nullable=False, index=True)
     userID = db.Column(db.INTEGER, db.ForeignKey('user.id'), nullable=False)
+    provider_skillID = db.Column(db.INTEGER, db.ForeignKey('provider_skill.id'), nullable=False)
     skillList = db.relationship(
         'ProviderSkill',
         backref=db.backref('provider', lazy='joined'),
