@@ -54,6 +54,11 @@ def register():
 def profile():
     return render_template("profile.html") 
 
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def editProfile():
+    return render_template("edit_profile.html") 
+
 
 @app.route('/talents', methods=['GET', 'POST'])
 def list():
