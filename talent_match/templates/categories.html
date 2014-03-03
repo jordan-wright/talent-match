@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <!-- work in progress -->
+  <div class="container" id="headerwrap" style="padding-top:80px;">
+        <div class="row">
+            <h1 style="text-align:center;">
+                <span class="glyphicon"></span> <b>Category List</b>
+            </h1>
+        </div>
+        <div class="container" id="catlist" style="padding-left:20px">
+            <div class="row">
+                <table class="table table-bordered">
+                    <thead>
+                        <th>Name</th>
+                        <th>Click to Display Talents</th>
+                    </thead>
+                    <thead>
+                {% for category in categories|sort %}
+                    <tr>
+                        <td> <h5 class="h5"> {{ category }} </h5> </td>
+                        <td> <h5 class="h5"> URL = show{{category}} </h5></td>
+                    </tr>
+                {% endfor %}
+                </table>
+        </div>
+    </div>
+{% endblock %}

@@ -53,3 +53,21 @@ def register():
 @login_required
 def profile():
     return render_template("profile.html") 
+
+
+@app.route('/talents', methods=['GET', 'POST'])
+def list():
+    user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
+
+    talents = [ dict(name='Harp', category='Music'), dict(name='Flute', category='Music')]
+    #form = PickCategoriesForm()
+    form = None
+    return render_template("talents.html", form=form, talents=talents, user=user)
+
+@app.route('/categories', methods=['GET', 'POST'])
+def listTalentCategories():
+    user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
+    #form = PickCategoriesForm()
+    form = None
+    categories = [ 'Music', 'Volunteer', 'Software', 'Graphic Design', 'Planning', 'Mechanical Engineering' ]
+    return render_template("categories.html", form=form, categories=categories, user=user)
