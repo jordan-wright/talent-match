@@ -123,8 +123,3 @@ class Company(db.Model):
     name = db.Column(db.String(80), nullable=False)
     pointOfContact = db.Column(db.String(120), nullable=False)
     is_available = db.Column(db.Boolean, nullable=False, default=False)
-
-
-
-
-
