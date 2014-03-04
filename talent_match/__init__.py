@@ -20,6 +20,9 @@ gravatar = Gravatar(app,
 			base_url=None)
 
 from talent_match import views, models, forms
+from talent_match.startup import addTestData
+
+app.createTestData = addTestData
 
 # Provide the user loader to the login manager
 @login_manager.user_loader
