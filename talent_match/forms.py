@@ -7,6 +7,8 @@ class LoginForm(Form):
 	password = PasswordField('password', validators=[Required()])
 
 class RegisterForm(Form):
+	firstName = TextField('firstName', validators=[Required()])
+	lastName = TextField('lastName', validators=[Required()])
 	username = TextField('username', validators=[Required()])
 	email = TextField('email', validators=[Required()])
 	password = PasswordField('password', validators=[Required(), EqualTo('confirm_password', message='Passwords must match')])

@@ -16,7 +16,9 @@
             </h1>
             <form class="form-signin" action="/register" method="POST">
                 <h2 class="form-signin-heading" style="color:#FFFFFF">Registration</h2>
-                {{ form.email(class="form-control", autofocus=true, required=true, placeholder="Email Address") }}
+                {{ form.firstName(class="form-control", autofocus=true, required=true, placeholder="First Name") }}
+                {{ form.lastName(class="form-control", required=true, placeholder="Last Name") }}
+                {{ form.email(class="form-control", required=true, placeholder="Email Address") }}
                 {{ form.username(class="form-control", required=true, placeholder="Username") }}
                 {{ form.password(class="form-control", required=true, placeholder="Password") }}
                 {{ form.confirm_password(class="form-control", required=true, placeholder="Confirm Password") }}

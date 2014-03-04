@@ -42,7 +42,7 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(form.username.data, form.email.data, bcrypt.generate_password_hash(form.password.data))
+        user = User(form.firstName.data, form.lastName.data, form.username.data, form.email.data, bcrypt.generate_password_hash(form.password.data))
         db.session.add(user)
         db.session.commit()
         flash('Registration Successful!', 'success')

@@ -15,7 +15,9 @@ class User(db.Model):
     phoneNumber = db.Column(db.INTEGER, nullable=True)
     website = db.Column(db.String(120), nullable=True)
 
-    def __init__(self, username=None, email=None, password=None):
+    def __init__(self, firstName=None, lastName=None, username=None, email=None, password=None):
+        self.firstName = firstName
+        self.lastName = lastName 
         self.username = username
         self.email = email
         self.pwd_hash = password
