@@ -1,8 +1,8 @@
 from talent_match import app, db, bcrypt
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
 from models import User
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, EditProfileForm
 
 
 @app.route('/')
@@ -54,10 +54,21 @@ def register():
 def profile():
     return render_template("profile.html") 
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@app.route('/edit', methods=['GET', 'POST'])
 @login_required
 def editProfile():
-    return render_template("edit_profile.html") 
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        g.user.firstName = form.firstName.data
+        g.user.lastName = form.lastName.data
+        g.user.quickIntro = form.quickIntro.data
+        g.user.background = form.background.data
+        g.user.email = form.email.data
+        g.user.phoneNumber = form.phoneNumber.data
+        g.user.website = form.website.data
+        db.session.commit()
+        return render_template("profile.html")
+    return render_template('/edit.html', form=form) 
 
 
 @app.route('/talents', methods=['GET', 'POST'])

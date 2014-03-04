@@ -10,6 +10,10 @@ class User(db.Model):
     lastName = db.Column(db.String(80), nullable=True)
     city = db.Column(db.String(80), nullable=True, index=True)
     state = db.Column(db.String(16), nullable=True, index=True)
+    quickIntro = db.Column(db.String(200), nullable=True)
+    background = db.Column(db.String(400), nullable=True)
+    phoneNumber = db.Column(db.INTEGER, nullable=True)
+    website = db.Column(db.String(120), nullable=True)
 
     def __init__(self, username=None, email=None, password=None):
         self.username = username
@@ -116,7 +120,6 @@ class Company(db.Model):
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     name = db.Column(db.String(80), nullable=False)
     pointOfContact = db.Column(db.String(120), nullable=False)
-    webSite = db.Column(db.String(120), nullable=False)
     is_available = db.Column(db.Boolean, nullable=False, default=False)
 
 

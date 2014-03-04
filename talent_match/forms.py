@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField, PasswordField
+from wtforms import TextField, PasswordField, TextAreaField, IntegerField
 from wtforms.validators import Required, EqualTo
 
 class LoginForm(Form):
@@ -18,3 +18,12 @@ class AddCategoryForm(Form):
 class AddTalentForm(Form):
 	category = TextField('category', validators=[Required()])
 	talent = TextField('talent', validators=[Required()])
+
+class EditProfileForm(Form):
+	firstName = TextField('firstName')
+	lastName = TextField('lastName')
+	quickIntro = TextField('quickIntro')
+	background = TextField('background')
+	email = TextField('email')
+	phoneNumber = IntegerField('phoneNumber')
+	website = TextField('website')
