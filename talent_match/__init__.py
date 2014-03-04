@@ -2,6 +2,7 @@ from flask import Flask, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flaskext.bcrypt import Bcrypt
 from flask.ext.login import LoginManager, current_user
+from flask.ext.gravatar import Gravatar
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -10,6 +11,13 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 bcrypt = Bcrypt(app)
+gravatar = Gravatar(app,
+			size=100,
+			rating='g',
+			default='mm',
+			force_default=False,
+			use_ssl=True,
+			base_url=None)
 
 from talent_match import views, models, forms
 

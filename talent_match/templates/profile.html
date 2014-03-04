@@ -12,7 +12,7 @@
             </h1>
             <div class="row mt centered">
                 <div class="col-lg-8 col-lg-offset-2">
-                    <img class="img-circle" src="/static/img/pic1.jpg" width="180" alt="" style="padding-bottom:20px;">
+                    <img class="img-circle" src="{{g.user.email | gravatar(size=180)}}" alt="">
                     {% if g.user.quickIntro %}
                         <p>{{g.user.quickIntro}}</p>
                     {% endif %}

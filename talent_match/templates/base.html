@@ -50,7 +50,7 @@
                     <li>
                 	{% if g.user.is_authenticated() %}
                         <a href="/profile">
-                        <img src="/static/img/pic1.jpg" class="img-circle" style="margin-right:10px" height="50" weight="50"/>
+                        <img class="img-circle" style="margin-right:10px;" src="{{g.user.email | gravatar(size=50)}}">
                         <span style="margin-right:10px;"><b>{{g.user.firstName}}</b></span>
                         </a>
                     </li>
