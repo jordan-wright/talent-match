@@ -25,7 +25,7 @@ def login():
             if next:
                 return redirect(next)
             # Redirect to the URL for the profile page
-            return redirect(url_for('index'))
+            return redirect(url_for('profile'))
         else:
             flash('Invalid Username/Password', 'danger')
     return render_template('login.html', form=form)

@@ -48,21 +48,23 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                    	{% if g.user.is_authenticated() %}
-                    	<div class="btn-group">
-							<button type="button" onclick="javascript:window.location = '/profile';" class="btn btn-success btn-lg nav-btn"><span class="glyphicon glyphicon-user"></span> {{g.user.username}}</button>
-							<button type="button" class="btn btn-success btn-lg nav-btn dropdown-toggle" data-toggle="dropdown">
-						    <span class="caret"></span>
-						    <span class="sr-only">Toggle Dropdown</span>
-						  </button>
-						  <ul class="dropdown-menu" role="menu">
+                	{% if g.user.is_authenticated() %}
+                        <a href="/profile">
+                        <img src="/static/img/pic1.jpg" class="img-circle" style="margin-right:10px" height="50" weight="50"/>
+                        <span style="margin-right:10px;"><b>{{g.user.firstName}}</b></span>
+                        </a>
+                    </li>
+                    <li style="padding: 25px 0;">
+                        <button type="button" class="btn btn-primary btn-circle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down" style="color:#FFFFFF" ></span>
+                        </button>
+    					<ul class="dropdown-menu" role="menu">
                                 <li><a href="/profile">Profile</a></li>
                                 <li><a href="/edit">Edit Profile</a></li>
-								<li><a href="/settings">Settings</a></li>
-								<li class="divider"></li>
-								<li><a href="/logout">Logout</a></li>
-						 	</ul>
-						</div>
+    							<li><a href="/settings">Settings</a></li>
+    							<li class="divider"></li>
+    							<li><a href="/logout">Logout</a></li>
+    					 </ul>
                     	{% else %}
                     	<a href="/login">
                             <button style="margin-top:0px;" class="btn btn-success btn-lg">Sign in</button>
