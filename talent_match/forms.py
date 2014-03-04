@@ -25,7 +25,7 @@ class EditProfileForm(Form):
 	firstName = TextField('firstName')
 	lastName = TextField('lastName')
 	quickIntro = TextAreaField('quickIntro')
-	background = TextField('background')
+	background = TextAreaField('background')
 	email = TextField('email')
 	phoneNumber = IntegerField('phoneNumber')
 	website = TextField('website')

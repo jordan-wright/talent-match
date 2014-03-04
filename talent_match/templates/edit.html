@@ -26,12 +26,7 @@
                 <div class="row mt centered">
                     <div class="col-lg-8 col-lg-offset-2">
                         <img class="img-circle" src="/static/img/pic1.jpg" width="180" alt="" style="padding-bottom:20px;">
-                        {% if g.user.quickIntro %}
-                            {{ form.quickIntro(class="form-control-profile", autofocus=true, placeholder="Create a Quick Intro") }}
-                        {% else %}
-                            {{ form.quickIntro(class="form-control-profile", autofocus=true, placeholder="Create a Quick Intro") }}
-                        {% endif %}
-
+                        {{ form.quickIntro(class="form-control-profile", autofocus=true, placeholder="Create a Quick Intro") }}
                     </div>
                 </div>
             </div>
@@ -41,11 +36,7 @@
                 <h1>Background</h1>
                 <hr>
                 <div class="col-lg-8 col-lg-offset-2">
-                    {% if g.user.background %}
-                        {{ form.background(class="form-control-profile", autofocus=true, value=g.user.background, placeholder="Tell Us a Little About Yourself") }}
-                    {% else %}
-                        {{ form.background(class="form-control-profile", autofocus=true, placeholder="Tell Us a Little About Yourself") }}
-                    {% endif %}
+                    {{ form.background(class="form-control-profile", autofocus=true, placeholder="Tell Us a Little About Yourself") }}
                 </div>    
             </div>
         </div>

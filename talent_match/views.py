@@ -68,7 +68,8 @@ def editProfile():
         g.user.website = form.website.data
         db.session.commit()
         return redirect(url_for('profile'))
-    form.quickIntro.data = g.user.quickIntro or "Default Quick Intro"
+    form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
+    form.background.data = g.user.background 
     return render_template('/edit.html', form=form) 
 
 
