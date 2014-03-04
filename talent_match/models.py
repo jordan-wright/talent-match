@@ -77,7 +77,10 @@ class ProviderSkill(db.Model):
     # this needs to be added in the profile => skill mapping table.
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     will_volunteer = db.Column(db.Boolean, default=False)
+    # for the one-to-one relationship from ProviderSkill to Skill
     skillID = db.Column(db.INTEGER, db.ForeignKey('skill.id'), nullable=False)
+    # for the one-to-many relationship from provider to provider skill
+    providerID = db.Column(db.INTEGER, db.ForeignKey('provider.id'), nullable=False)
 
 class Skill(db.Model):
     __tablename__ = 'skill'
