@@ -7,12 +7,17 @@
     <div class="container" id="profileHeader">
         <div class="row">
             <h1 style="text-align:center;">
-                <span class="glyphicon glyphicon-star"></span> <b>{{g.user.firstName}} {{g.user.lastName}}</b>
+                <span class="glyphicon glyphicon-star"></span> 
+                {% if g.user.firstName or g.user.lastName %}
+                <b>{{g.user.firstName}} {{g.user.lastName}}</b>
+                {% endif %}
             </h1>
             <div class="row mt centered">
                 <div class="col-lg-8 col-lg-offset-2">
                     <img class="img-circle" src="/static/img/pic1.jpg" width="180" alt="" style="padding-bottom:20px;">
-                    <p>{{g.user.quickIntro}}</p>
+                    {% if g.user.quickIntro %}
+                        <p>{{g.user.quickIntro}}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -44,14 +49,19 @@
                     <p><h6><i class="glyphicon glyphicon-send"></i></h6></p>
                     <h3>{{g.user.email}}</h3>
                 </div>
+                {% if g.user.phoneNumber %}
                 <div class="col-12 col-sm-4 with-hover-text">
                     <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
                     <h3>{{g.user.phoneNumber}}</h3>
                 </div>
+                {% endif %}
+
+                {% if g.user.website %}
                 <div class="col-12 col-sm-4 with-hover-text">
                     <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
                     <h3>{{g.user.website}}</h3>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

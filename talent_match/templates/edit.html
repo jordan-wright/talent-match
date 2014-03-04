@@ -10,14 +10,28 @@
             <div class="row">
                 <div class="col-lg-6 col-lg-offset-3">
                     <h1 style="text-align:center;">
-                        {{ form.firstName(class="form-control", required=true, autofocus=true, placeholder="First Name", value=g.user.firstName) }}
-                        {{ form.lastName(class="form-control", required=true, autofocus=true, placeholder="Last Name", value=g.user.lastName) }}
+                        {% if g.user.firstName %}
+                        {{ form.firstName(class="form-control", required=true, autofocus=true, value=g.user.firstName) }}
+                        {% else %}
+                        {{ form.firstName(class="form-control", required=true, autofocus=true, placeholder="First Name") }}
+                        {% endif %}
+
+                        {% if g.user.lastName %}
+                        {{ form.lastName(class="form-control", required=true, autofocus=true, value=g.user.lastName) }}
+                        {% else %}
+                        {{ form.lastName(class="form-control", required=true, autofocus=true, placeholder="Last Name") }}
+                        {% endif %}
                     </h1>
                 </div>
                 <div class="row mt centered">
                     <div class="col-lg-8 col-lg-offset-2">
                         <img class="img-circle" src="/static/img/pic1.jpg" width="180" alt="" style="padding-bottom:20px;">
-                       {{ form.quickIntro(class="form-control-profile", required=true, autofocus=true, placeholder="Create a Quick Intro", value=g.user.quickIntro) }}
+                        {% if g.user.quickIntro %}
+                            {{ form.quickIntro(class="form-control-profile", autofocus=true, value=g.user.quickIntro, placeholder="Create a Quick Intro") }}
+                        {% else %}
+                            {{ form.quickIntro(class="form-control-profile", autofocus=true, placeholder="Create a Quick Intro") }}
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
@@ -27,7 +41,11 @@
                 <h1>Background</h1>
                 <hr>
                 <div class="col-lg-8 col-lg-offset-2">
-                    {{ form.background(class="form-control-profile", required=true, autofocus=true, placeholder="Tell Us a Little About Yourself", value=g.user.background) }}
+                    {% if g.user.background %}
+                        {{ form.background(class="form-control-profile", autofocus=true, value=g.user.background, placeholder="Tell Us a Little About Yourself") }}
+                    {% else %}
+                        {{ form.background(class="form-control-profile", autofocus=true, placeholder="Tell Us a Little About Yourself") }}
+                    {% endif %}
                 </div>    
             </div>
         </div>
@@ -47,15 +65,23 @@
                 <div id="contact-row-2" class="row">
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-send"></i></h6></p>
-                        {{ form.email(class="form-control", required=true, autofocus=true, placeholder="Email Address", value=g.user.email) }}
+                        {{ form.email(class="form-control", required=true, autofocus=true, value=g.user.email, placeholder="Email") }}
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
-                        {{ form.phoneNumber(class="form-control", required=true, autofocus=true, placeholder="Phone Number", value=g.user.phoneNumber) }}
+                        {% if g.user.phoneNumber %}
+                            {{ form.phoneNumber(class="form-control", autofocus=true, value=g.user.phoneNumber, placeholder="Phone Number") }}
+                        {% else %}
+                            {{ form.phoneNumber(class="form-control", autofocus=true, placeholder="Phone Number") }}
+                        {% endif %}
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
-                        {{ form.website(class="form-control", required=true, autofocus=true, placeholder="Website", value=g.user.website) }}
+                        {% if g.user.website %}
+                            {{ form.website(class="form-control", autofocus=true, value=g.user.website, placeholder="Website") }}
+                        {% else %}
+                            {{ form.website(class="form-control", autofocus=true, placeholder="Website") }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
