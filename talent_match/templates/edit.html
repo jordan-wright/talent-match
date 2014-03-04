@@ -10,17 +10,9 @@
             <div class="row">
                 <div class="col-lg-6 col-lg-offset-3">
                     <h1 style="text-align:center;">
-                        {% if g.user.firstName %}
-                        {{ form.firstName(class="form-control", required=true, autofocus=true, value=g.user.firstName) }}
-                        {% else %}
-                        {{ form.firstName(class="form-control", required=true, autofocus=true, placeholder="First Name") }}
-                        {% endif %}
-
-                        {% if g.user.lastName %}
-                        {{ form.lastName(class="form-control", required=true, autofocus=true, value=g.user.lastName) }}
-                        {% else %}
-                        {{ form.lastName(class="form-control", required=true, autofocus=true, placeholder="Last Name") }}
-                        {% endif %}
+                        {{ form.firstName(class="form-control", required=true, autofocus=true, value=g.user.firstName, placeholder="First Name") }}
+                        
+                        {{ form.lastName(class="form-control", required=true, autofocus=true, value=g.user.lastName, placeholder="Last Name") }}
                     </h1>
                 </div>
                 <div class="row mt centered">
@@ -60,19 +52,11 @@
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
-                        {% if g.user.phoneNumber %}
-                            {{ form.phoneNumber(class="form-control", autofocus=true, value=g.user.phoneNumber, placeholder="Phone Number") }}
-                        {% else %}
-                            {{ form.phoneNumber(class="form-control", autofocus=true, placeholder="Phone Number") }}
-                        {% endif %}
+                        {{ form.phoneNumber(class="form-control", autofocus=true, value=g.user.phoneNumber, placeholder="Phone Number") }}
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
-                        {% if g.user.website %}
-                            {{ form.website(class="form-control", autofocus=true, value=g.user.website, placeholder="Website") }}
-                        {% else %}
-                            {{ form.website(class="form-control", autofocus=true, placeholder="Website") }}
-                        {% endif %}
+                        {{ form.website(class="form-control", autofocus=true, value=g.user.website, placeholder="Website") }}
                     </div>
                 </div>
             </div>
