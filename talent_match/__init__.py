@@ -13,6 +13,10 @@ bcrypt = Bcrypt(app)
 
 from talent_match import views, models, forms
 
+def createTestData():
+    models.addTestData()
+app.createTestData = createTestData
+
 # Provide the user loader to the login manager
 @login_manager.user_loader
 def user_loader(user_id):
