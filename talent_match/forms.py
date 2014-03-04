@@ -22,7 +22,7 @@ class AddTalentForm(Form):
 class EditProfileForm(Form):
 	firstName = TextField('firstName')
 	lastName = TextField('lastName')
-	quickIntro = TextField('quickIntro')
+	quickIntro = TextAreaField('quickIntro')
 	background = TextField('background')
 	email = TextField('email')
 	phoneNumber = IntegerField('phoneNumber')
