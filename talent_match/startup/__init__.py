@@ -7,7 +7,7 @@ __author__ = 'Steve'
 def addTestData() :
     userList = None
     userList = User.query.filter_by(is_admin=True)
-    print(userList.count())
+
     categoryList = Category.query.order_by(Category.name)
     skillList = Skill.query.order_by(Skill.name)
 
@@ -19,7 +19,7 @@ def addTestData() :
         db.session.add(admin)
 
         sally = User()
-        sally.is_admin = True; sally.username = 'sally'; sally.email = 'sally@talent-match.com'
+        sally.is_admin = False; sally.username = 'sally'; sally.email = 'sally@talent-match.com'
         sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sally.firstName = 'Sally'
         sally.lastName = 'Struthers'
@@ -36,7 +36,8 @@ def addTestData() :
               'Music' :
                   ['Harp', 'Flute', 'Violin', 'Viola', 'Cello', 'Bass', 'Conductor', 'Arranger', 'Composer'],
               'Software' :
-                  ['User Interface', 'HTML5', 'CSS3', 'Node.js', 'Python', 'Django', 'JavaScript', 'ASP.NET', 'SQL'],
+                  ['C#', 'F#', 'C++', 'Java', 'User Interface', 'HTML5', 'CSS3', 'Node.js', 'Python', 'Django',
+                   'JavaScript', 'ASP.NET', 'SQL'],
               'Graphic Design' :
                   ['Drawing', 'Painting', 'Mixed Media', 'Illustration', 'Adobe Illustrator', 'Typography', 'Adobe Photoshop'],
               'Planning' : # need more details here

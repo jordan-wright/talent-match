@@ -314,3 +314,25 @@ padding-top: 125px;
 .alert {
   text-align: center;
 }
+
+
+.table td, .table th {
+    border: 1px solid red;
+    font-color: white
+}
+
+table.table-bordered {
+    border: 1px solid white;
+    color: white
+}
+
+a.otherHref {
+    color: white;
+    text-decoration: underline;
+}
+
+/*
+a.otherHref.hover-text {
+    color : red;
+}
+*/

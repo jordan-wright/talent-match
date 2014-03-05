@@ -62,6 +62,14 @@
                                 <li><a href="/profile">Profile</a></li>
                                 <li><a href="/edit">Edit Profile</a></li>
     							<li><a href="/settings">Settings</a></li>
+
+                                <!-- for admin users, show additional options -->
+                                {%  if g.user.is_admin %}
+    							<li class="divider"></li>
+                                <li><a href="/categories">Admin: Categories</a></li>
+                                <li><a href="/skills">Admin: Skills</a></li>
+                                {%  endif %}
+
     							<li class="divider"></li>
     							<li><a href="/logout">Logout</a></li>
     					 </ul>

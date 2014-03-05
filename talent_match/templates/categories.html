@@ -12,17 +12,35 @@
             </h1>
         </div>
         <div class="container" id="catlist" style="padding-left:20px">
-            <div class="row">
+            <!--
+                <div class="row">
+                <table class="table table-bordered about-2">
+            -->
+            <div class="col-lg-8 col-lg-offset-2">
                 <table class="table table-bordered">
                     <thead>
-                        <th>Name</th>
-                        <th>Click to Display Talents</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Skill Count</th>
+                    {%  if user.is_admin  %}
+                        <th>Edit</th>
+                    {%  endif %}
+
                     </thead>
                     <thead>
-                {% for category in categories|sort %}
+                {% for category in categories %}
                     <tr>
-                        <td> <h5 class="h5"> {{ category }} </h5> </td>
-                        <td> <h5 class="h5"> URL = show{{category}} </h5></td>
+                        <td>
+                            {%  if user.is_admin  %}
+                                <h5 class="h5"> <a href="/skills?categoryID={{category.id}}" class="otherHref">{{ category.name }}</a> </h5> </td>
+                            {%  else %}
+                                <h5 class="h5"> {{ category.name }} </h5> </td>
+                            {%  endif  %}
+                            <td> <h5 class="h5"> {{category.description }} </h5></td>
+                            <td> <h5 class="h5"> {{category.skillCount }} </h5></td>
+                            {%  if user.is_admin  %}
+                                <td> <h5 class="h5"> Put the edit link here </h5></td>
+                            {% endif %}
                     </tr>
                 {% endfor %}
                 </table>

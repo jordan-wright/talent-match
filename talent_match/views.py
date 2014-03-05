@@ -1,7 +1,7 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
-from models import User
+from models import User, Category, Skill
 from forms import LoginForm, RegisterForm, EditProfileForm
 
 
@@ -73,19 +73,71 @@ def editProfile():
     return render_template('/edit.html', form=form) 
 
 
-@app.route('/talents', methods=['GET', 'POST'])
+@app.route('/skills', methods=['GET', 'POST'])
+@login_required
 def list():
-    user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
+    # original test stuff
+    # user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
+    # talents = [ dict(name='Harp', category='Music'), dict(name='Flute', category='Music')]
+    # form = PickCategoriesForm()
 
-    talents = [ dict(name='Harp', category='Music'), dict(name='Flute', category='Music')]
-    #form = PickCategoriesForm()
+    categoryID = None
+    if (request.args):
+        categoryID = request.args['categoryID']
+    elif request.form:
+        categoryID = request.form['categoryID']
+        print('found a post')
+    skillList = []
+    category = None
+    categoryName = None
+    categoryFirst = True  # display category first or not.
+    if categoryID:
+        print("Looking up skills by categoryID=" + categoryID)
+        category = Category.query.get(categoryID)
+    if category:
+        categoryFirst = False
+        #print(category)
+        #categoryName = category.name
+        #skillList = Skill.query.join(Category).\
+        #            filter(Category.id == category.id).\
+        #            order_by(Category.name).\
+        #            order_by(Skill.name).all()
+
+        myCategoryID = categoryID
+        for cat,skill in db.session.query(Category, Skill).\
+            filter(Category.id == Skill.categoryID).\
+            filter(Skill.categoryID == myCategoryID).all():
+                print(cat)
+                print(skill)
+                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet')
+                skillList.append(newSkill)
+
+    else:
+        categoryFirst = True
+        for cat,skill in db.session.query(Category, Skill).\
+            filter(Category.id == Skill.categoryID).all():
+                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet')
+                skillList.append(newSkill)
+
+    if (skillList != None):
+        skillList.sort(key=lambda test: (test['categoryName'], test['name']))
+    #x = dir(skillList[0])
+    #print(x)
+
     form = None
-    return render_template("talents.html", form=form, talents=talents, user=user)
+    return render_template("skills.html", form=form, skillList=skillList, user=g.user, categoryName=categoryName, categoryFirst=categoryFirst)
 
 @app.route('/categories', methods=['GET', 'POST'])
+@login_required
 def listTalentCategories():
-    user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
+    #user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
     #form = PickCategoriesForm()
     form = None
-    categories = [ 'Music', 'Volunteer', 'Software', 'Graphic Design', 'Planning', 'Mechanical Engineering' ]
-    return render_template("categories.html", form=form, categories=categories, user=user)
+
+    # original category query
+    categories =  Category.query.all()
+    categories.sort(key= lambda category: category.name)
+    # new category query
+    # this is still TBD (what we want to do is to show the skill count per category
+
+    return render_template("categories.html", form=form, categories=categories, user=g.user)
