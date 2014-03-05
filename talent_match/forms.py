@@ -1,6 +1,6 @@
 from flask_wtf import Form
 from wtforms import TextField, PasswordField, TextAreaField, IntegerField
-from wtforms.validators import Required, EqualTo
+from wtforms.validators import Required, EqualTo, Length
 
 class LoginForm(Form):
 	email = TextField('email', validators=[Required()])
@@ -27,5 +27,5 @@ class EditProfileForm(Form):
 	quickIntro = TextAreaField('quickIntro')
 	background = TextAreaField('background')
 	email = TextField('email')
-	phoneNumber = IntegerField('phoneNumber')
+	phoneNumber = TextField('phoneNumber', validators=[Length(max=10)])
 	website = TextField('website')

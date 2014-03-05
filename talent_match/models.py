@@ -12,7 +12,7 @@ class User(db.Model):
     state = db.Column(db.String(16), nullable=True, index=True)
     quickIntro = db.Column(db.String(200), nullable=True)
     background = db.Column(db.String(400), nullable=True)
-    phoneNumber = db.Column(db.INTEGER, nullable=True)
+    phoneNumber = db.Column(db.String(10), nullable=True)
     website = db.Column(db.String(120), nullable=True)
 
     def __init__(self, firstName=None, lastName=None, username=None, email=None, password=None):

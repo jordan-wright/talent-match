@@ -8,16 +8,17 @@
     <div class="form-group" style="padding-bottom:60px;">
         <div class="container" id="profileHeader">
             <div class="row">
-                <div class="col-lg-6 col-lg-offset-3">
-                    <h1 style="text-align:center;">
-                        {{ form.firstName(class="form-control", required=true, autofocus=true, value=g.user.firstName, placeholder="First Name") }}
-                        
-                        {{ form.lastName(class="form-control", required=true, autofocus=true, value=g.user.lastName, placeholder="Last Name") }}
-                    </h1>
-                </div>
                 <div class="row mt centered">
                     <div class="col-lg-8 col-lg-offset-2">
                         <img class="img-circle" src="{{g.user.email | gravatar(size=180)}}" alt="" style="margin-bottom:20px;">
+                            <div class="row mt centered">
+                                <div class="col-10 col-sm-6">
+                                    {{ form.firstName(class="form-control", required=true, autofocus=true, value=g.user.firstName, placeholder="First Name") }}
+                                </div>
+                                <div class="col-10 col-sm-6">
+                                    {{ form.lastName(class="form-control", required=true, autofocus=true, value=g.user.lastName, placeholder="Last Name") }}
+                                </div>
+                            </div>
                         {{ form.quickIntro(class="form-control-profile", autofocus=true, placeholder="Create a Quick Intro") }}
                     </div>
                 </div>
@@ -52,7 +53,7 @@
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
-                        {{ form.phoneNumber(class="form-control", autofocus=true, value=g.user.phoneNumber, placeholder="Phone Number") }}
+                        {{ form.phoneNumber(class="form-control", autofocus=true, value=g.user.phoneNumber, placeholder="Phone Number", maxlength="10", type="number") }}
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
@@ -62,7 +63,7 @@
             </div>
         </div>
     </div>
-    <div style="padding-bottom:60px;">
+    <div style="padding-bottom:60px;" class="col-lg-8 col-lg-offset-2">
         <button class="btn btn-lg btn-success btn-block" type="submit" >Save</button>
     </div>
     {{ form.hidden_tag() }}
