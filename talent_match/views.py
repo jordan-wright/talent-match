@@ -2,7 +2,7 @@ from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill
-from forms import LoginForm, RegisterForm, EditProfileForm
+from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm
 from sqlalchemy.sql import func
 
 @app.route('/')
@@ -90,19 +90,13 @@ def list():
     skillList = []
     category = None
     categoryName = None
-    categoryFirst = True  # display category first or not.
+    categoryFirst = True  # display category first or skill first in the table
     if categoryID:
         print("Looking up skills by categoryID=" + categoryID)
         category = Category.query.get(categoryID)
     if category:
-        categoryFirst = False
-        #print(category)
-        #categoryName = category.name
-        #skillList = Skill.query.join(Category).\
-        #            filter(Category.id == category.id).\
-        #            order_by(Category.name).\
-        #            order_by(Skill.name).all()
-
+        # show skills for a specific category
+        categoryFirst = False   # since the category is fixes, list the skill column first
         myCategoryID = categoryID
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).\
@@ -113,7 +107,8 @@ def list():
                 skillList.append(newSkill)
 
     else:
-        categoryFirst = True
+        # show all skills for all categories
+        categoryFirst = True    # for better viewing all skills, put the category column first, then the skill.
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).all():
                 newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet')
@@ -121,8 +116,6 @@ def list():
 
     if (skillList != None):
         skillList.sort(key=lambda test: (test['categoryName'], test['name']))
-    #x = dir(skillList[0])
-    #print(x)
 
     form = None
     return render_template("skills.html", form=form, skillList=skillList, user=g.user, categoryName=categoryName, categoryFirst=categoryFirst)
@@ -138,10 +131,9 @@ def listTalentCategories():
     #categories =  Category.query.all()
     #categories.sort(key= lambda category: category.name)
 
-    # reminder: may be able to use "from_statement" to utilize 'raw' sql statements
     # new category query - replacement that includes the count:
-        #filter((Skill.categoryID is None) or (Category.id == Skill.categoryID)).\
-
+    # reminder: may be able to use "from_statement" to utilize 'raw' sql statements
+    #
     # This still seems to have a bug with the EmptyCategoryTest (category with no skills).
     # There is something here that will need to be addressed long-term.
     categories = []
@@ -153,3 +145,64 @@ def listTalentCategories():
     categories.sort(key= lambda category: category['name'])
 
     return render_template("categories.html", form=form, categories=categories, user=g.user)
+
+@app.route('/categories/edit', methods=['GET', 'POST'])
+@login_required
+def editTalentCategories():
+
+    isAddTalent = True # assume add to start
+    form = EditCategoryForm()
+    # Validate the submitted data
+    if form.validate_on_submit():
+        print(form.data)
+        print(form.name.data)
+        print(form.description.data)
+        isCreate = False
+        if (form.id.data == ''):
+            isCreate = True
+        if (isCreate):
+            category = Category.query.filter_by(name=form.name.data).limit(1).first()
+            if (category != None):
+                print('existing category error')
+                flash('Category already exists', 'error')
+                return render_template("edit_category.html", editCategory=None, form=form, isAddTalent=True)
+            else:
+                category = Category(form.name.data, form.description.data)
+                db.session.add(category)
+                db.session.commit()
+        else:
+            category = Category.query.get(form.id.data)
+            category.description = form.description.data
+            category.name = form.name.data
+
+        db.session.commit()
+        return redirect('/categories')
+    else:
+        categoryID = None
+        if (request.args):
+            # need better way of doing this ...
+            try:
+                categoryID = request.args['id']
+            except:
+                categoryID = None
+        elif request.form:
+            try:
+                categoryID = request.form['id']
+            except:
+                categoryID = None
+        category = None
+        if categoryID:
+            isAddTalent = False
+            category = Category.query.get(categoryID)
+            print(category.name)
+            print(category.description)
+            #print(dir(form))
+            form.description.data = category.description
+            form.id.data = categoryID
+        else:
+            isAddTalent = True
+            form.id.data = None
+
+
+        return render_template("edit_category.html", editCategory=category, form=form, isAddTalent=isAddTalent)
+

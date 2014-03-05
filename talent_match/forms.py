@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, TextAreaField, IntegerField
+from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField
 from wtforms.validators import Required, EqualTo, Length
 
 class LoginForm(Form):
@@ -14,12 +14,15 @@ class RegisterForm(Form):
 	password = PasswordField('password', validators=[Required(), EqualTo('confirm_password', message='Passwords must match')])
 	confirm_password = PasswordField('confirm_password', validators=[Required()])
 
-class AddCategoryForm(Form):
-	category = TextField('category', validators=[Required()])
+class EditCategoryForm(Form):
+	name = TextField('Category Name', validators=[Required()])
+	description = TextAreaField('Description', validators=[Required()])
+	id = HiddenField('id')
 
-class AddTalentForm(Form):
-	category = TextField('category', validators=[Required()])
-	talent = TextField('talent', validators=[Required()])
+class EditSkillForm(Form):
+	category = SelectField('', choices=['a','b','c'], default='b')
+	name = TextField('Category Name', validators=[Required()])
+	description = TextAreaField('Description')
 
 class EditProfileForm(Form):
 	firstName = TextField('firstName')

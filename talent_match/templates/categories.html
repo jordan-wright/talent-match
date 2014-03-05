@@ -7,15 +7,15 @@
     <!-- work in progress -->
   <div class="container" id="headerwrap" style="padding-top:80px;">
         <div class="row">
+          <!-- <form action ="http://google.com/"></form> -->
             <h1 style="text-align:center;">
                 <span class="glyphicon"></span> <b>Category List</b>
+                <!-- btn-block -->
+                <a class="btn btn-lg btn-success" href="/categories/edit?new=True" >+ Add New</a>
             </h1>
+            <!-- </form>-->
         </div>
         <div class="container" id="catlist" style="padding-left:20px">
-            <!--
-                <div class="row">
-                <table class="table table-bordered about-2">
-            -->
             <div class="col-lg-8 col-lg-offset-2">
                 <table class="table table-bordered">
                     <thead>
@@ -23,7 +23,7 @@
                         <th>Description</th>
                         <th>Skill Count</th>
                     {%  if user.is_admin  %}
-                        <th>Edit</th>
+                        <th>Action</th>
                     {%  endif %}
 
                     </thead>
@@ -39,11 +39,14 @@
                             <td> <h5 class="h5"> {{category.description }} </h5></td>
                             <td> <h5 class="h5"> {{category.count }} </h5></td>
                             {%  if user.is_admin  %}
-                                <td> <h5 class="h5"> Edit this category  </h5></td>
+                               <!--  <td> <h5 class="h5"> Edit this category  </h5></td> -->
+                                <td> <a class="btn btn-sm btn-success" href="/categories/edit?id={{category.id}}">Edit</a> </td>
+                               </form>
                             {% endif %}
                     </tr>
                 {% endfor %}
                 </table>
         </div>
     </div>
+  </div>
 {% endblock %}

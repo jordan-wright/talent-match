@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+    body {
+        background-color:#3498db;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container" id="headerwrap" style="padding-top:80px;">
+        <div class="row">
+            <form class="form-signin" method="POST">
+                {% if isAddTalent %}
+                    <h2 class="form-signin-heading" style="color:#FFFFFF">Add Category</h2>
+                {%  else %}
+                    <h2 class="form-signin-heading" style="color:#FFFFFF">Edit Category</h2>
+                {% endif %}
+                {% with flashes = get_flashed_messages(with_categories=true) %}
+                    {% if flashes %}
+                        {% for category, message in flashes %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {{ form.name(class="form-control", required=true, autofocus=true, placeholder="Name", value=editCategory.name) }}
+                {{ form.description(class="form-control", required=true, placeholder="Description",value=editCategory.description) }}
+                {{ form.hidden_tag() }}
+                {% if isAddTalent %}
+                    <button class="btn btn-lg btn-success btn-block" type="submit">Add</button>
+                {%  else %}
+                    <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
