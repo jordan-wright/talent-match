@@ -19,7 +19,7 @@ def addTestData() :
         db.session.add(admin)
 
         sally = User()
-        sally.is_admin = False; sally.username = 'sally'; sally.email = 'sally@talent-match.com'
+        sally.is_admin = True; sally.username = 'sally'; sally.email = 'sally@talent-match.com'
         sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sally.firstName = 'Sally'
         sally.lastName = 'Struthers'
@@ -44,7 +44,8 @@ def addTestData() :
                   ['PMP'],
               # partially per wikipedia: http://en.wikipedia.org/wiki/List_of_engineering_branches#Mechanical_engineering
               'Mechanical Engineering' :
-                  ['Acoustical', 'Manufacturing', 'Thermal', 'Vehicle', 'Oil/Petroleum', 'Fluid dynamics']
+                  ['Acoustical', 'Manufacturing', 'Thermal', 'Vehicle', 'Oil/Petroleum', 'Fluid dynamics'],
+              'EmptyCategoryTest' : [],
             }
         print("Adding default categories")
         for categoryName in categoryList:

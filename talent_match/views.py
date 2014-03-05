@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill
 from forms import LoginForm, RegisterForm, EditProfileForm
-
+from sqlalchemy.sql import func
 
 @app.route('/')
 def index():
@@ -135,9 +135,21 @@ def listTalentCategories():
     form = None
 
     # original category query
-    categories =  Category.query.all()
-    categories.sort(key= lambda category: category.name)
-    # new category query
-    # this is still TBD (what we want to do is to show the skill count per category
+    #categories =  Category.query.all()
+    #categories.sort(key= lambda category: category.name)
+
+    # reminder: may be able to use "from_statement" to utilize 'raw' sql statements
+    # new category query - replacement that includes the count:
+        #filter((Skill.categoryID is None) or (Category.id == Skill.categoryID)).\
+
+    # This still seems to have a bug with the EmptyCategoryTest (category with no skills).
+    # There is something here that will need to be addressed long-term.
+    categories = []
+    for cat, myCount in db.session.query(Category, func.count('Skill.*')).\
+        outerjoin(Skill).\
+        group_by(Category).all():
+            newCat=dict(id=cat.id, name=cat.name, description=cat.description, count=myCount)
+            categories.append(newCat)
+    categories.sort(key= lambda category: category['name'])
 
     return render_template("categories.html", form=form, categories=categories, user=g.user)
