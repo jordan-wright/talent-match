@@ -8,7 +8,7 @@
   <div class="container" id="headerwrap" style="padding-top:80px;">
         <div class="row">
             <h1 style="text-align:center;">
-                <span class="glyphicon"></span> <b>Category List</b>
+                <span class="glyphicon"></span> <b>Skill List</b>
             </h1>
         </div>
         <div class="container" id="catlist" style="padding-left:20px">
@@ -28,6 +28,7 @@
                         {% endif %}
                         <th>Description</th>
                         <th>Users with Skill Count</th>
+                        <th>Edit</th>
                     </thead>
                     <thead>
                 {% for skill in skillList %}
@@ -52,6 +53,7 @@
 
                         <td> <h5 class="h5"> {{ skill.description }} </h5></td>
                         <td> <h5 class="h5"> {{ skill.userCount }} </h5></td>
+                        <td> <h5 class="h5"> Edit this skill  </h5></td>
                     </tr>
                 {% endfor %}
                 </table>
