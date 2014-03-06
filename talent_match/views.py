@@ -98,7 +98,7 @@ def listSkills():
             filter(Skill.categoryID == myCategoryID).all():
                 print(cat)
                 print(skill)
-                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet')
+                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet',id=skill.id)
                 skillList.append(newSkill)
 
     else:
@@ -106,7 +106,7 @@ def listSkills():
         categoryFirst = True    # for better viewing all skills, put the category column first, then the skill.
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).all():
-                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet')
+                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet', id=skill.id)
                 skillList.append(newSkill)
 
     if (skillList != None):
@@ -207,46 +207,9 @@ def editSkill():
             categoryChoices.append( (category.name, category.name) )
         form.category.choices = categoryChoices
 
-    """
-    if (form.category.choices == None):
-        print("Maybe this needs to be reset?")
-        categoryChoices = []
-        categoryList = Category.query.all()
-        categoryList.sort(key= lambda category: category.name)
-        first = None
-        for category in categoryList:
-            if (first == None):
-                #first = (category.id, category.name)
-                first = category.name
-            #categoryChoices.append( (category.id, category.name) )
-            categoryChoices.append( category.name )
-        form.category.choices = categoryChoices
-        form.default = first
-
-    # Validate the submitted data
-    print(dir(form))
-    if (form.errors):
-        print(form.errors)
-    if form.category.errors:
-        print(form.category.errors)
-    if form.description.errors:
-        print(form.description.errors)
-    if form.id.errors:
-        print(form.id.errors)
-    if form.name.errors:
-        print(form.name.errors)
-    """
-
     print('About to check the validation status of the form ...')
-
     if form.validate_on_submit():
-        print('here!')
-        print(dir(form))
-        #print(form.name.data)
-        #print(form.description.data)
-
-        isCreate = False
-
+        isCreate = False # initialization
         if (form.id.data == ''):
             isCreate = True
         if (isCreate):
@@ -270,9 +233,25 @@ def editSkill():
                 db.session.add(skill)
                 db.session.commit()
         else:
-            category = Category.query.get(form.id.data)
-            category.description = form.description.data
-            category.name = form.name.data
+            testSkillName = form.name.data
+            skill = Skill.query.get(form.id.data)
+            category = Category.query.get(skill.categoryID)
+            ## check to make sure that no other existing skills for this category have the same name as the new name.
+            ##otherSkill = Skill.query.\
+            ##    filter_by(categoryID=category.id).\
+            ##    filter_by(name=testSkillName).\
+            ##    filter_by(id!=skill.id).\
+            ##    first()
+            ##if (skill != None):
+            ##    print('existing skill error - name already exists')
+            ##    flash('Skill already exists', 'error')
+            ##    return render_template("edit_skill.html", editSkill=skill, form=form, isAddSkill=False)
+            if (skill) and (category):
+                skill.categoryID = category.id
+                skill.description = form.description.data
+                skill.name = form.name.data
+            else:
+                print('Error in data - data not saved')
 
         db.session.commit()
         return redirect('/skills')
@@ -303,9 +282,11 @@ def editSkill():
                 form.description.data = skill.description
                 form.id.data = skill.id
 
-                form.category.choices = Category.query.all()
-                # this is not right:
-                form.category.default = Category.query.get(skill.categoryID)
+                categoryForExistingSkill = Category.query.get(skill.categoryID)
+                if (categoryForExistingSkill):
+                    print(skill)
+                    print(categoryForExistingSkill)
+                    form.category.default = categoryForExistingSkill.name
 
             else:
                 print('GAAAAAHH!!!!!!! This is an error.')
