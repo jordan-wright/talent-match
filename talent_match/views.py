@@ -2,7 +2,7 @@ from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill
-from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm
+from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm
 from sqlalchemy.sql import func
 
 @app.route('/')
@@ -75,18 +75,13 @@ def editProfile():
 
 @app.route('/skills', methods=['GET', 'POST'])
 @login_required
-def list():
+def listSkills():
     # original test stuff
     # user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
     # talents = [ dict(name='Harp', category='Music'), dict(name='Flute', category='Music')]
     # form = PickCategoriesForm()
 
-    categoryID = None
-    if (request.args):
-        categoryID = request.args['categoryID']
-    elif request.form:
-        categoryID = request.form['categoryID']
-        print('found a post')
+    categoryID = request.values.get('categoryID')
     skillList = []
     category = None
     categoryName = None
@@ -122,7 +117,7 @@ def list():
 
 @app.route('/categories', methods=['GET', 'POST'])
 @login_required
-def listTalentCategories():
+def listCategories():
     #user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
     #form = PickCategoriesForm()
     form = None
@@ -148,8 +143,7 @@ def listTalentCategories():
 
 @app.route('/categories/edit', methods=['GET', 'POST'])
 @login_required
-def editTalentCategories():
-
+def editCategory():
     isAddTalent = True # assume add to start
     form = EditCategoryForm()
     # Validate the submitted data
@@ -178,31 +172,135 @@ def editTalentCategories():
         db.session.commit()
         return redirect('/categories')
     else:
-        categoryID = None
-        if (request.args):
-            # need better way of doing this ...
-            try:
-                categoryID = request.args['id']
-            except:
-                categoryID = None
-        elif request.form:
-            try:
-                categoryID = request.form['id']
-            except:
-                categoryID = None
+        categoryID = request.values.get('id')
         category = None
-        if categoryID:
+        if categoryID != None:
             isAddTalent = False
             category = Category.query.get(categoryID)
-            print(category.name)
-            print(category.description)
-            #print(dir(form))
+            #print(category.name)
+            #print(category.description)
             form.description.data = category.description
             form.id.data = categoryID
         else:
             isAddTalent = True
             form.id.data = None
 
-
         return render_template("edit_category.html", editCategory=category, form=form, isAddTalent=isAddTalent)
 
+@app.route('/skills/edit', methods=['GET', 'POST'])
+@login_required
+def editSkill():
+    print(request)
+    dir(request)
+    isAddSkill = True # assume add to start
+    form = EditSkillForm()
+
+    # There is a better way to do this, but this will work for today.
+    if (form.category.choices == None):
+        categoryChoices = []
+        categoryList = Category.query.all()
+        categoryList.sort(key= lambda category: category.name)
+        for category in categoryList:
+            #print category.name
+            # categoryChoices.append( (category.name, category.id) )
+            # categoryChoices.append( (category.id, category.name) )
+            categoryChoices.append( (category.id, category.name) )
+        form.category.choices = categoryChoices
+
+    """
+    if (form.category.choices == None):
+        print("Maybe this needs to be reset?")
+        categoryChoices = []
+        categoryList = Category.query.all()
+        categoryList.sort(key= lambda category: category.name)
+        first = None
+        for category in categoryList:
+            if (first == None):
+                #first = (category.id, category.name)
+                first = category.name
+            #categoryChoices.append( (category.id, category.name) )
+            categoryChoices.append( category.name )
+        form.category.choices = categoryChoices
+        form.default = first
+    """
+
+    # Validate the submitted data
+    print(dir(form))
+    if (form.errors):
+        print(form.errors)
+    if form.category.errors:
+        print(form.category.errors)
+    if form.description.errors:
+        print(form.description.errors)
+    if form.id.errors:
+        print(form.id.errors)
+    if form.name.errors:
+        print(form.name.errors)
+
+    print('About to check the validation status of the form ...')
+
+    if form.validate_on_submit():
+        print('here!')
+        print(dir(form))
+        #print(form.name.data)
+        #print(form.description.data)
+        #print(form.category.data)
+        isCreate = False
+
+        if (form.id.data == ''):
+            isCreate = True
+        if (isCreate):
+            category = Category.query.filter_by(name=form.category.data).limit(1).first()
+            testSkillName = form.name.data
+            skill = Skill.query.\
+                filter(categoryID=category.id).\
+                filter(name=testSkillName).\
+                first()
+            if (skill != None):
+                print('existing skill error')
+                flash('Skill already exists', 'error')
+                return render_template("edit_category.html", editCategory=None, form=form, isAddSkill=True)
+            else:
+                skill = Category(form.name.data, form.description.data)
+                skill.categoryID = category.id
+                db.session.add(skill)
+                db.session.commit()
+        else:
+            category = Category.query.get(form.id.data)
+            category.description = form.description.data
+            category.name = form.name.data
+
+        db.session.commit()
+        return redirect('/skills')
+
+    else:
+        print('here - in the regular render')
+        skillID = request.values.get('id')
+        skill = None
+        print(request.values)
+        if skillID:
+            print('Checking the skill ... skip this for now' )
+            isAddSkill = False
+            skill = Skill.query.get(skillID)
+
+            if (skill):
+                form.description.data = skill.description
+                form.id.data = skill.id
+
+                form.category.choices = Category.query.all()
+                # this is not right:
+                form.category.default = Category.query.get(skill.categoryID)
+
+            else:
+                print('GAAAAAHH!!!!!!! This is an error.')
+        else:
+            print('Add skill?')
+            isAddSkill = True
+            form.id.data = None
+
+
+
+        # <!-- {{ form.category(class="form-control", required=true, autofocus=true) }} -->
+
+
+        return render_template("edit_skill.html", editSkill=skill, form=form, isAddSkill=isAddSkill)

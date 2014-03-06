@@ -117,6 +117,20 @@ class Activity(db.Model):
     def __repr__(self):
         return 'Activity %r' % self.name
 
+class Invitation(db.Model):
+    __tablename__ = 'invitation'
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
+    invitingUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    receivingUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    activityID = db.Column(db.INTEGER, db.ForeignKey('activity.id'))
+    skillID = db.Column(db.INTEGER, db.ForeignKey('skill.id'))
+    accepted = db.Column(db.Boolean, default=False)
+    canceled = db.Column(db.Boolean, default=False)
+    def __init__(self):
+        pass
+    def __repr__(self):
+        return 'Invitation'
+
 class Company(db.Model):
     __tablename__ = 'company'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)

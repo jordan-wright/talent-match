@@ -17,14 +17,8 @@
                 {%  else %}
                     <h2 class="form-signin-heading" style="color:#FFFFFF">Edit Skill</h2>
                 {% endif %}
-                {% with flashes = get_flashed_messages(with_categories=true) %}
-                    {% if flashes %}
-                        {% for category, message in flashes %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                {{ form.name(class="form-control", required=true, autofocus=true, placeholder="Name", value=editSkill.name) }}
+                {{ form.category(class="form-control", required=true, autofocus=true) }}
+                {{ form.name(class="form-control", required=true, placeholder="Name", value=editSkill.name) }}
                 {{ form.description(class="form-control", required=true, placeholder="Description",value=editSkill.description) }}
                 {{ form.hidden_tag() }}
                 {% if isAddSkill %}

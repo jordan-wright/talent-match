@@ -9,6 +9,7 @@
         <div class="row">
             <h1 style="text-align:center;">
                 <span class="glyphicon"></span> <b>Skill List</b>
+                <a class="btn btn-lg btn-success" href="/skills/edit?new=True" >+ Add New</a>
             </h1>
         </div>
         <div class="container" id="catlist" style="padding-left:20px">
@@ -49,7 +50,8 @@
 
                         <td> <h5 class="h5"> {{ skill.description }} </h5></td>
                         <!-- <td> <h5 class="h5"> {{ skill.userCount }} </h5></td> -->
-                        <td> <h5 class="h5"> Edit this skill  </h5></td>
+                        <!-- <td> <h5 class="h5"> Edit this skill  </h5></td> -->
+                        <td> <a class="btn btn-sm btn-success" href="/skills/edit?id={{skill.id}}">Edit</a> </td>
                     </tr>
                 {% endfor %}
                 </table>

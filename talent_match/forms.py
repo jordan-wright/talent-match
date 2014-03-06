@@ -20,9 +20,10 @@ class EditCategoryForm(Form):
 	id = HiddenField('id')
 
 class EditSkillForm(Form):
-	category = SelectField('', choices=['a','b','c'], default='b')
+	category = SelectField('Category', coerce=unicode, validators=[Required()])
 	name = TextField('Category Name', validators=[Required()])
 	description = TextAreaField('Description')
+	id = HiddenField('id')
 
 class EditProfileForm(Form):
 	firstName = TextField('firstName')
