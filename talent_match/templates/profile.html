@@ -5,6 +5,13 @@
 {% endblock %}
 {% block content %}
     <div class="container" id="profileHeader">
+        {% with flashes = get_flashed_messages(with_categories=true) %}
+            {% if flashes %}
+                {% for category, message in flashes %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <div class="row">
             <h1 style="text-align:center;">
                 <span class="glyphicon glyphicon-star"></span> 

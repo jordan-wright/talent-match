@@ -67,6 +67,7 @@ def editProfile():
         g.user.phoneNumber = form.phoneNumber.data
         g.user.website = form.website.data
         db.session.commit()
+        flash('Profile Update Successful!', 'success')
         return redirect(url_for('profile'))
     form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
     form.background.data = g.user.background 

@@ -13,13 +13,13 @@
                         <img class="img-circle" src="{{g.user.email | gravatar(size=180)}}" alt="" style="margin-bottom:20px;">
                             <div class="row mt centered">
                                 <div class="col-10 col-sm-6">
-                                    {{ form.firstName(class="form-control", required=true, autofocus=true, value=g.user.firstName, placeholder="First Name") }}
+                                    {{ form.firstName(class="form-control", value=g.user.firstName, placeholder="First Name") }}
                                 </div>
                                 <div class="col-10 col-sm-6">
-                                    {{ form.lastName(class="form-control", required=true, autofocus=true, value=g.user.lastName, placeholder="Last Name") }}
+                                    {{ form.lastName(class="form-control", required=true, value=g.user.lastName, placeholder="Last Name") }}
                                 </div>
                             </div>
-                        {{ form.quickIntro(class="form-control-profile", autofocus=true, placeholder="Create a Quick Intro") }}
+                        {{ form.quickIntro(class="form-control-profile", placeholder="Create a Quick Intro") }}
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                 <h1>Background</h1>
                 <hr>
                 <div class="col-lg-8 col-lg-offset-2">
-                    {{ form.background(class="form-control-profile", autofocus=true, placeholder="Tell Us a Little About Yourself") }}
+                    {{ form.background(class="form-control-profile", placeholder="Tell Us a Little About Yourself") }}
                 </div>    
             </div>
         </div>
@@ -49,15 +49,15 @@
                 <div id="contact-row-2" class="row">
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-send"></i></h6></p>
-                        {{ form.email(class="form-control", required=true, autofocus=true, value=g.user.email, placeholder="Email") }}
+                        {{ form.email(class="form-control", required=true, value=g.user.email, placeholder="Email") }}
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
-                        {{ form.phoneNumber(class="form-control", autofocus=true, value=g.user.phoneNumber, placeholder="Phone Number", maxlength="10", type="number") }}
+                        {{ form.phoneNumber(class="form-control", value=g.user.phoneNumber, placeholder="Phone Number", maxlength="10", type="number") }}
                     </div>
                     <div class="col-12 col-sm-4">
                         <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
-                        {{ form.website(class="form-control", autofocus=true, value=g.user.website, placeholder="Website") }}
+                        {{ form.website(class="form-control", value=g.user.website, placeholder="Website") }}
                     </div>
                 </div>
             </div>
