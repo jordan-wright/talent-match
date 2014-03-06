@@ -20,7 +20,8 @@ class EditCategoryForm(Form):
 	id = HiddenField('id')
 
 class EditSkillForm(Form):
-	category = SelectField('Category', coerce=unicode, validators=[Required()])
+	#category = SelectField(u'Category', coerce=unicode, validators=[Required()])
+	category = SelectField(u'Category', validators=[Required()])
 	name = TextField('Category Name', validators=[Required()])
 	description = TextAreaField('Description')
 	id = HiddenField('id')

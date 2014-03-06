@@ -204,7 +204,7 @@ def editSkill():
             #print category.name
             # categoryChoices.append( (category.name, category.id) )
             # categoryChoices.append( (category.id, category.name) )
-            categoryChoices.append( (category.id, category.name) )
+            categoryChoices.append( (category.name, category.name) )
         form.category.choices = categoryChoices
 
     """
@@ -222,7 +222,6 @@ def editSkill():
             categoryChoices.append( category.name )
         form.category.choices = categoryChoices
         form.default = first
-    """
 
     # Validate the submitted data
     print(dir(form))
@@ -236,6 +235,7 @@ def editSkill():
         print(form.id.errors)
     if form.name.errors:
         print(form.name.errors)
+    """
 
     print('About to check the validation status of the form ...')
 
@@ -244,24 +244,28 @@ def editSkill():
         print(dir(form))
         #print(form.name.data)
         #print(form.description.data)
-        #print(form.category.data)
+
         isCreate = False
 
         if (form.id.data == ''):
             isCreate = True
         if (isCreate):
+            print(form.category.data)
             category = Category.query.filter_by(name=form.category.data).limit(1).first()
+            print(category)
             testSkillName = form.name.data
+            print(testSkillName)
             skill = Skill.query.\
-                filter(categoryID=category.id).\
-                filter(name=testSkillName).\
+                filter_by(categoryID=category.id).\
+                filter_by(name=testSkillName).\
                 first()
             if (skill != None):
                 print('existing skill error')
                 flash('Skill already exists', 'error')
-                return render_template("edit_category.html", editCategory=None, form=form, isAddSkill=True)
+                return render_template("edit_skill.html", editSkill=None, form=form, isAddSkill=True)
             else:
-                skill = Category(form.name.data, form.description.data)
+                print('trying to add the skill ... ')
+                skill = Skill(category.id,testSkillName, form.description.data)
                 skill.categoryID = category.id
                 db.session.add(skill)
                 db.session.commit()
@@ -275,6 +279,18 @@ def editSkill():
 
     else:
         print('here - in the regular render')
+
+        if (form.errors):
+            print(form.errors)
+        if form.category.errors:
+            print(form.category.errors)
+        if form.description.errors:
+            print(form.description.errors)
+        if form.id.errors:
+            print(form.id.errors)
+        if form.name.errors:
+            print(form.name.errors)
+
         skillID = request.values.get('id')
         skill = None
         print(request.values)
