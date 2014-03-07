@@ -14,12 +14,12 @@ def addTestData() :
     if (userList == None) or (userList.count() < 1):
         print("Adding default user(s)")
         admin = User()
-        admin.is_admin = True; admin.username = 'admin'; admin.email = 'admin@talent-match.com'
+        admin.is_admin = True; admin.username = 'admin'; admin.email = 'admin@talent-match.us'
         admin.pwd_hash ='$2a$12$5XpK1rXasJv1Zdz7ABxMN.EyHERZ7WqMUjmRQeFALP7LEbrNB8tb2'
         db.session.add(admin)
 
         sally = User()
-        sally.is_admin = True; sally.username = 'sally'; sally.email = 'sally@talent-match.com'
+        sally.is_admin = True; sally.username = 'sally'; sally.email = 'sally@talent-match.us'
         sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sally.firstName = 'Sally'
         sally.lastName = 'Struthers'
