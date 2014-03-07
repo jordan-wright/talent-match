@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 from talent_match import app, db
 from config import basedir
