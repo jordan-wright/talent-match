@@ -9,4 +9,4 @@ python:
 install:
   - pip install -r requirements.txt
 # command to run tests
-script: ./talent_match_tests.py
+script: python talent_match_tests.py
