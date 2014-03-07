@@ -1,6 +1,8 @@
 talent-match
 ============
 
+[![Build Status](https://travis-ci.org/jordan-wright/talent-match.png?branch=master)](https://travis-ci.org/jordan-wright/talent-match)
+
 Term Project for CS 5373
 
 ## Introduction
