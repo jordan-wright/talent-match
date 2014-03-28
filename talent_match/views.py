@@ -4,6 +4,16 @@ from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm
 from sqlalchemy.sql import func
+from functools import wraps
+
+def admin_required(f):
+    @wraps(f)
+    @login_required
+    def decorated(*args, **kwargs):
+        if not g.user.is_admin:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated
 
 @app.route('/')
 def index():
@@ -75,7 +85,7 @@ def editProfile():
 
 
 @app.route('/skills', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def listSkills():
     # original test stuff
     # user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
@@ -117,7 +127,7 @@ def listSkills():
     return render_template("skills.html", form=form, skillList=skillList, user=g.user, categoryName=categoryName, categoryFirst=categoryFirst)
 
 @app.route('/categories', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def listCategories():
     #user = dict(isAdmin = True, name='Steve', email='test-only-a-test')
     #form = PickCategoriesForm()
@@ -143,7 +153,7 @@ def listCategories():
     return render_template("categories.html", form=form, categories=categories, user=g.user)
 
 @app.route('/categories/edit', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def editCategory():
     isAddTalent = True # assume add to start
     form = EditCategoryForm()
@@ -189,7 +199,7 @@ def editCategory():
         return render_template("edit_category.html", editCategory=category, form=form, isAddTalent=isAddTalent)
 
 @app.route('/skills/edit', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def editSkill():
     print(request)
     dir(request)
