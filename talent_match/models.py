@@ -15,7 +15,7 @@ def modelToString(self) :
                 # Steve: adding this safety check.
                 keyInfo = c.get(key)
                 if (hasattr(keyInfo, 'default')):
-                    
+
                     if not (hasattr(c.get(key).default, 'arg') and
                         getattr(c.get(key).default, 'arg') == getattr(self, key)):
                             atts.append( (key, getattr(self, key)) )

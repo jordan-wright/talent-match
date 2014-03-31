@@ -34,3 +34,6 @@ class EditProfileForm(Form):
 	email = TextField('email')
 	phoneNumber = TextField('phoneNumber', validators=[Length(max=10)])
 	website = TextField('website')
+
+class SearchForm(Form):
+	query = TextField('query', validators=[Required()])

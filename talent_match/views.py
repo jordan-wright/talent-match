@@ -2,7 +2,7 @@ from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill, Seeker, Provider
-from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm
+from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm
 from sqlalchemy.sql import func
 from functools import wraps
 
@@ -89,7 +89,16 @@ def editProfile():
         return redirect(url_for('profile'))
     form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
     form.background.data = g.user.background 
-    return render_template('/edit.html', form=form) 
+    return render_template('/edit.html', form=form)
+
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    form = SearchForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        return render_template('/search.html', query=form.query.data)
+    else:
+        return redirect(url_for('index')) 
 
 
 @app.route('/skills', methods=['GET', 'POST'])
