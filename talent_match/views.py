@@ -1,7 +1,7 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
-from models import User, Category, Skill, Seeker, Provider
+from models import User, Category, Skill, Seeker, Provider, ProviderSkill
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm
 from sqlalchemy.sql import func
 from functools import wraps
@@ -96,7 +96,9 @@ def editProfile():
 def search():
     form = SearchForm(csrf_enabled=False)
     if form.validate_on_submit():
-        return render_template('/search.html', query=form.query.data)
+        query = form.query.data
+        users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).all()
+        return render_template('/search.html', query=query, users=users, count=len(users))
     else:
         return redirect(url_for('index')) 
 
