@@ -1,3 +1,4 @@
+import sys
 from talent_match import db
 
 ## Project 3:  Steve - adding relationships and navigation
@@ -10,9 +11,13 @@ def modelToString(self) :
     c = self._sa_class_manager
     for key in c.keys():
             if key in self.__dict__:
-                if not (hasattr(c.get(key).default, 'arg') and
+
+                keyInfo = c.get(key)
+                # Steve: adding this safety check.
+                if (hasattr(keyInfo, 'default')):
+                    if not (hasattr(c.get(key).default, 'arg') and
                         getattr(c.get(key).default, 'arg') == getattr(self, key)):
-                    atts.append( (key, getattr(self, key)) )
+                            atts.append( (key, getattr(self, key)) )
 
     return self.__class__.__name__ + '(' + ', '.join(x[0] + '=' + repr(x[1]) for x in atts) + ')'
 
@@ -56,19 +61,36 @@ class User(db.Model):
         return unicode(self.id)
 
     ## Project 3:  Steve - adding relationships and navigation
-    def addSkill(self, skill):
+    ## This is a convenience mechanism to avoid having to navigate thru the relationship graph quite as much.
+    ## arguments:  the Skill instance, and extra association data
+    ##             the extra association data is limited today to the "will_volunteer" flag.
+    def addSkill(self, skill, will_volunteer=False):
         if (skill):
-            seeker = self.seekerProfile
+            seeker = self.providerProfile
 
-            # check to make sure the skill does not already exist
-            if (True):
+            # delegate to the provider method of the same name.
+            return self.providerProfile.addSkill(skill, will_volunteer)
 
-                # add the skill to the list.
-                pass
 
-            # save the changes
-            db.session.commit()
+    ## Project 3:  Steve - adding relationships and navigation
+    ## This is a convenience mechanism to avoid having to navigate thru the relationship graph quite as much.
+    def getProviderSkillList(self):
+        result = []
 
+        if (self.providerProfile):
+            result = self.providerProfile.getProviderSkillList()
+
+        return result
+
+    ## Project 3:  Steve - adding relationships and navigation
+    ## This is a convenience mechanism to avoid having to navigate thru the relationship graph quite as much.
+    def getActivityList(self):
+        result = []
+        if (self.seekerProfile):
+            # delegate to the seeker profile object the details of determining this information.
+            result = self.seekerProfile.getActivityList()
+
+        return result
 
     def __repr__(self):
         return '<User %r>' % (self.username)
@@ -82,6 +104,52 @@ class Provider(db.Model):
     skillList = db.relationship(
         'ProviderSkill',
         backref=db.backref('provider', lazy='joined'))
+
+    ## Project 3:  Steve - adding relationships and navigation
+    def hasSkill(self, skill):
+        ps = ProviderSkill.query.filter_by(providerID=self.id,skillID=skill.id).first()
+        if (ps):
+            return True
+        else:
+           return False
+
+    ## Project 3:  Steve - adding relationships and navigation
+    def getProviderSkillList(self):
+        result = None
+        if (self.skillList):
+            result = self.skillList
+        return result
+
+    ## Project 3:  Steve - adding relationships and navigation
+    ## arguments:  the Skill instance, and extra association data
+    ##             the extra association data is limited today to the "will_volunteer" flag.
+    def addSkill(self, skill, will_volunteer):
+        result = False
+        if (skill):
+
+            try:
+                # check to see if the skill already exists.
+                if (self.hasSkill(skill)):
+                    result = False
+                else:
+                    # set the association class extra attributes:
+                    providerSkill = ProviderSkill(will_volunteer)
+
+                    # set the association class keys:
+                    providerSkill.providerID = self.id
+                    providerSkill.skillID = skill.id
+
+                    # add to database
+                    db.session.add(providerSkill)
+
+                    # save the change
+                    db.session.commit()
+            except:
+                exception = sys.exc_info()[0]
+                print "Unexpected exception: " + exception
+                result = False
+
+        return result
 
     def __init__(self, userID, is_available=True):
         self.userID = userID
@@ -97,12 +165,21 @@ class Seeker(db.Model):
     userID = db.Column(db.INTEGER, db.ForeignKey('user.id'), nullable=True)
     companyID = db.Column(db.INTEGER, db.ForeignKey('company.id'), nullable=True)
 
+    ## Project 3:  Steve - adding relationships and navigation
     activityList = db.relationship(
         'Activity',
         backref=db.backref('activity', lazy='joined'))
 
+    ## Project 3:  Steve - adding relationships and navigation
+    def getActivityList(self):
+        result = None
+        if (self.activityList):
+            result = self.activityList
+        return result
+
     def __init__(self, userID):
         self.userID = userID
+
     def __repr__(self):
         #return 'Talent Seeker object'  # for now; should get the user object and return its name
         return modelToString(self)
@@ -138,8 +215,12 @@ class ProviderSkill(db.Model):
     skillID = db.Column(db.INTEGER, db.ForeignKey('skill.id'), nullable=False)
     # for the one-to-many relationship from provider to provider skill
     providerID = db.Column(db.INTEGER, db.ForeignKey('provider.id'), nullable=False)
-    def __init__(self):
-        pass
+
+    ## Project 3:  Steve - adding relationships and navigation
+    skill = db.relationship('Skill', backref='provider_skill', uselist=False, lazy='joined')
+
+    def __init__(self, will_volunteer=False):
+        self.will_volunteer = will_volunteer
     def __repr__(self):
         return modelToString(self)
 
@@ -150,8 +231,7 @@ class Skill(db.Model):
     name = db.Column(db.String(80), nullable=False, index=True, unique=True)
     description = db.Column(db.String(256), nullable=True)
 
-    # will_volunteer listed in model; however, this is a per individual skill, not the "universal" skill.
-    # this needs to be added in the profile => skill mapping table.
+    ## Project 3:  Steve - adding relationships and navigation
     category = db.relationship('Category', backref='skill', uselist=False, lazy='joined')
 
     def __init__(self, categoryID, name, description):

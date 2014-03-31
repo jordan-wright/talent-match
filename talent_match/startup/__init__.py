@@ -152,9 +152,29 @@ def addTestData() :
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
+
+                # Let's add this skill to our user again.   The second time should fail
+                if (user.addSkill(mechSkill)):
+                    print "Fail - cannot add a skill to the same user twice."
+                else:
+                    print "Success - cannot add a skill to the same user twice."
+
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
+
+        print("Checking out the sally user skill navigation ... ")
+
+        user = User.query.filter_by(username='sally.smith').first()
+        sallySkillList = user.getProviderSkillList()
+        if (sallySkillList):
+            for sallySkill in sallySkillList:
+                # This is the provider skill object (association class)
+                print(sallySkill)
+                skill = sallySkill.skill
+                # This is the common/shared skill object.
+                print(skill)
+
 
         print("Checking out the steve user ... ")
         user = User.query.filter_by(username='steve').first()
