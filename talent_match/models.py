@@ -12,9 +12,10 @@ def modelToString(self) :
     for key in c.keys():
             if key in self.__dict__:
 
-                keyInfo = c.get(key)
                 # Steve: adding this safety check.
+                keyInfo = c.get(key)
                 if (hasattr(keyInfo, 'default')):
+                    
                     if not (hasattr(c.get(key).default, 'arg') and
                         getattr(c.get(key).default, 'arg') == getattr(self, key)):
                             atts.append( (key, getattr(self, key)) )
@@ -81,6 +82,12 @@ class User(db.Model):
             result = self.providerProfile.getProviderSkillList()
 
         return result
+
+
+    ## Project 3:  Steve - adding relationships and navigation
+    ## This is a convenience mechanism to avoid having to navigate thru the relationship graph quite as much.
+    def addActivity(self, name, description):
+        return self.seekerProfile.addActivity(name, description, self)
 
     ## Project 3:  Steve - adding relationships and navigation
     ## This is a convenience mechanism to avoid having to navigate thru the relationship graph quite as much.
@@ -169,6 +176,17 @@ class Seeker(db.Model):
     activityList = db.relationship(
         'Activity',
         backref=db.backref('activity', lazy='joined'))
+
+    ## Project 3:  Steve - adding relationships and navigation
+    def addActivity(self, name, description, user):
+        result = None
+        try:
+            activity = Activity(name, description, user)
+            db.session.add(activity)
+            db.session.commit()
+            return activity
+        except:
+            result = None
 
     ## Project 3:  Steve - adding relationships and navigation
     def getActivityList(self):
@@ -265,6 +283,21 @@ class Activity(db.Model):
     # at Association Object (see: http://docs.sqlalchemy.org/en/rel_0_9/orm/relationships.html#association-pattern)
     # activitySkillList = db.relationship("ActivitySkill", backref='activity', lazy='dynamic')
     """
+    activitySkillList = db.relationship(
+        'ActivitySkill',
+        backref=db.backref('activity', lazy='joined'))
+
+    def addSkill(self, skill, quantity = 1, exclusiveResource=True):
+        try:
+            activitySkill = ActivitySkill(self.id, skill.id, quantity, exclusiveResource)
+            db.session.add(activitySkill)
+            db.session.commit()
+            return True
+        except:
+            return False
+
+    def getActivitySkillList(self):
+        return self.activitySkillList
 
     def __init__(self, name , description, user):
         self.name = name
@@ -281,11 +314,13 @@ class ActivitySkill(db.Model):
     skillID = db.Column(db.Integer, db.ForeignKey('skill.id'))
     quantity = db.Column(db.INTEGER, nullable=False)
     #skillList = db.relationship("Skill", backref='activity_skill', lazy='dynamic')
+    exclusivePerson = db.Column(db.Boolean, default=True)
 
-    def __init__(self, activityID, skillID, quantity ):
+    def __init__(self, activityID, skillID, quantity = 1, exclusivePerson=True ):
         self.activityID = activityID
         self.skillID = skillID
         self.quantity = quantity
+        self.exclusivePerson = exclusivePerson
         if (quantity == None):
             quantity = 1
     def __repr__(self):

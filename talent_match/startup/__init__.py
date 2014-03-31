@@ -121,11 +121,13 @@ def addTestData() :
         softwareSkillHtml5 = None
         softwareSkillCSharp = None
         softwareSkillJava = None
+        softwareSkillPython = None
         softwareCategory = Category.query.filter_by(name = 'Software').first()
         if (softwareCategory != None):
             softwareSkillHtml5 = Skill.query.filter_by(name = 'HTML5').first()
             softwareSkillCSharp = Skill.query.filter_by(name = 'C#').first()
             softwareSkillJava = Skill.query.filter_by(name = 'Java').first()
+            softwareSkillPython = Skill.query.filter_by(name = 'Python').first()
 
         print("Checking the new category -> skill relationship ... ")
         if (softwareCategory != None):
@@ -190,10 +192,41 @@ def addTestData() :
                 print("No provider profile found.")
             if (softwareSkillCSharp != None):
                 # Let's add this skill to our user.
-                user.addSkill(softwareSkillHtml5)
+                user.addSkill(softwareSkillHtml5, False)
             if (softwareSkillJava != None):
                 # Let's add this skill to our user.
-                user.addSkill(softwareSkillHtml5)
+                user.addSkill(softwareSkillJava, True)
+
+        print("Creating an activity for user='steve'")
+
+        user = User.query.filter_by(username='steve').first()
+        activity = user.addActivity('Flask-based Coding Activity', "Need some help for Project 4 in Dr. Mengel's class!")
+        if (activity):
+            activity.hourDuration = 20
+            # activity.beginDate =
+            # activity.endDate =
+            db.session.commit()
+
+            ## Important Note: we need to look at overlapping skills
+            ## so that we can differentiate between 1 person with Python, HTML5 and
+            ## 2 people (one with Python, one with HTML5).
+            activity.addSkill(softwareSkillPython, 1)
+            activity.addSkill(softwareSkillHtml5, 1)
+
+        print("Checking the activity navigation ... ")
+
+        user = User.query.filter_by(username='steve').first()
+        activityList = user.getActivityList()
+        if (activityList):
+            # The activity list
+            for act in activityList:
+                print(act)
+                activitySkillList = act.activitySkillList
+                if (activitySkillList):
+                    for skill in activitySkillList:
+                        print skill
+                else:
+                    print "Error - activity skill list is empty."
 
 
 
