@@ -1,7 +1,7 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g
 from flask.ext.login import login_user, login_required, logout_user
-from models import User, Category, Skill
+from models import User, Category, Skill, Seeker, Provider
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm
 from sqlalchemy.sql import func
 from functools import wraps
@@ -55,6 +55,14 @@ def register():
         user = User(form.firstName.data, form.lastName.data, form.username.data, form.email.data, bcrypt.generate_password_hash(form.password.data))
         db.session.add(user)
         db.session.commit()
+
+        ## Project 3: Steve - adding the automatic creation of the seeker, provider objects associated with a user.
+        seeker = Seeker(user.id)
+        provider = Provider(user.id)
+        db.session.add(seeker)
+        db.session.add(provider)
+        db.session.commit()
+
         flash('Registration Successful!', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)

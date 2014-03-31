@@ -1,5 +1,21 @@
 from talent_match import db
 
+## Project 3:  Steve - adding relationships and navigation
+## Adapted from: https://bitbucket.org/zzzeek/sqlalchemy/wiki/UsageRecipes/GenericOrmBaseClass
+def modelToString(self) :
+    ## changes: in the example, it was "self.c"; replaced "self.c" with an equivalent based on empirical
+    ## debugging.
+    atts = []
+    ## This is not particularly ideal, but it will work for now.
+    c = self._sa_class_manager
+    for key in c.keys():
+            if key in self.__dict__:
+                if not (hasattr(c.get(key).default, 'arg') and
+                        getattr(c.get(key).default, 'arg') == getattr(self, key)):
+                    atts.append( (key, getattr(self, key)) )
+
+    return self.__class__.__name__ + '(' + ', '.join(x[0] + '=' + repr(x[1]) for x in atts) + ')'
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
@@ -14,6 +30,11 @@ class User(db.Model):
     background = db.Column(db.String(400), nullable=True)
     phoneNumber = db.Column(db.String(10), nullable=True)
     website = db.Column(db.String(120), nullable=True)
+
+    ## Project 3:  Steve - adding relationships and navigation
+    seekerProfile = db.relationship('Seeker', uselist=False, backref='user')
+    ## Project 3:  Steve - adding relationships and navigation
+    providerProfile = db.relationship('Provider', uselist=False, backref='user')
 
     def __init__(self, firstName=None, lastName=None, username=None, email=None, password=None):
         self.firstName = firstName
@@ -34,6 +55,21 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    ## Project 3:  Steve - adding relationships and navigation
+    def addSkill(self, skill):
+        if (skill):
+            seeker = self.seekerProfile
+
+            # check to make sure the skill does not already exist
+            if (True):
+
+                # add the skill to the list.
+                pass
+
+            # save the changes
+            db.session.commit()
+
+
     def __repr__(self):
         return '<User %r>' % (self.username)
 
@@ -42,35 +78,52 @@ class Provider(db.Model):
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     is_available = db.Column(db.Boolean, nullable=False, index=True)
     userID = db.Column(db.INTEGER, db.ForeignKey('user.id'), nullable=False)
+
     skillList = db.relationship(
         'ProviderSkill',
         backref=db.backref('provider', lazy='joined'))
+
     def __init__(self, userID, is_available=True):
         self.userID = userID
         self.is_available = is_available
     def __repr__(self):
-        return 'Talent Provider object'  # for now; should get the user object and return its name
+        #return 'Talent Provider object'  # for now; should get the user object and return its name
+        return modelToString(self)
+
 
 class Seeker(db.Model):
     __tablename__ = 'seeker'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     userID = db.Column(db.INTEGER, db.ForeignKey('user.id'), nullable=True)
     companyID = db.Column(db.INTEGER, db.ForeignKey('company.id'), nullable=True)
+
+    activityList = db.relationship(
+        'Activity',
+        backref=db.backref('activity', lazy='joined'))
+
     def __init__(self, userID):
         self.userID = userID
     def __repr__(self):
-        return 'Talent Seeker object'  # for now; should get the user object and return its name
+        #return 'Talent Seeker object'  # for now; should get the user object and return its name
+        return modelToString(self)
 
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     name = db.Column(db.String(80), nullable=False, index=True, unique=True)
     description = db.Column(db.String(256), nullable=True)
+
+    ## Project 3:  Steve - adding relationships and navigation
+    skillList = db.relationship('Skill', lazy='joined')
+
     def __init__(self, name, description):
         self.name = name
         self.description = description
     def __repr__(self):
-        return 'Category %r' % self.name
+        if (self.skillList) and (len(self.skillList) > 0):
+            return 'Category: ' + self.name + ', description=' + self.description + ', count=' + str(len(self.skillList))
+        else:
+            return 'Category: ' + self.name + ', description=' + self.description
 
 # This model object provides additional information in the mapping from a talent Provider to
 # a Skill.   Initially, this will include the 'will_volunteer' attribute which can vary
@@ -85,6 +138,10 @@ class ProviderSkill(db.Model):
     skillID = db.Column(db.INTEGER, db.ForeignKey('skill.id'), nullable=False)
     # for the one-to-many relationship from provider to provider skill
     providerID = db.Column(db.INTEGER, db.ForeignKey('provider.id'), nullable=False)
+    def __init__(self):
+        pass
+    def __repr__(self):
+        return modelToString(self)
 
 class Skill(db.Model):
     __tablename__ = 'skill'
@@ -92,14 +149,20 @@ class Skill(db.Model):
     categoryID = db.Column(db.INTEGER, db.ForeignKey('category.id'))
     name = db.Column(db.String(80), nullable=False, index=True, unique=True)
     description = db.Column(db.String(256), nullable=True)
+
     # will_volunteer listed in model; however, this is a per individual skill, not the "universal" skill.
     # this needs to be added in the profile => skill mapping table.
+    category = db.relationship('Category', backref='skill', uselist=False, lazy='joined')
+
     def __init__(self, categoryID, name, description):
         self.categoryID = categoryID
         self.name = name
         self.description = description
     def __repr__(self):
-        return 'Skill %r' % self.name
+        if (self.category):
+            return 'Skill: ' + self.name + ', description=' + self.description + ', category=' + self.category.name
+        else:
+            return 'Skill: ' + self.name + ', description=' + self.description
 
 class Activity(db.Model):
     __tablename__ = 'activity'
@@ -111,11 +174,42 @@ class Activity(db.Model):
     hourDuration = db.Column(db.INTEGER, nullable=True)
     dayDuration = db.Column(db.INTEGER, nullable=True)
     monthDuration = db.Column(db.INTEGER, nullable=True)
-    def __init__(self, name, description):
+
+    ## Project 3:  Steve - adding relationships and navigation
+    seekerID = db.Column(db.INTEGER, db.ForeignKey('seeker.id'), nullable=False)
+    """
+    # Adding this next bit soon ....
+    #
+    # per SQL alchemy documentation :  ...  if it has any other columns, such as its own primary key, or foreign keys
+    #  to other tables, SQLAlchemy requires a different usage pattern called the association object, described
+    # at Association Object (see: http://docs.sqlalchemy.org/en/rel_0_9/orm/relationships.html#association-pattern)
+    # activitySkillList = db.relationship("ActivitySkill", backref='activity', lazy='dynamic')
+    """
+
+    def __init__(self, name , description, user):
         self.name = name
         self.description = description
+        ## Project 3:  Steve - adding relationships and navigation
+        self.seekerID = user.seekerProfile.id
     def __repr__(self):
-        return 'Activity %r' % self.name
+        return modelToString(self)
+
+class ActivitySkill(db.Model):
+    __tablename__ = 'activity_skill'
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
+    activityID = db.Column(db.Integer, db.ForeignKey('activity.id'))
+    skillID = db.Column(db.Integer, db.ForeignKey('skill.id'))
+    quantity = db.Column(db.INTEGER, nullable=False)
+    #skillList = db.relationship("Skill", backref='activity_skill', lazy='dynamic')
+
+    def __init__(self, activityID, skillID, quantity ):
+        self.activityID = activityID
+        self.skillID = skillID
+        self.quantity = quantity
+        if (quantity == None):
+            quantity = 1
+    def __repr__(self):
+        return modelToString(self)
 
 class Invitation(db.Model):
     __tablename__ = 'invitation'
@@ -129,7 +223,7 @@ class Invitation(db.Model):
     def __init__(self):
         pass
     def __repr__(self):
-        return 'Invitation'
+        return modelToString(self)
 
 class Company(db.Model):
     __tablename__ = 'company'
@@ -137,3 +231,7 @@ class Company(db.Model):
     name = db.Column(db.String(80), nullable=False)
     pointOfContact = db.Column(db.String(120), nullable=False)
     is_available = db.Column(db.Boolean, nullable=False, default=False)
+    def __init__(self):
+        pass
+    def __repr__(self):
+        return modelToString(self)
