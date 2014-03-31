@@ -15,13 +15,13 @@
         <div class="row">
             <h1 style="text-align:center;">
                 <span class="glyphicon glyphicon-star"></span> 
-                <b>{{g.user.firstName}} {{g.user.lastName}}</b>
+                <b>{{user.firstName}} {{user.lastName}}</b>
             </h1>
             <div class="row mt centered">
                 <div class="col-lg-8 col-lg-offset-2">
-                    <img class="img-circle" src="{{g.user.email | gravatar(size=180)}}" alt="">
-                    {% if g.user.quickIntro %}
-                        <p>{{g.user.quickIntro}}</p>
+                    <img class="img-circle" src="{{user.email | gravatar(size=180)}}" alt="">
+                    {% if user.quickIntro %}
+                        <p>{{user.quickIntro}}</p>
                     {% endif %}
                 </div>
             </div>
@@ -32,7 +32,7 @@
             <h1>Background</h1>
             <hr>
             <div class="col-lg-8 col-lg-offset-2">
-                <p>{{g.user.background}}</p>
+                <p>{{user.background}}</p>
             </div>    
         </div>
     </div>
@@ -52,19 +52,19 @@
             <div id="contact-row-6" class="row">
                 <div class="col-12 col-sm-4 with-hover-text">
                     <p><h6><i class="glyphicon glyphicon-send"></i></h6></p>
-                    <h3>{{g.user.email}}</h3>
+                    <h3>{{user.email}}</h3>
                 </div>
-                {% if g.user.phoneNumber %}
+                {% if user.phoneNumber %}
                 <div class="col-12 col-sm-4 with-hover-text">
                     <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
-                    <h3>{{g.user.phoneNumber}}</h3>
+                    <h3>{{user.phoneNumber}}</h3>
                 </div>
                 {% endif %}
 
-                {% if g.user.website %}
+                {% if user.website %}
                 <div class="col-12 col-sm-4 with-hover-text">
                     <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
-                    <h3>{{g.user.website}}</h3>
+                    <h3>{{user.website}}</h3>
                 </div>
                 {% endif %}
             </div>
