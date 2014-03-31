@@ -313,8 +313,11 @@ class ActivitySkill(db.Model):
     activityID = db.Column(db.Integer, db.ForeignKey('activity.id'))
     skillID = db.Column(db.Integer, db.ForeignKey('skill.id'))
     quantity = db.Column(db.INTEGER, nullable=False)
-    #skillList = db.relationship("Skill", backref='activity_skill', lazy='dynamic')
     exclusivePerson = db.Column(db.Boolean, default=True)
+
+    ## Project 3:  Steve - adding relationships and navigation
+    ## Note: this is subject to change!
+    skill =  db.relationship('Skill', backref='activity_skill', uselist=False, lazy='joined')
 
     def __init__(self, activityID, skillID, quantity = 1, exclusivePerson=True ):
         self.activityID = activityID

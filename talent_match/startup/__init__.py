@@ -223,8 +223,9 @@ def addTestData() :
                 print(act)
                 activitySkillList = act.activitySkillList
                 if (activitySkillList):
-                    for skill in activitySkillList:
-                        print skill
+                    for activitySkill in activitySkillList:
+                        print activitySkill
+                        print activitySkill.skill
                 else:
                     print "Error - activity skill list is empty."
 
