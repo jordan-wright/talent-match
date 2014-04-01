@@ -261,6 +261,13 @@ class Skill(db.Model):
             return 'Skill: ' + self.name + ', description=' + self.description + ', category=' + self.category.name
         else:
             return 'Skill: ' + self.name + ', description=' + self.description
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'name': self.name,
+            'description' : self.description
+       }
 
 class Activity(db.Model):
     __tablename__ = 'activity'

@@ -1,5 +1,5 @@
 from talent_match import app, db, bcrypt
-from flask import render_template, request, redirect, url_for, flash, g
+from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill, Seeker, Provider, ProviderSkill
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm
@@ -148,6 +148,13 @@ def listSkills():
 
     form = None
     return render_template("skills.html", form=form, skillList=skillList, user=g.user, categoryName=categoryName, categoryFirst=categoryFirst)
+
+@app.route('/skills/search', methods=['GET', 'POST'])
+@login_required
+def searchSkills():
+    query = request.values.get('query')
+    if not query: return redirect(url_for('index'))
+    return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
 
 @app.route('/categories', methods=['GET', 'POST'])
 @admin_required

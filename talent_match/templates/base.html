@@ -12,7 +12,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
     <!-- Custom styles for this template -->
     <link href="/static/css/main.css" rel="stylesheet">
 
@@ -49,9 +49,9 @@
                         <form style="margin-top:15px;" class="form-inline" method="post" action="/search" role="form">
                             <div class="form-group">
                                 {% if query %}
-                                <input type="text" class="form-control" id="query" name="query" placeholder="{{query}}" required>
+                                <input type="text" class="form-control" id="query" name="query" placeholder="{{query}}" required autocomplete="off">
                                 {% else %}
-                                <input type="text" class="form-control" id="query" name="query" placeholder="Search for talent" required>
+                                <input type="text" class="form-control" id="query" name="query" placeholder="Search for talent" autocomplete="off" required>
                                 {% endif %}
                             </div>
                             <button type="submit" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-search"></span></button>
@@ -105,6 +105,8 @@
     <!-- Bootstrap core JavaScript ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="/static/js/typeahead.bundle.min.js"></script>
+    <script src="/static/js/talent-match.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
 </body>
 
