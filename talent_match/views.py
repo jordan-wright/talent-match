@@ -5,6 +5,7 @@ from models import User, Category, Skill, Seeker, Provider, ProviderSkill
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm
 from sqlalchemy.sql import func
 from functools import wraps
+from config import POSTS_PER_PAGE
 
 def admin_required(f):
     @wraps(f)
@@ -76,7 +77,7 @@ def profile(username):
         user = User.query.filter_by(username=username).first_or_404()
     return render_template("profile.html", user=user) 
 
-@app.route('/edit', methods=['GET', 'POST'])
+@app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def editProfile():
     form = EditProfileForm()
@@ -93,18 +94,16 @@ def editProfile():
         return redirect(url_for('profile'))
     form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
     form.background.data = g.user.background 
-    return render_template('/edit.html', form=form)
+    return render_template("profile_edit.html", form=form)
 
 @app.route('/search', methods=['GET', 'POST'])
+@app.route('/search/<int:page>', methods = ['GET', 'POST'])
 @login_required
-def search():
+def search(page = 1): #, setquery = ''):
     form = SearchForm(csrf_enabled=False)
-    if form.validate_on_submit():
-        query = form.query.data
-        users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).all()
-        return render_template('/search.html', query=query, users=users, count=len(users))
-    else:
-        return redirect(url_for('index')) 
+    query = form.query.data or setquery
+    users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
+    return render_template('search.html', query=query, users=users, )
 
 
 @app.route('/skills', methods=['GET', 'POST'])

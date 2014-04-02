@@ -77,6 +77,72 @@ def addTestData() :
         db.session.add(steveProvider)
         db.session.commit()
 
+
+        print("Adding user='sam.smith'")
+        sam = User()
+        sam.is_admin = False; sam.username = 'sam.smith'; sam.email = 'sam.smith@talent-match.us'
+        sam.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        sam.firstName = 'Sam'
+        sam.lastName = 'Smith'
+        sam.phoneNumber = '806-555-1212'
+        sam.website = 'sam-smith-realty.com'
+        db.session.add(sam)
+        db.session.commit()
+        samSeeker = Seeker(sam.id)
+        samProvider = Provider(sam.id)
+        db.session.add(samSeeker)
+        db.session.add(samProvider)
+        db.session.commit()
+
+        print("Adding user='sammy.smith'")
+        sammy = User()
+        sammy.is_admin = False; sammy.username = 'sammy.smith'; sammy.email = 'sammy.smith@talent-match.us'
+        sammy.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        sammy.firstName = 'Sammy'
+        sammy.lastName = 'Smith'
+        sammy.phoneNumber = '806-555-1212'
+        sammy.website = 'sammy-smith-realty.com'
+        db.session.add(sammy)
+        db.session.commit()
+        sammySeeker = Seeker(sammy.id)
+        sammyProvider = Provider(sammy.id)
+        db.session.add(sammySeeker)
+        db.session.add(sammyProvider)
+        db.session.commit()
+
+
+        print("Adding user='mike.smith'")
+        mike = User()
+        mike.is_admin = False; mike.username = 'mike.smith'; mike.email = 'mike.smith@talent-match.us'
+        mike.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        mike.firstName = 'Mike'
+        mike.lastName = 'Smith'
+        mike.phoneNumber = '806-555-1212'
+        mike.website = 'mike-smith-realty.com'
+        db.session.add(mike)
+        db.session.commit()
+        mikeSeeker = Seeker(mike.id)
+        mikeProvider = Provider(mike.id)
+        db.session.add(mikeSeeker)
+        db.session.add(mikeProvider)
+        db.session.commit()
+
+        print("Adding user='mikey.smith'")
+        mikey = User()
+        mikey.is_admin = False; mikey.username = 'mikey.smith'; mikey.email = 'mikey.smith@talent-match.us'
+        mikey.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        mikey.firstName = 'Mikey'
+        mikey.lastName = 'Smith'
+        mikey.phoneNumber = '806-555-1212'
+        mikey.website = 'mikey-smith-realty.com'
+        db.session.add(mikey)
+        db.session.commit()
+        mikeySeeker = Seeker(mikey.id)
+        mikeyProvider = Provider(mikey.id)
+        db.session.add(mikeySeeker)
+        db.session.add(mikeyProvider)
+        db.session.commit()
+        
     else:
         pass
 
@@ -164,6 +230,113 @@ def addTestData() :
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
+
+        print("Checking out the sam user ... ")
+        user = User.query.filter_by(username='sam.smith').first()
+        if (user != None):
+            print(user)
+            if (user.seekerProfile):
+                print(user.seekerProfile)
+            else:
+                print("No seeker profile found.")
+            if (user.providerProfile):
+                print(user.providerProfile)
+            else:
+                print("No provider profile found.")
+            if (mechSkill != None):
+                # Let's add this skill to our user.
+                user.addSkill(mechSkill)
+
+                # Let's add this skill to our user again.   The second time should fail
+                if (user.addSkill(mechSkill)):
+                    print "Fail - cannot add a skill to the same user twice."
+                else:
+                    print "Success - cannot add a skill to the same user twice."
+
+            if (softwareSkillHtml5 != None):
+                # Let's add this skill to our user.
+                user.addSkill(softwareSkillHtml5)
+
+        print("Checking out the sammy user ... ")
+        user = User.query.filter_by(username='sammy.smith').first()
+        if (user != None):
+            print(user)
+            if (user.seekerProfile):
+                print(user.seekerProfile)
+            else:
+                print("No seeker profile found.")
+            if (user.providerProfile):
+                print(user.providerProfile)
+            else:
+                print("No provider profile found.")
+            if (mechSkill != None):
+                # Let's add this skill to our user.
+                user.addSkill(mechSkill)
+
+                # Let's add this skill to our user again.   The second time should fail
+                if (user.addSkill(mechSkill)):
+                    print "Fail - cannot add a skill to the same user twice."
+                else:
+                    print "Success - cannot add a skill to the same user twice."
+
+            if (softwareSkillHtml5 != None):
+                # Let's add this skill to our user.
+                user.addSkill(softwareSkillHtml5)
+
+
+        print("Checking out the mike user ... ")
+        user = User.query.filter_by(username='mike.smith').first()
+        if (user != None):
+            print(user)
+            if (user.seekerProfile):
+                print(user.seekerProfile)
+            else:
+                print("No seeker profile found.")
+            if (user.providerProfile):
+                print(user.providerProfile)
+            else:
+                print("No provider profile found.")
+            if (mechSkill != None):
+                # Let's add this skill to our user.
+                user.addSkill(mechSkill)
+
+                # Let's add this skill to our user again.   The second time should fail
+                if (user.addSkill(mechSkill)):
+                    print "Fail - cannot add a skill to the same user twice."
+                else:
+                    print "Success - cannot add a skill to the same user twice."
+
+            if (softwareSkillHtml5 != None):
+                # Let's add this skill to our user.
+                user.addSkill(softwareSkillHtml5)
+
+
+        print("Checking out the mikey user ... ")
+        user = User.query.filter_by(username='mikey.smith').first()
+        if (user != None):
+            print(user)
+            if (user.seekerProfile):
+                print(user.seekerProfile)
+            else:
+                print("No seeker profile found.")
+            if (user.providerProfile):
+                print(user.providerProfile)
+            else:
+                print("No provider profile found.")
+            if (mechSkill != None):
+                # Let's add this skill to our user.
+                user.addSkill(mechSkill)
+
+                # Let's add this skill to our user again.   The second time should fail
+                if (user.addSkill(mechSkill)):
+                    print "Fail - cannot add a skill to the same user twice."
+                else:
+                    print "Success - cannot add a skill to the same user twice."
+
+            if (softwareSkillHtml5 != None):
+                # Let's add this skill to our user.
+                user.addSkill(softwareSkillHtml5)
+
 
         print("Checking out the sally user skill navigation ... ")
 
