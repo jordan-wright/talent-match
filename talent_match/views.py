@@ -123,8 +123,6 @@ def activityRequestSubmit():
     status = request.values.get('status')
     activity = None
     newStatus = False
-    print("id:" + activityID)
-    print("status:" + status)
     if (status == '1'): 
         newStatus = True
 

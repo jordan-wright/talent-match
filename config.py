@@ -8,5 +8,5 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repo')
 
 # pagination
-POSTS_PER_PAGE = 3
+POSTS_PER_PAGE = 2
 SECRET_KEY = "Secret Key Here"
