@@ -97,12 +97,11 @@ def editProfile():
     return render_template("profile_edit.html", form=form)
 
 @app.route('/search', methods=['GET', 'POST'])
-@app.route('/serach/<query>')
-@app.route('/search/<query>/<int:page>', methods = ['GET', 'POST'])
+@app.route('/search/<int:page>', methods = ['GET', 'POST'])
 @login_required
 def search(page = 1): #, setquery = ''):
     form = SearchForm(csrf_enabled=False)
-    query = form.query.data or setquery
+    query = form.query.data or request.values.get('setquery')
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
     return render_template('search.html', query=query, users=users, )
 
