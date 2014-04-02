@@ -419,7 +419,7 @@ def addTestData() :
 
 
         user = User.query.filter_by(username='sally.smith').first()
-        activity = user.addActivity('Website Coding Activity', "Need some help for a coding a website")
+        activity = user.addActivity('Website Coding Activity', "Need some help for coding a website")
         if (activity):
             activity.hourDuration = 20
             # activity.beginDate =

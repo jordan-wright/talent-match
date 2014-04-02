@@ -117,6 +117,26 @@ def listActivityRequests():
     return render_template("activity_requests.html", activities=activities, user=g.user)
 
 
+@app.route('/activity/request/submit', methods=['GET', 'POST'])
+@login_required
+def activityRequestSubmit():
+    activityID = request.values.get('id')
+    status = request.values.get('status')
+    activity = None
+    newStatus = False
+    print("id:" + activityID)
+    print("status:" + status)
+    if (status == '1'): 
+        newStatus = True
+
+    if (activityID != None):
+        activity = Activity.query.get(activityID)
+        activity.seekerStatus = newStatus
+        db.session.commit()
+
+    form = None
+    return redirect(url_for('listActivityRequests'))
+
 
 
 @app.route('/skills', methods=['GET', 'POST'])
