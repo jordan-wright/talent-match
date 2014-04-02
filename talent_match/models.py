@@ -279,7 +279,8 @@ class Activity(db.Model):
     hourDuration = db.Column(db.INTEGER, nullable=True)
     dayDuration = db.Column(db.INTEGER, nullable=True)
     monthDuration = db.Column(db.INTEGER, nullable=True)
-
+    ##
+    seekerStatus = db.Column(db.Boolean)
     ## Project 3:  Steve - adding relationships and navigation
     seekerID = db.Column(db.INTEGER, db.ForeignKey('seeker.id'), nullable=False)
     """

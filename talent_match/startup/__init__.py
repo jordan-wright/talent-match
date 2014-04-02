@@ -386,6 +386,68 @@ def addTestData() :
             activity.addSkill(softwareSkillPython, 1)
             activity.addSkill(softwareSkillHtml5, 1)
 
+        user = User.query.filter_by(username='steve').first()
+        activity = user.addActivity('Flask-based Coding Activity 2', "Need some help for Project 5")
+        if (activity):
+            activity.hourDuration = 20
+            # activity.beginDate =
+            # activity.endDate =
+            db.session.commit()
+
+            ## Important Note: we need to look at overlapping skills
+            ## so that we can differentiate between 1 person with Python, HTML5 and
+            ## 2 people (one with Python, one with HTML5).
+            activity.addSkill(softwareSkillPython, 1)
+            activity.addSkill(softwareSkillHtml5, 1)
+
+
+        print("Creating an activity for user='sally.smith'")
+
+        user = User.query.filter_by(username='sally.smith').first()
+        activity = user.addActivity('Advance Coding Activity', "Need some help for a Coding Project")
+        if (activity):
+            activity.hourDuration = 20
+            # activity.beginDate =
+            # activity.endDate =
+            db.session.commit()
+
+            ## Important Note: we need to look at overlapping skills
+            ## so that we can differentiate between 1 person with Python, HTML5 and
+            ## 2 people (one with Python, one with HTML5).
+            activity.addSkill(softwareSkillPython, 1)
+            activity.addSkill(softwareSkillHtml5, 1)
+
+
+        user = User.query.filter_by(username='sally.smith').first()
+        activity = user.addActivity('Website Coding Activity', "Need some help for a coding a website")
+        if (activity):
+            activity.hourDuration = 20
+            # activity.beginDate =
+            # activity.endDate =
+            db.session.commit()
+
+            ## Important Note: we need to look at overlapping skills
+            ## so that we can differentiate between 1 person with Python, HTML5 and
+            ## 2 people (one with Python, one with HTML5).
+            activity.addSkill(softwareSkillPython, 1)
+            activity.addSkill(softwareSkillHtml5, 1)
+
+
+        user = User.query.filter_by(username='sally.smith').first()
+        activity = user.addActivity('Web Page Maintenance', "Need some help for maintaining and updating a web page")
+        if (activity):
+            activity.hourDuration = 20
+            # activity.beginDate =
+            # activity.endDate =
+            db.session.commit()
+
+            ## Important Note: we need to look at overlapping skills
+            ## so that we can differentiate between 1 person with Python, HTML5 and
+            ## 2 people (one with Python, one with HTML5).
+            activity.addSkill(softwareSkillPython, 1)
+            activity.addSkill(softwareSkillHtml5, 1)
+
+
         print("Checking the activity navigation ... ")
 
         user = User.query.filter_by(username='steve').first()

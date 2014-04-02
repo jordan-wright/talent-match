@@ -1,7 +1,7 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from models import User, Category, Skill, Seeker, Provider, ProviderSkill
+from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm
 from sqlalchemy.sql import func
 from functools import wraps
@@ -97,13 +97,26 @@ def editProfile():
     return render_template("profile_edit.html", form=form)
 
 @app.route('/search', methods=['GET', 'POST'])
-@app.route('/search/<int:page>', methods = ['GET', 'POST'])
+@app.route('/serach/<query>')
+@app.route('/search/<query>/<int:page>', methods = ['GET', 'POST'])
 @login_required
 def search(page = 1): #, setquery = ''):
     form = SearchForm(csrf_enabled=False)
     query = form.query.data or setquery
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
     return render_template('search.html', query=query, users=users, )
+
+
+@app.route('/activity/requests', methods=['GET', 'POST'])
+@login_required
+def listActivityRequests():
+    activities = db.session.query(Activity).join(Seeker).\
+        filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).all()
+
+    form = None
+    return render_template("activity_requests.html", activities=activities, user=g.user)
+
+
 
 
 @app.route('/skills', methods=['GET', 'POST'])

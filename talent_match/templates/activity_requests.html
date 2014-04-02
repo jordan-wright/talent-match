@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}activity_requests{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}  
+
+  <div class="container" style="padding-top:80px;">
+        <div class="row">
+            <br/>
+            <h1 style="text-align:center;">
+                <span class="glyphicon"></span> <b>Activity Requests</b>
+            </h1>
+            <br/>
+        </div>
+        <div class="container" id="catlist" style="padding-left:20px">
+            <div class="col-lg-10 col-lg-offset-1">
+                <table class="table table-bordered">
+                    <thead>
+                        <th><h3>Activity</h3></th>
+                        <th><h3>Description</h3></th>
+                        <th><h3>Status</h3></th>
+                    </thead>
+                    <thead>
+                {% for activity in activities %}
+                    <tr>
+                        <td> <h5 class="h5" style="color:black"> {{ activity.name }} </h5> </td>
+                        <td> <h5 class="h5" style="color:black"> {{ activity.description }} </h5> </td>
+                        <td> <h5 class="h5" style="color:black"> {{ activity.seekerStatus }} </h5> </td>
+                        {% if activity.seekerStatus == None  %}
+                            <td align="center"> <a class="btn btn-sm btn-action" > Approve </a> </td> <!--href="/skills/edit?id={{activity.id}}"-->
+                            <td align="center"> <a class="btn btn-sm btn-action" > Reject </a> </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </table>
+        </div>
+    </div>
+{% endblock %}
