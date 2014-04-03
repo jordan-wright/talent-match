@@ -24,16 +24,15 @@
             </div>
         </a>
     {% endfor %}
-    <
     <div class="row centered col-lg-offset-3">
         <div class="col-lg-4">
             {% if users.has_prev %}
-                <a href=" /search/{{users.prev_num}}?page = users.prev_num&setquery={{query}} "><h2 style="color:blue"> << Back |</h2></a>
+                <a href=" /search/{{users.prev_num}}?query={{query}} "><h2 style="color:blue"> &lt;&lt; Back |</h2></a>
             {% endif %}
         </div>
         <div class="col-lg-4">
             {% if users.has_next %}
-                <a href=" /search/{{users.next_num}}?page = users.next_num&setquery={{query}} "><h2 style="color:blue">| Next >> </h2></a>
+                <a href=" /search/{{users.next_num}}?query={{query}} "><h2 style="color:blue">| Next &gt;&gt; </h2></a>
             {% endif %}
         </div>
     </div>
