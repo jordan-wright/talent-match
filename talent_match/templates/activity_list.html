@@ -15,6 +15,7 @@
         </div>
         <div class="container" id="catlist" style="padding-left:20px">
             <div class="col-lg-10 col-lg-offset-1">
+            {% if activities %}
                 <table class="table table-bordered">
                     <thead>
                         <th><h3><b>Activity</b></h3></th>
@@ -28,6 +29,9 @@
                     </tr>
                 {% endfor %}
                 </table>
+            {% else %}
+                <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> No activities at this time.</div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
