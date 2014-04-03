@@ -344,6 +344,13 @@ class Invitation(db.Model):
     receivingUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     activityID = db.Column(db.INTEGER, db.ForeignKey('activity.id'))
     skillID = db.Column(db.INTEGER, db.ForeignKey('skill.id'))
+
+    ## Project 3:  Steve - adding relationships and navigation
+    skill = db.relationship('Skill', backref='invitation', uselist=False, lazy='joined')
+    activity = db.relationship('Activity', backref='invitation', uselist=False, lazy='joined')
+
+    # invitingUser = db.Column('User', backref='invitation', uselist=False, lazy='joined')
+
     accepted = db.Column(db.Boolean, default=False)
     canceled = db.Column(db.Boolean, default=False)
     def __init__(self):

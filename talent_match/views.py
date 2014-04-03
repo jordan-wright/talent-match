@@ -1,8 +1,8 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity
-from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm
+from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill
+from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, ActivityForm
 from sqlalchemy.sql import func
 from functools import wraps
 from config import POSTS_PER_PAGE
@@ -106,16 +106,16 @@ def search(page = 1): #, setquery = ''):
     return render_template('search.html', query=query, users=users, )
 
 
-@app.route('/activity/requests', methods=['GET', 'POST'])
+@app.route('/activity/list', methods=['GET', 'POST'])
 @login_required
 def listActivityRequests():
     activities = db.session.query(Activity).join(Seeker).\
         filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).all()
 
     form = None
-    return render_template("activity_requests.html", activities=activities, user=g.user)
+    return render_template("activity_list.html", activities=activities, user=g.user)
 
-
+"""
 @app.route('/activity/request/submit', methods=['GET', 'POST'])
 @login_required
 def activityRequestSubmit():
@@ -133,7 +133,7 @@ def activityRequestSubmit():
 
     form = None
     return redirect(url_for('listActivityRequests'))
-
+"""
 
 
 @app.route('/skills', methods=['GET', 'POST'])
@@ -371,3 +371,51 @@ def editSkill():
 
 
         return render_template("edit_skill.html", editSkill=skill, form=form, isAddSkill=isAddSkill)
+
+@login_required
+@admin_required
+@app.route('/activities/listAll', methods=['GET', 'POST'])
+def listAllActivities():
+    pass
+
+@login_required
+@app.route('/activities/list', methods=['GET', 'POST'])
+def listActivity():
+    pass
+
+@login_required
+@app.route('/activities/edit', methods=['GET', 'POST'])
+def editActivity():
+    isAddActivity = True # assume add to start
+    tempSkillList =  \
+    [
+        { 'id': 1 ,  'name' : 'C++', 'quantity' : 1 },
+        { 'id': 2 ,  'name' : 'C#', 'quantity' : 1 },
+        { 'id': 3 ,  'name' : 'Python', 'quantity' : 1 },
+        { 'id': 4 ,  'name' : 'Harp', 'quantity' : 1 }
+    ]
+    form = ActivityForm(tempSkillList)
+    # Validate the submitted data
+    if form.validate_on_submit():
+        print(form.data)
+        return redirect('/activities/list')
+    else:
+        activityID = request.values.get('id')
+        activity = None
+
+
+        if activityID != None:
+            isAddActivity = False
+            activity = Activity.query.get(activityID)
+
+            form.description.data = activity.description
+            form.name.data = activity.name
+            form.id.data = activity.id
+
+
+        else:
+            isAddActivity = True
+            form.id.data = None
+
+        return render_template("edit_activity.html", activity=activity, activitySkillList=tempSkillList, form=form, isAddActivity=isAddActivity)
+
