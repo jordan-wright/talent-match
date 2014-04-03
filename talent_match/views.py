@@ -374,16 +374,14 @@ def editSkill():
 
 @login_required
 @admin_required
-@app.route('/activities/listAll', methods=['GET', 'POST'])
+@app.route('/activity/listAll', methods=['GET', 'POST'])
 def listAllActivities():
     pass
 
 @login_required
-@app.route('/activities/edit', methods=['GET', 'POST'])
+@app.route('/activity/edit', methods=['GET', 'POST'])
 def editActivity():
     pass
-
-    """
     isAddActivity = True # assume add to start
     tempSkillList =  \
     [
@@ -392,7 +390,10 @@ def editActivity():
         { 'id': 3 ,  'name' : 'Python', 'quantity' : 1 },
         { 'id': 4 ,  'name' : 'Harp', 'quantity' : 1 }
     ]
-    form = ActivityForm(tempSkillList)
+    form = ActivityForm()
+
+    print form.data
+
     # Validate the submitted data
     if form.validate_on_submit():
         print(form.data)
@@ -410,11 +411,25 @@ def editActivity():
             form.name.data = activity.name
             form.id.data = activity.id
 
+            print form.data
+
 
         else:
             isAddActivity = True
             form.id.data = None
-        """
-    return None
-    #return render_template("edit_activity.html", activity=activity, activitySkillList=tempSkillList, form=form, isAddActivity=isAddActivity)
 
+    #return None
+    activitySkillData = None
+    activitySkillData = tempSkillList[0]
+
+    return render_template("edit_activity.html", activity=activity, form=form, activitySkillData=activitySkillData, isAddActivity=False)
+
+
+"""
+                {{ form.description(class="form-control", required=true, placeholder="Begin Date",value=activity.beginDate) }}
+                {{ form.description(class="form-control", required=true, placeholder="End date",value=activity.endDate) }}
+                {{ form.description(class="form-control", required=true, placeholder="ZIP",value=activity.forZipCode) }}
+                {{ form.description(class="form-control", required=true, placeholder="Distance",value=activity.distance) }}
+
+                {{ form.skillList(class="form-edit", required=true, placeholder="Skills",value=activitySkillList) }}
+"""

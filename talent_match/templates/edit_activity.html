@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+    body {
+        background-color:#3498db;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container" id="headerwrap" style="padding-top:80px;">
+        <div class="row">
+            <form class="form-signin" method="POST">
+                {% if isAddActivity %}
+                    <h2 class="form-signin-heading" style="color:#FFFFFF">Add</h2>
+                {%  else %}
+                    <h2 class="form-signin-heading" style="color:#FFFFFF">Edit</h2>
+                {% endif %}
+                {% with flashes = get_flashed_messages(with_categories=true) %}
+                    {% if flashes %}
+                        {% for category, message in flashes %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                Name: {{ form.name(class="form-control", required=true, autofocus=true, placeholder="Name", value=activity.name) }}
+                Description: {{ form.description(class="form-control", required=true, placeholder="Description",value=activity.description) }}
+                Begin Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.beginDate) }}
+                End Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.endDate) }}
+                Location (ZIP: {{ form.forZipCode(class="form-control", required=false, placeholder="79401",value=activity.forZipCode) }}
+                Distance (miles): {{ form.distance(class="form-control", required=false, placeholder="100",value=activity.distance) }}
+
+                Skills: {{ form.activitySkill(class="form-control", required=false, value=activitySkillData) }}
+
+                {{ form.hidden_tag() }}
+                {% if isAddActivity %}
+                    <button class="btn btn-lg btn-success btn-block" type="submit">Add</button>
+                {%  else %}
+                    <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
