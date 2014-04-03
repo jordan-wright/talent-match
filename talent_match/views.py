@@ -1,7 +1,7 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill
+from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
 from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm#, ActivityForm
 from sqlalchemy.sql import func
 from functools import wraps
@@ -115,25 +115,36 @@ def listActivityRequests():
     form = None
     return render_template("activity_list.html", activities=activities, user=g.user)
 
-"""
-@app.route('/activity/request/submit', methods=['GET', 'POST'])
+@app.route('/invites', methods=['GET', 'POST'])
 @login_required
-def activityRequestSubmit():
-    activityID = request.values.get('id')
+def invites():
+    invitationList = []
+    for invite, active in db.session.query(Invitation, Activity).\
+        filter(Invitation.activityID == Activity.id, Invitation.receivingUserID == g.user.id).all():
+            newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id)
+            invitationList.append(newInvite)
+
+    return render_template("invites.html", invitationList=invitationList)
+
+@app.route('/invites/submit', methods=['GET', 'POST'])
+@login_required
+def inviteSubmit():
+    invitationID = request.values.get('id')
+    print("id is: " + invitationID)
     status = request.values.get('status')
-    activity = None
+    invitation = None
     newStatus = False
     if (status == '1'): 
         newStatus = True
 
-    if (activityID != None):
-        activity = Activity.query.get(activityID)
-        activity.seekerStatus = newStatus
+    if (invitationID != None):
+        invitation = Invitation.query.get(invitationID)
+        invitation.accepted = newStatus
         db.session.commit()
 
     form = None
-    return redirect(url_for('listActivityRequests'))
-"""
+    return redirect(url_for('invites'))
+
 
 
 @app.route('/skills', methods=['GET', 'POST'])
