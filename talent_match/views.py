@@ -379,13 +379,11 @@ def listAllActivities():
     pass
 
 @login_required
-@app.route('/activities/list', methods=['GET', 'POST'])
-def listActivity():
-    pass
-
-@login_required
 @app.route('/activities/edit', methods=['GET', 'POST'])
 def editActivity():
+    pass
+
+    """
     isAddActivity = True # assume add to start
     tempSkillList =  \
     [
@@ -416,6 +414,7 @@ def editActivity():
         else:
             isAddActivity = True
             form.id.data = None
-
-        return render_template("edit_activity.html", activity=activity, activitySkillList=tempSkillList, form=form, isAddActivity=isAddActivity)
+        """
+    return None
+    #return render_template("edit_activity.html", activity=activity, activitySkillList=tempSkillList, form=form, isAddActivity=isAddActivity)
 
