@@ -470,7 +470,8 @@ def addTestData() :
         invitedUser = User.query.filter_by(username = 'mike.smith').first()
         invitingUser = User.query.filter_by(username='steve').first()
         activity = user.getActivityList()[0] # dangerous
-        invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUserID=invitingUser.id, receivingUserID=invitedUser.id)
+        invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
+        db.session.add(invitation)
         db.session.commit()
         invitationID = invitation.id
 
@@ -479,16 +480,17 @@ def addTestData() :
         invitingUser = None
         invitedUser = invitation.receivingUser
         invitingUser = invitation.invitingUser
-        """
+
+        print "Checking invitation navigation:"
         if (invitingUser):
             print(invitingUser)
         else:
-            print("Invitation naviation failed.")
+            print("Invitation navigation failed.")
         if (invitedUser):
             print(invitedUser)
         else:
-            print("Invitation naviation failed.")
-        """
+            print("Invitation navigation failed.")
+
 
 
 

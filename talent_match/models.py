@@ -351,8 +351,10 @@ class Invitation(db.Model):
     skill = db.relationship('Skill', backref='invitation', uselist=False, lazy='joined')
     activity = db.relationship('Activity', backref='invitation', uselist=False, lazy='joined')
 
-    #invitingUser = db.Column('User', backref='invitation', uselist=False, lazy='joined')
-    #receivingUser = db.Column('User', backref='invitation', uselist=False, lazy='joined')
+    #invitingUser = db.relationship('User', backref='invitation', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
+    #receivingUser = db.relationship('User', backref='invitation', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
+    invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
+    receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
 
     accepted = db.Column(db.Boolean, default=False)
     canceled = db.Column(db.Boolean, default=False)
