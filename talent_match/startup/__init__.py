@@ -469,7 +469,7 @@ def addTestData() :
         print 'Creating a sample invitation'
         invitedUser = User.query.filter_by(username = 'mike.smith').first()
         invitingUser = User.query.filter_by(username='steve').first()
-        activity = user.getActivityList()[0] # dangerous
+        activity = Activity.query.filter_by(seekerID='4').first()
         invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
         db.session.add(invitation)
         db.session.commit()
@@ -484,7 +484,7 @@ def addTestData() :
 
         invitedUser = User.query.filter_by(username = 'sally.smith').first()
         invitingUser = User.query.filter_by(username='steve').first()
-        activity = user.getActivityList()[0] # dangerous
+        activity = Activity.query.filter_by(seekerID='4').first()
         invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
         db.session.add(invitation)
         db.session.commit()

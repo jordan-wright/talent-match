@@ -359,7 +359,7 @@ class Invitation(db.Model):
     canceled = db.Column(db.Boolean, default=False)
 
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
-        self.activityID = invitingUserID
+        self.activityID = activityID
         self.invitingUserID = invitingUserID
         self.receivingUserID = receivingUserID
         self.skillID = skillID
