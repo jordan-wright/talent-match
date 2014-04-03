@@ -464,6 +464,35 @@ def addTestData() :
                 else:
                     print "Error - activity skill list is empty."
 
+        # create a test invitation
+        #softwareSkillHtml5
+        print 'Creating a sample invitation'
+        invitedUser = User.query.filter_by(username = 'mike.smith').first()
+        invitingUser = User.query.filter_by(username='steve').first()
+        activity = user.getActivityList()[0] # dangerous
+        invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUserID=invitingUser.id, receivingUserID=invitedUser.id)
+        db.session.commit()
+        invitationID = invitation.id
+
+        invitation = Invitation.query.get(invitationID)
+        invitedUser = None
+        invitingUser = None
+        invitedUser = invitation.receivingUser
+        invitingUser = invitation.invitingUser
+        """
+        if (invitingUser):
+            print(invitingUser)
+        else:
+            print("Invitation naviation failed.")
+        if (invitedUser):
+            print(invitedUser)
+        else:
+            print("Invitation naviation failed.")
+        """
+
+
+
+
 
 
 

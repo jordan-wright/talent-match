@@ -339,6 +339,8 @@ class ActivitySkill(db.Model):
 
 class Invitation(db.Model):
     __tablename__ = 'invitation'
+
+
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     invitingUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     receivingUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
@@ -349,12 +351,18 @@ class Invitation(db.Model):
     skill = db.relationship('Skill', backref='invitation', uselist=False, lazy='joined')
     activity = db.relationship('Activity', backref='invitation', uselist=False, lazy='joined')
 
-    # invitingUser = db.Column('User', backref='invitation', uselist=False, lazy='joined')
+    #invitingUser = db.Column('User', backref='invitation', uselist=False, lazy='joined')
+    #receivingUser = db.Column('User', backref='invitation', uselist=False, lazy='joined')
 
     accepted = db.Column(db.Boolean, default=False)
     canceled = db.Column(db.Boolean, default=False)
-    def __init__(self):
-        pass
+
+    def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
+        self.activityID = invitingUserID
+        self.invitingUserID = invitingUserID
+        self.receivingUserID = receivingUserID
+        self.skillID = skillID
+
     def __repr__(self):
         return modelToString(self)
 
