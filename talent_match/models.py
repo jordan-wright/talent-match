@@ -356,6 +356,7 @@ class Invitation(db.Model):
     invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
     receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
 
+    rejected = db.Column(db.Boolean, default=False)
     accepted = db.Column(db.Boolean, default=False)
     canceled = db.Column(db.Boolean, default=False)
 
