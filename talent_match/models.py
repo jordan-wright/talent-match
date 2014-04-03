@@ -279,8 +279,7 @@ class Activity(db.Model):
     hourDuration = db.Column(db.INTEGER, nullable=True)
     dayDuration = db.Column(db.INTEGER, nullable=True)
     monthDuration = db.Column(db.INTEGER, nullable=True)
-    ##
-    seekerStatus = db.Column(db.Boolean)
+
     ## Project 3:  Steve - adding relationships and navigation
     seekerID = db.Column(db.INTEGER, db.ForeignKey('seeker.id'), nullable=False)
     """
@@ -356,8 +355,7 @@ class Invitation(db.Model):
     invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
     receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
 
-    rejected = db.Column(db.Boolean, default=False)
-    accepted = db.Column(db.Boolean, default=False)
+    accepted = db.Column(db.Boolean)
     canceled = db.Column(db.Boolean, default=False)
 
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
