@@ -37,3 +37,7 @@ class EditProfileForm(Form):
 
 class SearchForm(Form):
 	query = TextField('query', validators=[Required()])
+
+class CreateInviteForm(Form):
+	activities = SelectField(u'Activities', validators=[Required()])
+	skills = SelectField(u'Skills', validators=[Required()])

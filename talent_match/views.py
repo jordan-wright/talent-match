@@ -2,7 +2,7 @@ from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
 from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
-from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm#, ActivityForm
+from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm#, ActivityForm
 from sqlalchemy.sql import func
 from functools import wraps
 from config import POSTS_PER_PAGE
@@ -76,7 +76,7 @@ def profile(username):
     if username and username != g.user.username:
         user = User.query.filter_by(username=username).first_or_404()
     skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
-    return render_template("profile.html", user=user, skills=skills) 
+    return render_template("profile.html", user=user, skills=skills, gUser=g.user) 
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
@@ -105,7 +105,7 @@ def search(page = 1): #, setquery = ''):
     form = SearchForm(csrf_enabled=False)
     query = form.query.data or request.values.get('query')
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
-    return render_template('search.html', query=query, users=users, )
+    return render_template('search.html', query=query, users=users, gUser=g.user)
 
 
 @app.route('/activity/list', methods=['GET', 'POST'])
@@ -147,7 +147,41 @@ def inviteSubmit():
     form = None
     return redirect(url_for('invites'))
 
+@app.route('/invites/send', methods=['GET', 'POST'])
+@login_required
+def sendInvite():
+    receivingUserID = request.values.get('inviteUserID')
+    activityID = request.values.get('activityID')
+    skillID = request.values.get('skillID')
 
+    if (inviteUserID and activityID and skillID):
+        invitation = Invitation(activityID, skillID, g.user.id, receivingUserID)
+        db.session.add(invitation)
+        db.session.commit()
+
+    return redirect(url_for('profile(inviteUser.username)'))
+
+@app.route('/invites/create', methods=['GET', 'POST'])
+@login_required
+def createInvite():
+    form = CreateInviteForm()
+    inviteUserID = request.values.get('id')
+    skillsList = []
+
+    if (inviteUserID != None):
+        inviteUser = User.query.get(inviteUserID)
+        if (form.activities.choices == None):
+            form.activities.choices = db.session.query(Activity).join(Seeker).\
+                filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).add_column(Activity.name)
+        
+        if (form.skills.choices == None):
+            providerSkills = db.session.query(Skill).join(ProviderSkill).filter(Provider.userID == inviteUserID, ProviderSkill.skillID == Skill.id , ProviderSkill.providerID == inviteUserID).all()
+            for skill in providerSkills:
+                 print(skill.name)
+                 skillsList.append((skill.name, skill.name))
+        form.skills.choices = skillsList
+
+    return render_template("invites_create.html", form=form, inviteUser=inviteUser, user=g.user)
 
 @app.route('/skills', methods=['GET', 'POST'])
 @admin_required
@@ -172,8 +206,6 @@ def listSkills():
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).\
             filter(Skill.categoryID == myCategoryID).all():
-                print(cat)
-                print(skill)
                 newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet',id=skill.id)
                 skillList.append(newSkill)
 

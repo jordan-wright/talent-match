@@ -20,7 +20,9 @@
                 </div>
             </a>
             <div class="col-lg-4">
-                <div style="margin-top:20px;" class="btn btn-danger" disabled><span class="glyphicon glyphicon-envelope"></span> Invite</div>
+                {% if user != gUser %}
+                    <a style="margin-top:20px;" class="btn btn-danger" href="/invites/create?id={{user.id}}"><span class="glyphicon glyphicon-envelope"></span> Invite</a>
+                {% endif %}
             </div>    
         </div>
     {% endfor %}

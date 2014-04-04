@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Create Invite{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <div class="container" style="padding-top:80px;">
+        <div class="row">
+            <form class="form-signin" method="POST">
+                <div class="row">
+                    <br/>
+                    <h1 style="text-align:center;">
+                        <b>Invite</b>
+                    </h1>
+                    <br/>
+                </div>
+                <a href="/profile/{{inviteUser.username}}">
+                    <div class="row mt centered">
+                        <div class="col-lg-6"><img class="img-circle" src="{{user.email | gravatar(size=100)}}"></div>
+                        <div class="col-lg-6">
+                            <h2>{{inviteUser.firstName}} {{inviteUser.lastName}}</h2>
+                            <p>{{inviteUser.email}}</p>
+                        </div> 
+                    </div>
+                </a>
+                <div class="row centered">
+                    <div class="col">
+                        <h4 style="color:black">Select an Activity: </h4>
+                        {{ form.activities(class="form-control", required=true, autofocus=true) }}
+                        <br/>
+                    </div>
+                    <div class="col">
+                        <h4 style="color:black">Select the needed skill: </h4>
+                        {{ form.skills(class="form-control", required=true, autofocus=true) }}
+                    </div>
+                </div>
+                <br/>
+                <button class="btn btn-lg btn-success btn-block" type="submit" disabled>Send Invite</button>
+                <br/>
+            </form>
+        </div>
+    </div>
+{% endblock %}
