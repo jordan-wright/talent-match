@@ -41,51 +41,17 @@
                     {% if skills %}
                         <table class="table table-bordered">
                         <thead>
-                            <th><h3><b>Status</b></h3></th>
+                            <th><h3><b>Category</b></h3></th>
                             <th><h3><b>Skill</b></h3></th>
                             <th><h3><b>Description</b></h3></th>
                         </thead>
-                        <thead>
-                        <table class="table table-bordered">
-                    <thead>
-                        {% if categoryFirst %}
-                            <th>Category</th>
-                            <th>Skill</th>
-                        {% else %}
-                            <th>Skill</th>
-                            <th>Category</th>
-                        {% endif %}
-                        <th>Description</th>
-                        <!-- <th>Users with Skill Count</th> -->
-                        <th>Edit</th>
-                    </thead>
-                    <thead>
-                {% for skill in skillList %}
-                    <tr>
-                        {% if categoryFirst %}
-                            <td> <h5 class="h5"> {{ skill.categoryName }} </h5></td>
-                            <td>
-                                {%  if user.is_admin  %}
-                                    <h5 class="h5"> {{ skill.name }} </h5> </td>
-                                {%  else %}
-                                    <h5 class="h5"> {{ skill.name }} </h5> </td>
-                                {%  endif  %}
-                        {% else %}
-                            <td>
-                                {%  if user.is_admin  %}
-                                    <h5 class="h5"> {{ skill.name }} </h5> </td>
-                                {%  else %}
-                                    <h5 class="h5"> {{ skill.name }} </h5> </td>
-                                {%  endif  %}
-                            <td> <h5 class="h5"> {{ skill.categoryName }} </h5></td>
-                        {% endif %}
-
-                        <td> <h5 class="h5"> {{ skill.description }} </h5></td>
-                        <!-- <td> <h5 class="h5"> {{ skill.userCount }} </h5></td> -->
-                        <!-- <td> <h5 class="h5"> Edit this skill  </h5></td> -->
-                        <td> <a class="btn btn-sm btn-success" href="/skills/edit?id={{skill.id}}">Edit</a> </td>
-                    </tr>
-                {% endfor %}
+                        {% for skill in skills %}
+                            <tr style="text-align:left;">
+                                <td><h4> {{ skill.category.name }} </h5> </td>
+                                <td> <h4> {{ skill.name }} </h5></td>
+                                <td> <h4> {{ skill.description }} </h5></td>
+                            </tr>
+                        {% endfor %}
                 </table>
                     {% else %}
                     <div class="alert alert-info">

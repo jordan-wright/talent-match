@@ -75,7 +75,8 @@ def profile(username):
     user = g.user
     if username and username != g.user.username:
         user = User.query.filter_by(username=username).first_or_404()
-    return render_template("profile.html", user=user) 
+    skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
+    return render_template("profile.html", user=user, skills=skills) 
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
@@ -93,8 +94,9 @@ def editProfile():
         flash('Profile Update Successful!', 'success')
         return redirect(url_for('profile'))
     form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
-    form.background.data = g.user.background 
-    return render_template("profile_edit.html", form=form)
+    form.background.data = g.user.background
+    skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == g.user.id).all()
+    return render_template("profile_edit.html", form=form, skills=skills)
 
 @app.route('/search', methods=['GET', 'POST'])
 @app.route('/search/<int:page>', methods = ['GET', 'POST'])
