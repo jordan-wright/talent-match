@@ -491,50 +491,69 @@ def skillsAsJson():
         })
         return result
 
-@app.route('/activity_ds/activitySkills/<int:activitySkillID>.json', methods=['GET', 'POST','PUT', 'DELETE'])
+## ------------------------------------------------------------------
+## For an Ext.js Data Store for an Activity Skill model,
+## this provides the appropriate REST endpoint for get 1, put, delete
+## ------------------------------------------------------------------
+@app.route('/activity_ds/activitySkills/<int:activitySkillID>', methods=['GET','PUT','DELETE'])
+@app.route('/activity_ds/activitySkills/<int:activitySkillID>.json', methods=['GET','PUT', 'DELETE'])
 def activitySkillInstance(activitySkillID):
-    print(request)
-    if request.method == 'GET':
-        result = \
-            {
-                "success": False,
-                "message": "Invalid activity skill ID provided.",
-            }
+    result = json.dumps(
+    {
+        "success": False,
+        "message": "Invalid activity skill ID provided.",
+    })
 
-        if (activitySkillID == None):
-            return result
+    print request
+    print request.data
 
-        data = {}
-        activitySkill = None
-        if (activitySkillID):
-            activitySkill = ActivitySkill.query.get(activitySkillID)
-            data = activitySkill.serialize
 
-        if (activitySkill):
+    activitySkill = ActivitySkill.query.get(activitySkillID)
+    if (activitySkill):
+        # read a single ActivitySkill object:
+        if request.method == 'GET':
+            activitySkillList = [ activitySkill ]
+            data = [activitySkill.serialize for activitySkill in activitySkillList]
             result = json.dumps(
                 {
                     "success": True,
                     "message": "Loaded data",
                     "data" : data
                 })
+        # Update an existing ActivitySkill object:
+        elif request.method == 'PUT':
+            ## This is similar to the POST (add) code in the next route, below:
+            existingSkillString = request.data
+            if (existingSkillString):
+                # convert the form/input data:
+                existingSkillInfo = json.loads(existingSkillString)
+                category = Category.query.filter_by(name=existingSkillInfo['category']).first()
+                skill = Skill.query.filter_by(categoryID=category.id, name=existingSkillInfo['skill']).first()
+                # make the changes and save:
+                activitySkill.skillID = skill.id
+                db.session.commit()
+                # return the serialized object (same as GET, above):
+                activitySkillList = [ activitySkill ]
+                data = [activitySkill.serialize for activitySkill in activitySkillList]
+                result = json.dumps(
+                    {
+                        "success": True,
+                        "message": "Loaded data",
+                        "data" : data
+                    })
+        # Delete an existing ActivitySkill object:
+        elif request.method == 'DELETE':
+            db.session.delete(activitySkill)
+            db.session.commit()
+            result = json.dumps(
+            {
+                "success": True,
+                "message": "Deleted activity skill"
+            })
 
-        return result
+    return result
 
-    # update
-    elif request.method == 'POST':
-        temp = request.values.get('data')
-
-    # create
-    elif request.method == 'PUT':
-        return "ECHO: PUT\n"
-
-    # delete
-    elif request.method == 'DELETE':
-        return "ECHO: DELETE"
-
-
-
-@app.route('/activity_ds/activitySkills/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/activity_ds/activitySkills/', methods=['GET', 'POST'])
 def activitySkillsAsJson():
     # To get a list of activity skills, the caller must provide the activity ID
     activityID = request.values.get('id')
@@ -577,18 +596,7 @@ def activitySkillsAsJson():
                     "message": "Loaded data",
                     "data" : data
                 })
-
-        print result
         return result
-
-
-    if request.method == 'PUT':
-        print('PUT')
-        print(request.form)
-
-    if request.method == 'DELETE':
-        print('DELETE')
-        print(request.form)
 
     if request.method == 'GET':
         activity = Activity.query.get(activityID)
