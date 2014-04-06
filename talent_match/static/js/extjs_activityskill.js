@@ -146,7 +146,9 @@ Ext.onReady(function(){
     });
 
     var grid = Ext.create('Ext.grid.Panel', {
-        renderTo: document.body,
+        // trying to move this around ...
+        // renderTo: document.body,
+        renderTo: 'skill-panel',
         plugins: [rowEditing],
         width: 600,
         height: 400,

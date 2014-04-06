@@ -385,18 +385,9 @@ def listAllActivities():
 @login_required
 @app.route('/activity/edit', methods=['GET', 'POST'])
 def editActivity():
-    pass
     isAddActivity = True # assume add to start
-    tempSkillList =  \
-    [
-        { 'id': 1 ,  'category': 'Software', 'skill' : 'C++', 'quantity' : 1 },
-        { 'id': 2 ,  'category': 'Software', 'skill' : 'C#', 'quantity' : 1 },
-        { 'id': 3 ,  'category': 'Software', 'skill' : 'Python', 'quantity' : 1 },
-        { 'id': 4 ,  'category': 'Software', 'skill' : 'Harp', 'quantity' : 1 }
-    ]
+    activityID = None
     form = ActivityForm()
-
-    print form.data
 
     # Validate the submitted data
     if form.validate_on_submit():
@@ -406,7 +397,6 @@ def editActivity():
         activityID = request.values.get('id')
         activity = None
 
-
         if activityID != None:
             isAddActivity = False
             activity = Activity.query.get(activityID)
@@ -414,22 +404,11 @@ def editActivity():
             form.description.data = activity.description
             form.name.data = activity.name
             form.id.data = activity.id
-
-            print form.data
-
-
         else:
             isAddActivity = True
             form.id.data = None
 
-    #return None
-    activitySkillData = None
-    #activitySkillData = tempSkillList[0]
-    for x in tempSkillList:
-        form.activitySkill.append_entry(x)
-#    form.activitySkill.data = tempSkillList
-
-    return render_template("edit_activity.html", activity=activity, form=form, activitySkillData=activitySkillData, isAddActivity=False)
+    return render_template("edit_activity.html", activity=activity, form=form, activityID=activityID, isAddActivity=isAddActivity)
 
 # Return a list of categories in JSON form.
 # The data format is designed to be friendly to an Ext.js data store.

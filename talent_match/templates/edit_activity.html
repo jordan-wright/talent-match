@@ -8,9 +8,36 @@
         background-color:#3498db;
     }
     </style>
-    <link rel="stylesheet" type="text/css" href="/static/css/restful.css" />
-    <script type="text/javascript" src="/static/js/ext-all.js"></script>
-    <script type="text/javascript" src="/static/js/extjs_test.js"></script>
+
+    <!-- only for a modification -->
+    {% if isAddActivity %}
+    {% else %}
+        <link rel="stylesheet" type="text/css" href="/static/extjs/resources/css/ext-all.css" />
+        <link rel="stylesheet" type="text/css" href="/static/extjs/example/example.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/ext_js_grid_example.css" />
+    {% endif %}
+
+    <script>
+            if (talent_match_global === undefined)
+        {
+            var talent_match_global = {};
+        }
+
+        {% if isAddActivity %}
+            talent_match_global.activityID = {{ -1 }};
+        {% else %}
+            talent_match_global.activityID = {{ activityID }};
+        {% endif %}
+
+    </script>
+
+    <!-- only for a modification -->
+    {% if isAddActivity %}
+    {% else %}
+        <script type="text/javascript" src="/static/js/ext-all.js"></script>
+        <script type="text/javascript" src="/static/extjs/example/examples.js"></script>
+        <script type="text/javascript" src="/static/js/extjs_activityskill.js"></script>
+    {% endif %}
 
 {% endblock %}
 
@@ -62,11 +89,10 @@
                 </div>
             </form>
         </div>
+    <div id="skill-panel" class="form-activity">
+        <P>Skills are edited, below, immediately.  The Save button only applies to the main activity attributes.</P>
     </div>
+ </div>
 {% endblock %}
-{% block footer %}
-    <div class="row">
-    hi Steve this is a test.
-    </div>
-{% endblock %}
+
 
