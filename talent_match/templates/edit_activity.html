@@ -90,7 +90,10 @@
             </form>
         </div>
     <div id="skill-panel" class="form-activity">
-        <P>Skills are edited, below, immediately.  The Save button only applies to the main activity attributes.</P>
+        {% if isAddActivity %}
+        {% else %}
+            <P>Skills are edited, below, immediately - double-click to edit.  The Save button, above, only applies to the main activity attributes.</P>
+        {% endif %}
     </div>
  </div>
 {% endblock %}

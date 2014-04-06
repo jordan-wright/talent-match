@@ -421,7 +421,8 @@ def editActivity():
 #   'message' : 'Loaded data'
 #   'data'    :  [ (category data goes here) ]
 # }
-@app.route('/categories/categories.json', methods=['GET', 'POST'])
+@app.route('/categories_ds/categories', methods=['GET'])
+@app.route('/categories_ds/categories.json', methods=['GET'])
 def categoriesAsJson():
     categoryList = Category.query.all()
     data = [category.serialize for category in categoryList]
@@ -448,7 +449,7 @@ def categoriesAsJson():
 #   'message' : 'Loaded data'
 #   'data'    : [ (skill data goes here) ]
 # }
-@app.route('/skills/skills.json', methods=['GET', 'POST'])
+@app.route('/skills_ds/skills.json', methods=['GET', 'POST'])
 def skillsAsJson():
     # To get a list of skills, the caller must provide a
     categoryID = request.values.get('id')

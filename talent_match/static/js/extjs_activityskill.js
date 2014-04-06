@@ -1,5 +1,36 @@
 Ext.require(['Ext.data.*', 'Ext.grid.*']);
 
+Ext.define('Category', {
+    extend: 'Ext.data.Model',
+    fields:
+    [
+        {
+            name: 'id',
+            type: 'int'
+        },
+        {
+            name: 'name',
+            type: 'string'
+        }
+    ]
+});
+
+Ext.define('Skill', {
+    extend: 'Ext.data.Model',
+    fields:
+    [
+        {
+            name: 'id',
+            type: 'int'
+        },
+        {
+            name: 'name',
+            type: 'string'
+        }
+    ]
+});
+
+
 Ext.define('ActivitySkill', {
     extend: 'Ext.data.Model',
     fields:
@@ -59,6 +90,59 @@ Ext.onReady(function(){
 
     var sampleData =
         {"message": "Loaded data", "data": [{"category": "Software", "exclusivePerson": true, "activityID": 1, "categoryID": 6, "skill": "Python", "quantity": 1, "id": 1, "skillID": 32}, {"category": "Software", "exclusivePerson": true, "activityID": 1, "categoryID": 6, "skill": "HTML5", "quantity": 1, "id": 2, "skillID": 29}], "success": true};
+
+    var  categoryListStore =Ext.create('Ext.data.Store', {
+        autoLoad: true,
+        model: 'Category',
+        proxy:
+        {
+            type: 'rest',
+            pageParam: false, //to remove param "page"
+            startParam: false, //to remove param "start"
+            limitParam: false,
+            // The activity ID is set on the page load in a simple script where the Jinja2 engine substitutes
+            // the desired value.
+            //url: '/activity/activitySkills.json?activityID' + talent_match_global['activityID'],
+            url: '/categories_ds/categories.json',
+            reader:
+            {
+                type: 'json',
+                idProperty: 'id',               //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
+                messageProperty: 'message',     //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
+                root: 'data',
+                model : 'Category'
+            },
+            writer:
+            {
+                type: 'json'
+            }
+        }
+    });
+
+    var  skillListStore =Ext.create('Ext.data.Store', {
+        autoLoad: false,
+        model: 'Skill',
+            type: 'rest',
+            pageParam: false, //to remove param "page"
+            startParam: false, //to remove param "start"
+            limitParam: false,
+            // The activity ID is set on the page load in a simple script where the Jinja2 engine substitutes
+            // the desired value.
+            //url: '/activity/activitySkills.json?activityID' + talent_match_global['activityID'],
+            url: '/skill_ds/skills.json',
+            reader:
+            {
+                type: 'json',
+                idProperty: 'id',               //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
+                messageProperty: 'message',     //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
+                root: 'data',
+                model : 'Category'
+            },
+            writer:
+            {
+                type: 'json'
+            }
+        });
 
     var store = Ext.create('Ext.data.Store', {
         autoLoad: true,
@@ -170,7 +254,25 @@ Ext.onReady(function(){
                 sortable: true,
                 dataIndex: 'category',
                 field: {
-                    xtype: 'textfield'
+                    xtype: 'combobox',
+                    typeAhead : true,
+                    triggerAction: 'all',
+                    selectOnTab: true,
+                    // store: [ 'Music', 'Software', 'Golf'],  // need to replace this.
+                    store: categoryListStore,
+                    emptyText: 'Select a Category',
+                    valueField : 'name',
+                    displayField : 'name',
+                    id : 'id',
+                    // lazyRender: true,
+                    listClass: 'x-combo-list-medium',
+                    listeners: {
+                        'select' : function(field,nval,oval) {
+                            skillListStore.load({
+                                params: {'id':nval.data.id }
+                            });
+                        }
+                    }
                 }
             },
             {
@@ -180,7 +282,18 @@ Ext.onReady(function(){
                 sortable: true,
                 dataIndex: 'skill',
                 field: {
-                    xtype: 'textfield'
+                    xtype: 'combobox',
+                    typeAhead : true,
+                    triggerAction: 'all',
+                    selectOnTab: true,
+                    store: [ 'C#', 'C++', 'NotARealSkill'],  // need to replace this.
+                    // store: skillListStore,
+                    emptyText: 'Select a Skill',
+                    //valueField : 'name',
+                    //displayField : 'name',
+                    //id : 'id',
+                    // lazyRender: true,
+                    listClass: 'x-combo-list-medium'
                 }
             },
             {
