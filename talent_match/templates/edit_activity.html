@@ -1,5 +1,6 @@
+<!--  } -->
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Activity Management{% endblock %}
 {% block head %}
     {{ super() }}
     <style type="text/css">
@@ -7,11 +8,23 @@
         background-color:#3498db;
     }
     </style>
+    <link rel="stylesheet" type="text/css" href="/static/css/restful.css" />
+    <script type="text/javascript" src="/static/js/ext-all.js"></script>
+    <script type="text/javascript" src="/static/js/extjs_test.js"></script>
+
 {% endblock %}
+
 {% block content %}
+
+    <!-- adding to try to get some dynamic behavior
+    <script type="text/javascript" src="/static/js/extjs_test.js">
+    </script>
+    -->
+
     <div class="container" id="headerwrap" style="padding-top:80px;">
         <div class="row">
-            <form class="form-signin" method="POST">
+
+            <form class="form-activity" method="POST">
                 {% if isAddActivity %}
                     <h2 class="form-signin-heading" style="color:#FFFFFF">Add</h2>
                 {%  else %}
@@ -24,22 +37,36 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                Name: {{ form.name(class="form-control", required=true, autofocus=true, placeholder="Name", value=activity.name) }}
-                Description: {{ form.description(class="form-control", required=true, placeholder="Description",value=activity.description) }}
-                Begin Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.beginDate) }}
-                End Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.endDate) }}
-                Location (ZIP: {{ form.forZipCode(class="form-control", required=false, placeholder="79401",value=activity.forZipCode) }}
-                Distance (miles): {{ form.distance(class="form-control", required=false, placeholder="100",value=activity.distance) }}
-
-                Skills: {{ form.activitySkill(class="form-control", required=false, value=activitySkillData) }}
-
-                {{ form.hidden_tag() }}
-                {% if isAddActivity %}
-                    <button class="btn btn-lg btn-success btn-block" type="submit">Add</button>
-                {%  else %}
-                    <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
-                {% endif %}
+                <div class="row">
+                    <div class="col-lg-1" style="width:50%">
+                        Name: {{ form.name(class="form-control", required=true, autofocus=true, placeholder="Name", value=activity.name) }}
+                        Description: {{ form.description(class="form-control", required=true, placeholder="Description",value=activity.description) }}
+                        Location (ZIP): {{ form.forZipCode(class="form-control", disabled="disabled", required=false, placeholder="79401",value=activity.forZipCode) }}
+                    </div>
+                    <div class="col-lg-1" style="width:50%">
+                        Begin Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.beginDate) }}
+                        End Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.endDate) }}
+                        Distance (miles): {{ form.distance(class="form-control", disabled="disabled", required=false, placeholder="100",value=activity.distance) }}
+                    </div>
+                </div>
+                <div class="row" >
+                    <br/>
+                    <div class="form-signin">
+                    {{ form.hidden_tag() }}
+                    {% if isAddActivity %}
+                        <button class="btn btn-lg btn-success btn-block" type="submit">Add</button>
+                    {%  else %}
+                        <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
+                    {% endif %}
+                    </div>
+                </div>
             </form>
         </div>
     </div>
 {% endblock %}
+{% block footer %}
+    <div class="row">
+    hi Steve this is a test.
+    </div>
+{% endblock %}
+

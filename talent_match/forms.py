@@ -1,6 +1,6 @@
 from datetime import date
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, FormField, FieldList
+from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, FormField, FieldList, SubmitField
 from wtforms_html5 import DateField #as Html5DateField, DateRange
 from wtforms.widgets import TableWidget, ListWidget, SubmitInput
 from wtforms.validators import Required, EqualTo, Length
@@ -89,6 +89,10 @@ class TableWidgetTest(TestCase):
         )
 """
 
+class ActivityFieldList(FieldList):
+	widget = TableWidget()
+	addNew = SubmitField('Add Activity')
+
 class ActivitySkillRow(Form):
 	#category = SelectField(u'Category', validators=[Required()])
 	#skill = SelectField(u'Skill', validators=[Required()])
@@ -98,6 +102,7 @@ class ActivitySkillRow(Form):
 	quantity = TextField('Quantity', validators=[Required()])
 	invitee =  TextField('Invitee', validators=[Required()])
 	inviteeStatus =  TextField('Invitation Status', validators=[Required()])
+	submitField = SubmitField('Hi Steve')
 
 class ActivityForm(Form):
 	#def __init__(self, temp):
@@ -111,7 +116,9 @@ class ActivityForm(Form):
 	forZipCode = IntegerField('ZIP Code')
 	distance = IntegerField('Within X miles')
 
-	activitySkill = FormField(ActivitySkillRow)
+	#activitySkill = FormField(ActivitySkillRow)
+	activitySkill = FieldList(FormField(ActivitySkillRow))
+	#activitySkill = ActivityFieldList(FormField(ActivitySkillRow))
 
 	#hourDuration = db.Column(db.INTEGER, nullable=True)
     #dayDuration = db.Column(db.INTEGER, nullable=True)

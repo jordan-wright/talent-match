@@ -220,6 +220,17 @@ class Category(db.Model):
         else:
             return 'Category: ' + self.name + ', description=' + self.description
 
+    ## Project 3: adapting the serialize method from Jordan for the category list, too.
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description' : self.description
+       }
+
+
 # This model object provides additional information in the mapping from a talent Provider to
 # a Skill.   Initially, this will include the 'will_volunteer' attribute which can vary
 # from provider to provider
@@ -265,6 +276,8 @@ class Skill(db.Model):
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
+            'id' : self.id,
+            'categoryID' : self.categoryID,
             'name': self.name,
             'description' : self.description
        }
@@ -315,12 +328,16 @@ class Activity(db.Model):
     def __repr__(self):
         return modelToString(self)
 
+
 class ActivitySkill(db.Model):
     __tablename__ = 'activity_skill'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     activityID = db.Column(db.Integer, db.ForeignKey('activity.id'))
     skillID = db.Column(db.Integer, db.ForeignKey('skill.id'))
     quantity = db.Column(db.INTEGER, nullable=False)
+
+    # This is being included for now; however, we have made a simplifying assumption for the moment
+    # that one person=one activity skill.  This assumption may be changed at a later point in time.
     exclusivePerson = db.Column(db.Boolean, default=True)
 
     ## Project 3:  Steve - adding relationships and navigation
@@ -337,9 +354,24 @@ class ActivitySkill(db.Model):
     def __repr__(self):
         return modelToString(self)
 
+    ## Project 3: adapting the serialize method from Jordan for the activity list, too.
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'activityID': self.activityID,
+            'skillID' : self.skill.id,
+            'skill' : self.skill.name,
+            'categoryID' : self.skill.categoryID,
+            'category' : self.skill.category.name,
+            'quantity' : self.quantity,
+            'exclusivePerson' : self.exclusivePerson
+       }
+
+
 class Invitation(db.Model):
     __tablename__ = 'invitation'
-
 
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
     invitingUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))

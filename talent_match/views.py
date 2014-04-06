@@ -6,6 +6,10 @@ from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, Ed
 from sqlalchemy.sql import func
 from functools import wraps
 from config import POSTS_PER_PAGE
+import json
+
+def json_default(o):
+    return o.__dict__
 
 def admin_required(f):
     @wraps(f)
@@ -385,10 +389,10 @@ def editActivity():
     isAddActivity = True # assume add to start
     tempSkillList =  \
     [
-        { 'id': 1 ,  'name' : 'C++', 'quantity' : 1 },
-        { 'id': 2 ,  'name' : 'C#', 'quantity' : 1 },
-        { 'id': 3 ,  'name' : 'Python', 'quantity' : 1 },
-        { 'id': 4 ,  'name' : 'Harp', 'quantity' : 1 }
+        { 'id': 1 ,  'category': 'Software', 'skill' : 'C++', 'quantity' : 1 },
+        { 'id': 2 ,  'category': 'Software', 'skill' : 'C#', 'quantity' : 1 },
+        { 'id': 3 ,  'category': 'Software', 'skill' : 'Python', 'quantity' : 1 },
+        { 'id': 4 ,  'category': 'Software', 'skill' : 'Harp', 'quantity' : 1 }
     ]
     form = ActivityForm()
 
@@ -420,10 +424,195 @@ def editActivity():
 
     #return None
     activitySkillData = None
-    activitySkillData = tempSkillList[0]
+    #activitySkillData = tempSkillList[0]
+    for x in tempSkillList:
+        form.activitySkill.append_entry(x)
+#    form.activitySkill.data = tempSkillList
 
     return render_template("edit_activity.html", activity=activity, form=form, activitySkillData=activitySkillData, isAddActivity=False)
 
+# Return a list of categories in JSON form.
+# The data format is designed to be friendly to an Ext.js data store.
+#
+# Example: /categories/categories.json
+#
+# Result:
+# {
+#   'success' : true
+#   'message' : 'Loaded data'
+#   'data'    :  [ (category data goes here) ]
+# }
+@app.route('/categories/categories.json', methods=['GET', 'POST'])
+def categoriesAsJson():
+    categoryList = Category.query.all()
+    data = [category.serialize for category in categoryList]
+    # Note: we can opt to switch to json.dumps to remove the key sorting if desired.
+    result = jsonify(
+            {
+                "success": True,
+                "message": "Loaded data",
+                "data" : data
+            })
+
+    # return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
+    return result
+
+# Return a list of skills in JSON form.
+# The data format is designed to be friendly to an Ext.js data store.
+#
+# Example: /skills/skills.json?categoryID=1
+# Example: /skills/skills.json?id=2
+#
+# Result:
+# {
+#   'success' : true
+#   'message' : 'Loaded data'
+#   'data'    : [ (skill data goes here) ]
+# }
+@app.route('/skills/skills.json', methods=['GET', 'POST'])
+def skillsAsJson():
+    # To get a list of skills, the caller must provide a
+    categoryID = request.values.get('id')
+    if ( categoryID == None):
+        categoryID = request.values.get('categoryID')
+    if (categoryID == None):
+        return redirect(url_for('index'))
+    else:
+        skillList = Skill.query.filter_by(categoryID=categoryID).all()
+        # Coerce the result to return an empty array instead of a null.
+        if (skillList == None):
+            skillList = []
+        data = [skill.serialize for skill in skillList]
+
+        result = jsonify({
+            "success": True,
+            "message": "Loaded data",
+            "data" : data
+        })
+        return result
+
+@app.route('/activity_ds/activitySkills/<int:activitySkillID>.json', methods=['GET', 'POST','PUT', 'DELETE'])
+def activitySkillInstance(activitySkillID):
+    print(request)
+    if request.method == 'GET':
+        result = \
+            {
+                "success": False,
+                "message": "Invalid activity skill ID provided.",
+            }
+
+        if (activitySkillID == None):
+            return result
+
+        data = {}
+        activitySkill = None
+        if (activitySkillID):
+            activitySkill = ActivitySkill.query.get(activitySkillID)
+            data = activitySkill.serialize
+
+        if (activitySkill):
+            result = json.dumps(
+                {
+                    "success": True,
+                    "message": "Loaded data",
+                    "data" : data
+                })
+
+        return result
+
+    # update
+    elif request.method == 'POST':
+        temp = request.values.get('data')
+
+    # create
+    elif request.method == 'PUT':
+        return "ECHO: PUT\n"
+
+    # delete
+    elif request.method == 'DELETE':
+        return "ECHO: DELETE"
+
+
+
+@app.route('/activity_ds/activitySkills/', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def activitySkillsAsJson():
+    # To get a list of activity skills, the caller must provide the activity ID
+    activityID = request.values.get('id')
+    if ( activityID == None):
+        activityID = request.values.get('activityID')
+    if (activityID == None):
+        return redirect(url_for('index'))  # this could be improved
+
+    if request.method == 'POST':
+        newSkillString = request.data
+        activitySkill = None
+        if (newSkillString):
+            # this seems to come to us as a string, so we'll convert it back to an object
+            newSkill = json.loads(newSkillString)
+            result = \
+            {
+                "success": False,
+                "message": "Invalid activity skill ID provided.",
+            }
+            if (newSkill):
+                # look up the skill and category
+                category = Category.query.filter_by(name=newSkill['category']).first()
+                skill = Skill.query.filter_by(categoryID=category.id, name=newSkill['skill']).first()
+                activitySkill = ActivitySkill(activityID, skill.id)
+                db.session.add(activitySkill)
+                db.session.commit()
+
+        if (activitySkill):
+            # This should be all that we need to use:
+            #data = activitySkill.serialize
+            #
+            # However, we are re-using the same serialization used in the collection request to try to see if this
+            # works better, instead.
+            activitySkillList = [ activitySkill ]
+            data = [activitySkill.serialize for activitySkill in activitySkillList]
+
+            result = json.dumps(
+                {
+                    "success": True,
+                    "message": "Loaded data",
+                    "data" : data
+                })
+
+        print result
+        return result
+
+
+    if request.method == 'PUT':
+        print('PUT')
+        print(request.form)
+
+    if request.method == 'DELETE':
+        print('DELETE')
+        print(request.form)
+
+    if request.method == 'GET':
+        activity = Activity.query.get(activityID)
+        activitySkillList = activity.getActivitySkillList()
+        # Coerce the result to return an empty array instead of a null.
+        if (activitySkillList == None):
+            activitySkillList = []
+        data = [activitySkill.serialize for activitySkill in activitySkillList]
+
+        result = json.dumps(
+            {
+                "success": True,
+                "message": "Loaded data",
+                "data" : data
+            })
+        return result
+
+@app.route('/activity/test', methods=['GET', 'POST'])
+def testExtJs():
+    return render_template("test.html")
+
+@app.route('/activity/test2', methods=['GET', 'POST'])
+def testSteveExtJsPrototype():
+    return render_template("test2.html", activityID="1", temp="Hi Steve This is Steve Again")  # replace this later
 
 """
                 {{ form.description(class="form-control", required=true, placeholder="Begin Date",value=activity.beginDate) }}

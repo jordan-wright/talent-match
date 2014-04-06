@@ -136,6 +136,12 @@ a:after {
 	min-width: 280px;
 }
 
+.form-control-disabled {
+	height: 42px;
+	font-size: 18px;
+	min-width: 280px;
+}
+
 i {
 	margin: 8px;
 	color: #3498db; 
@@ -239,6 +245,14 @@ padding-top: 125px;
   margin: 0 auto;
 }
 
+.form-activity {
+  /* max-width: 750px; */
+  width: auto;
+  max-width: 600px;
+  margin: 30px auto;
+}
+
+
 .form-signin-heading {
     text-align:center;
 }
@@ -256,6 +270,17 @@ padding-top: 125px;
   font-size: 16px;
   height: auto;
   padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.form-control-skills {
+  font-family: 'Open Sans', sans-serif;
+  position: inherit;
+  font-size: 16px;
+  height: auto;
+  padding: 4px;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
