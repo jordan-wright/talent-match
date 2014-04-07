@@ -405,6 +405,7 @@ class Invitation(db.Model):
     invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
     receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
 
+    accepted = db.Column(db.Boolean)
     canceled = db.Column(db.Boolean, default=False)
 
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
