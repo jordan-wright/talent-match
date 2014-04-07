@@ -9,7 +9,9 @@
         <div class="row">
             <br/>
             <h1 style="text-align:center;">
-                <span class="glyphicon"></span> <b>Activity List</b>
+                <span class="glyphicon"><b>Activity List</b>
+                <a class="btn btn-lg btn-success" href="/activity/edit" >+ Add New</a>
+                </span>
             </h1>
             <br/>
         </div>
@@ -20,12 +22,14 @@
                     <thead>
                         <th><h3><b>Activity</b></h3></th>
                         <th><h3><b>Description</b></h3></th>
+                        <th><h3><b>Action</b></h3></th>
                     </thead>
                     <thead>
                 {% for activity in activities %}
                     <tr>
                         <td> <h5 class="h5" style="color:black"> {{ activity.name }} </h5> </td>
                         <td> <h5 class="h5" style="color:black"> {{ activity.description }} </h5> </td>
+                        <td> <h5 class="h5"> <a class="btn btn-sm btn-success" href="/activity/edit?id={{activity.id}}">Edit</a> </h5> </td>
                     </tr>
                 {% endfor %}
                 </table>
