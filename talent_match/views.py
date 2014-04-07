@@ -1,15 +1,12 @@
 from talent_match import app, db, bcrypt
 from flask import render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill
-from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, ActivityForm
+from models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
+from forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
 from sqlalchemy.sql import func
 from functools import wraps
 from config import POSTS_PER_PAGE
 import json
-
-def json_default(o):
-    return o.__dict__
 
 def admin_required(f):
     @wraps(f)
@@ -79,7 +76,9 @@ def profile(username):
     user = g.user
     if username and username != g.user.username:
         user = User.query.filter_by(username=username).first_or_404()
-    return render_template("profile.html", user=user) 
+
+    skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
+    return render_template("profile.html", user=user, skills=skills, gUser=g.user) 
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
@@ -97,17 +96,21 @@ def editProfile():
         flash('Profile Update Successful!', 'success')
         return redirect(url_for('profile'))
     form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
-    form.background.data = g.user.background 
     return render_template("profile_edit.html", form=form)
+    form.background.data = g.user.background
+    skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == g.user.id).all()
+    return render_template("profile_edit.html", form=form, skills=skills)
 
 @app.route('/search', methods=['GET', 'POST'])
 @app.route('/search/<int:page>', methods = ['GET', 'POST'])
 @login_required
 def search(page = 1): #, setquery = ''):
     form = SearchForm(csrf_enabled=False)
-    query = form.query.data or request.values.get('setquery')
+
+    query = form.query.data or request.values.get('query')
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
-    return render_template('search.html', query=query, users=users, )
+
+    return render_template('search.html', query=query, users=users, gUser=g.user)
 
 
 @app.route('/activity/list', methods=['GET', 'POST'])
@@ -118,6 +121,74 @@ def listActivityRequests():
 
     form = None
     return render_template("activity_list.html", activities=activities, user=g.user)
+
+
+@app.route('/invites', methods=['GET', 'POST'])
+@login_required
+def invites():
+    invitationList = []
+    for invite, active in db.session.query(Invitation, Activity).\
+        filter(Invitation.activityID == Activity.id, Invitation.receivingUserID == g.user.id).all():
+            newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id)
+            invitationList.append(newInvite)
+
+    return render_template("invites.html", invitationList=invitationList)
+
+@app.route('/invites/submit', methods=['GET', 'POST'])
+@login_required
+def inviteSubmit():
+    invitationID = request.values.get('id')
+    print("id is: " + invitationID)
+    status = request.values.get('status')
+    invitation = None
+    newStatus = False
+    if (status == '1'): 
+        newStatus = True
+
+    if (invitationID != None):
+        invitation = Invitation.query.get(invitationID)
+        invitation.accepted = newStatus
+        db.session.commit()
+
+    form = None
+    return redirect(url_for('invites'))
+
+@app.route('/invites/send', methods=['GET', 'POST'])
+@login_required
+def sendInvite():
+    receivingUserID = request.values.get('inviteUserID')
+    activityID = request.values.get('activityID')
+    skillID = request.values.get('skillID')
+
+    if (inviteUserID and activityID and skillID):
+        invitation = Invitation(activityID, skillID, g.user.id, receivingUserID)
+        db.session.add(invitation)
+        db.session.commit()
+
+    return redirect(url_for('profile(inviteUser.username)'))
+
+@app.route('/invites/create', methods=['GET', 'POST'])
+@login_required
+def createInvite():
+    form = CreateInviteForm()
+    inviteUserID = request.values.get('id')
+    skillsList = []
+
+    if (inviteUserID != None):
+        inviteUser = User.query.get(inviteUserID)
+        if (form.activities.choices == None):
+            form.activities.choices = db.session.query(Activity).join(Seeker).\
+                filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).add_column(Activity.name)
+        
+        if (form.skills.choices == None):
+            providerSkills = db.session.query(Skill).join(ProviderSkill).filter(Provider.userID == inviteUserID, ProviderSkill.skillID == Skill.id , ProviderSkill.providerID == inviteUserID).all()
+            for skill in providerSkills:
+                 print(skill.name)
+                 skillsList.append((skill.name, skill.name))
+        form.skills.choices = skillsList
+
+    return render_template("invites_create.html", form=form, inviteUser=inviteUser, user=g.user)
+
 
 @app.route('/skills', methods=['GET', 'POST'])
 @admin_required
@@ -142,8 +213,6 @@ def listSkills():
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).\
             filter(Skill.categoryID == myCategoryID).all():
-                print(cat)
-                print(skill)
                 newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet',id=skill.id)
                 skillList.append(newSkill)
 
@@ -329,14 +398,9 @@ def editSkill():
             isAddSkill = True
             form.id.data = None
 
+
         return render_template("edit_skill.html", editSkill=skill, form=form, isAddSkill=isAddSkill)
 
-# This should be removed with the merge
-@login_required
-@admin_required
-@app.route('/activity/listAll', methods=['GET', 'POST'])
-def listAllActivities():
-    pass
 
 # Project 3 - Steve
 # Either create a new activity for the current user or edit an existing activity.
@@ -345,6 +409,7 @@ def listAllActivities():
 # Example: /activity/edit           (create)
 #
 @login_required
+
 @app.route('/activity/edit', methods=['GET', 'POST'])
 def editActivity():
     print(request)
@@ -355,6 +420,7 @@ def editActivity():
     # Validate the submitted data
     if form.validate_on_submit():
         print(form.data)
+
         isCreate = False # initialization
         name = form.name.data
         description = form.description.data
@@ -398,6 +464,7 @@ def editActivity():
         activityID = request.values.get('id')
         activity = None
 
+
         if (activityID):
             isAddActivity = False
             activity = Activity.query.get(activityID)
@@ -405,6 +472,7 @@ def editActivity():
             form.description.data = activity.description
             form.name.data = activity.name
             form.id.data = activity.id
+
             form.beginDate.data = activity.beginDate
             form.endDate.data = activity.endDate
             ## Future: forZipCode, distance

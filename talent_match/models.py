@@ -314,6 +314,7 @@ class Activity(db.Model):
     seekerStatus = db.Column(db.Boolean)
     ## Project 3:  Steve - adding relationships and navigation
     seekerID = db.Column(db.INTEGER, db.ForeignKey('seeker.id'), nullable=False)
+
     ## Project 3:  Steve - adding relationships and navigation
     activitySkillList = db.relationship(
         'ActivitySkill',
@@ -404,12 +405,11 @@ class Invitation(db.Model):
     invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
     receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
 
-    rejected = db.Column(db.Boolean, default=False)
-    accepted = db.Column(db.Boolean, default=False)
     canceled = db.Column(db.Boolean, default=False)
 
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
-        self.activityID = invitingUserID
+
+        self.activityID = activityID
         self.invitingUserID = invitingUserID
         self.receivingUserID = receivingUserID
         self.skillID = skillID

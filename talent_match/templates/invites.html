@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Invitations{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}  
+
+  <div class="container" style="padding-top:80px;">
+        <div class="row">
+            <br/>
+            <h1 style="text-align:center;">
+                <span class="glyphicon"></span> <b>Invitations</b>
+            </h1>
+            <br/>
+        </div>
+        <div class="container" id="catlist" style="padding-left:20px">
+            <div class="col-lg-10 col-lg-offset-1">
+            {% if invitationList %}
+                <table class="table table-bordered">
+                    <thead>
+                        <th><h3><b>Activity</b></h3></th>
+                        <th><h3><b>Description</b></h3></th>
+                        <th><h3><b>Status</b></h3></th>
+                    </thead>
+                    <thead>
+                {% for invite in invitationList %}
+                    <tr>
+                        <td> <h5 class="h5" style="color:black"> {{ invite.activityName }} </h5> </td>
+                        <td> <h5 class="h5" style="color:black"> {{ invite.description }} </h5> </td>
+                        {% if invite.accepted == True  %}
+                            <td> <h5 class="h5" style="color:black"> Accepted </h5> </td>
+                        {% else %}
+                            {% if invite.accepted == False  %}
+                                <td> <h5 class="h5" style="color:black"> Rejected </h5> </td>
+                            {% else %}
+                                <td> <h5 class="h5" style="color:black"> Unknown </h5> </td>
+                            {% endif %}
+                        {% endif %} 
+                        {% if invite.accepted == None  %}
+                            <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=1 "> Accept </a> </td> 
+                            <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </table>
+            {% else %}
+                <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> No invitations at this time.</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

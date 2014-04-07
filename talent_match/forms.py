@@ -1,11 +1,10 @@
 from datetime import date
 from flask_wtf import Form
+from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField
 from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, FormField, FieldList, SubmitField
 from wtforms_html5 import DateField #as Html5DateField, DateRange
-from wtforms.widgets import TableWidget, ListWidget, SubmitInput
 from wtforms.validators import Required, EqualTo, Length
 from talent_match.models import Activity, ActivitySkill, User, Seeker, Skill, Category
-
 
 class LoginForm(Form):
 	email = TextField('email', validators=[Required()])
@@ -43,6 +42,10 @@ class EditProfileForm(Form):
 class SearchForm(Form):
 	query = TextField('query', validators=[Required()])
 
+class CreateInviteForm(Form):
+	activities = SelectField(u'Activities', validators=[Required()])
+	skills = SelectField(u'Skills', validators=[Required()])
+
 ##
 ## Project 3 - Steve
 ##
@@ -61,4 +64,3 @@ class ActivityForm(Form):
 	#hourDuration = db.Column(db.INTEGER, nullable=True)
     #dayDuration = db.Column(db.INTEGER, nullable=True)
     #monthDuration = db.Column(db.INTEGER, nullable=True)
-

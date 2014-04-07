@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Edit{% endblock %}
 {% block head %}
-    {{ super() }}
-{% endblock %}
+    {{ super() }} 
+{% endblock %} 
 {% block content %}
 <form class="container" method="post" action="/profile/edit" role="form">
     <div class="form-group" style="padding-bottom:60px;">
@@ -11,52 +11,81 @@
                 <div class="row mt centered">
                     <div class="col-lg-8 col-lg-offset-2">
                         <img class="img-circle" src="{{g.user.email | gravatar(size=180)}}" alt="" style="margin-bottom:20px;">
-                            <div class="row mt centered">
-                                <div class="col-10 col-sm-6">
-                                    {{ form.firstName(class="form-control", value=g.user.firstName, placeholder="First Name") }}
-                                </div>
-                                <div class="col-10 col-sm-6">
-                                    {{ form.lastName(class="form-control", required=true, value=g.user.lastName, placeholder="Last Name") }}
-                                </div>
+                        <div class="row mt centered">
+                            <div class="col-10 col-sm-6">
+                                {{ form.firstName(class="form-control", value=g.user.firstName, placeholder="First Name") }}
                             </div>
+                            <div class="col-10 col-sm-6">
+                                {{ form.lastName(class="form-control", required=true, value=g.user.lastName, placeholder="Last Name") }}
+                            </div>
+                        </div>
                         {{ form.quickIntro(class="form-control-profile", placeholder="Create a Quick Intro") }}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container" id="about" >
+        <div class="container" id="about">
             <div class="row mt centered">
                 <h1>Background</h1>
                 <hr>
                 <div class="col-lg-8 col-lg-offset-2">
                     {{ form.background(class="form-control-profile", placeholder="Tell Us a Little About Yourself") }}
-                </div>    
+                </div>
             </div>
         </div>
-        <div class="container" id="about-2" >
+        <div class="container" id="about-2">
             <div class="row mt centered">
                 <h1>Skills</h1>
                 <hr>
                 <div class="col-lg-8 col-lg-offset-2">
-                     <p>Skills</p>
-                </div>    
+                    {% if skills %}
+                        <table class="table table-bordered">
+                        <thead>
+                            <th><h3><b>Category</b></h3></th>
+                            <th><h3><b>Skill</b></h3></th>
+                            <th><h3><b>Description</b></h3></th>
+                        </thead>
+                        {% for skill in skills %}
+                            <tr style="text-align:left;">
+                                <td><h4> {{ skill.category.name }} </h5> </td>
+                                <td> <h4> {{ skill.name }} </h5></td>
+                                <td> <h4> {{ skill.description }} </h5></td>
+                            </tr>
+                        {% endfor %}
+                </table>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <span class="glyphicon glyphicon-info-sign"></span> No skills listed.
+                    </div>
+                    <div class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-plus-sign"></span> Add Skill</div>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <div class="container" id="about" >
+        <div class="container" id="about">
             <div class="row mt centered">
                 <h1>Contact</h1>
                 <hr>
                 <div id="contact-row-2" class="row">
                     <div class="col-12 col-sm-4">
-                        <p><h6><i class="glyphicon glyphicon-send"></i></h6></p>
+                        <p>
+                            <h6><i class="glyphicon glyphicon-send"></i>
+                            </h6>
+                        </p>
                         {{ form.email(class="form-control", required=true, value=g.user.email, placeholder="Email") }}
                     </div>
                     <div class="col-12 col-sm-4">
-                        <p><h6><i class="glyphicon glyphicon-phone"></i></h6></p>
+                        <p>
+                            <h6><i class="glyphicon glyphicon-phone"></i>
+                            </h6>
+                        </p>
                         {{ form.phoneNumber(class="form-control", value=g.user.phoneNumber, placeholder="Phone Number", maxlength="10", type="number") }}
                     </div>
                     <div class="col-12 col-sm-4">
-                        <p><h6><i class="glyphicon glyphicon-globe"></i></h6></p>
+                        <p>
+                            <h6><i class="glyphicon glyphicon-globe"></i>
+                            </h6>
+                        </p>
                         {{ form.website(class="form-control", value=g.user.website, placeholder="Website") }}
                     </div>
                 </div>
@@ -64,7 +93,7 @@
         </div>
     </div>
     <div style="padding-bottom:60px;" class="col-lg-8 col-lg-offset-2">
-        <button class="btn btn-lg btn-success btn-block" type="submit" >Save</button>
+        <button class="btn btn-lg btn-success btn-block" type="submit">Save</button>
     </div>
     {{ form.hidden_tag() }}
 </form>
