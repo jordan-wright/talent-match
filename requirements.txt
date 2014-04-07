@@ -12,3 +12,4 @@ Werkzeug==0.9.4
 docopt==0.6.1
 itsdangerous==0.23
 WTForms-Alchemy==0.12.4
+wtforms-html5==0.1.3
