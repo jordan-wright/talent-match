@@ -329,11 +329,16 @@ Ext.onReady(function(){
                                 previousItem = oval[0].data;
                             }
                             if (previousItem !== selectedItem) {
-                                var skillCombo = Ext.get('combo-select-skill-id');
+                                var skillCombo = Ext.getCmp('combo-select-skill-id');
                                 if (skillCombo) {
-                                    skillCombo.clearValue()
-                                    skillListStore.extraParams = {'id':selectedItem.id };
-                                    skillListStore.reload();
+                                    skillCombo.clearValue();
+                                    skillCombo.store.extraParams = {'id': selectedItem.id };
+                                    skillCombo.store.proxy.extraParams = {'id': selectedItem.id };
+                                    skillCombo.store.reload();
+                                    // Something changed ...
+                                    // skillCombo.clearValue()
+                                    // skillListStore.extraParams = {'id':selectedItem.id };
+                                    // skillListStore.reload();
                                 }
                             }
                         }
@@ -395,8 +400,20 @@ Ext.onReady(function(){
                        },
                        beforeQuery: function(query) {
                            var selectedRecord = grid.getSelectionModel().getSelection()[0];
-                           this.store.extraParams = {'id': selectedRecord.data.categoryID };
-                           this.store.proxy.extraParams = {'id': selectedRecord.data.categoryID };
+
+                           var comboComponent = Ext.getCmp('combo-select-category-id');
+                           // The referenceCategoryID is from the component; it can and will differ from the
+                           // model if there are staged, uncommitted changes.
+                           // I have not yet found another way to accomplish this result.
+                           var referenceCategoryID = comboComponent.valueModels[0].data.id;
+
+                           var realCategoryID = selectedRecord.data.categoryID;
+                           if (referenceCategoryID !== realCategoryID) {
+                               realCategoryID = referenceCategoryID
+                           }
+
+                           this.store.extraParams = {'id': realCategoryID };
+                           this.store.proxy.extraParams = {'id': realCategoryID };
                            this.store.reload();
                        }
                     }
