@@ -3,6 +3,7 @@ from talent_match import db
 
 ## Project 3:  Steve - adding relationships and navigation
 ## Adapted from: https://bitbucket.org/zzzeek/sqlalchemy/wiki/UsageRecipes/GenericOrmBaseClass
+## This is short-hand for creating a generic __repr__ (toString) method.
 def modelToString(self) :
     ## changes: in the example, it was "self.c"; replaced "self.c" with an equivalent based on empirical
     ## debugging.
@@ -22,6 +23,10 @@ def modelToString(self) :
 
     return self.__class__.__name__ + '(' + ', '.join(x[0] + '=' + repr(x[1]) for x in atts) + ')'
 
+##
+## This class stores the login and other supporting data for our users.
+## It also contains some convenience methods for navigation.
+##
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
@@ -102,6 +107,10 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % (self.username)
 
+##
+## The talent provider is a user who can provide (for cost or on a volunteer basis) a useful skill.
+## A user can be both a seeker and provider of talent (skills).
+##
 class Provider(db.Model):
     __tablename__ = 'provider'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
@@ -165,7 +174,10 @@ class Provider(db.Model):
         #return 'Talent Provider object'  # for now; should get the user object and return its name
         return modelToString(self)
 
-
+##
+## This class represents a person who is in the role of recruiting talent providers to join/fill an activity needing
+## certain skills.
+##
 class Seeker(db.Model):
     __tablename__ = 'seeker'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
@@ -202,6 +214,9 @@ class Seeker(db.Model):
         #return 'Talent Seeker object'  # for now; should get the user object and return its name
         return modelToString(self)
 
+##
+## This class represents a class or category of skills (e.g., music, software, etc.).
+##
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
@@ -253,6 +268,9 @@ class ProviderSkill(db.Model):
     def __repr__(self):
         return modelToString(self)
 
+##
+## This class represents a particular skill or talent for a user or a person seeking talent for an activity.
+##
 class Skill(db.Model):
     __tablename__ = 'skill'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
@@ -292,18 +310,11 @@ class Activity(db.Model):
     hourDuration = db.Column(db.INTEGER, nullable=True)
     dayDuration = db.Column(db.INTEGER, nullable=True)
     monthDuration = db.Column(db.INTEGER, nullable=True)
-    ##
+    ## This may not be used yet.
     seekerStatus = db.Column(db.Boolean)
     ## Project 3:  Steve - adding relationships and navigation
     seekerID = db.Column(db.INTEGER, db.ForeignKey('seeker.id'), nullable=False)
-    """
-    # Adding this next bit soon ....
-    #
-    # per SQL alchemy documentation :  ...  if it has any other columns, such as its own primary key, or foreign keys
-    #  to other tables, SQLAlchemy requires a different usage pattern called the association object, described
-    # at Association Object (see: http://docs.sqlalchemy.org/en/rel_0_9/orm/relationships.html#association-pattern)
-    # activitySkillList = db.relationship("ActivitySkill", backref='activity', lazy='dynamic')
-    """
+    ## Project 3:  Steve - adding relationships and navigation
     activitySkillList = db.relationship(
         'ActivitySkill',
         backref=db.backref('activity', lazy='joined'))
@@ -328,7 +339,9 @@ class Activity(db.Model):
     def __repr__(self):
         return modelToString(self)
 
-
+##
+## This class is the association table between an Activity and a Skill.
+##
 class ActivitySkill(db.Model):
     __tablename__ = 'activity_skill'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
@@ -369,7 +382,10 @@ class ActivitySkill(db.Model):
             'exclusivePerson' : self.exclusivePerson
        }
 
-
+##
+## This class represents an invitation from a talent seeker to a talent provider in order to fill the need for a
+## a given skill that the provider possesses and the seeker needs for an activity.
+##
 class Invitation(db.Model):
     __tablename__ = 'invitation'
 
@@ -401,6 +417,9 @@ class Invitation(db.Model):
     def __repr__(self):
         return modelToString(self)
 
+##
+## This class holds some additional information about a talent seeker.
+##
 class Company(db.Model):
     __tablename__ = 'company'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)

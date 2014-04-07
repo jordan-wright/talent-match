@@ -52,6 +52,20 @@
         <div class="row">
 
             <form class="form-activity" method="POST">
+
+                {% macro with_errors(field) %}
+                    <div class="form_field">
+                    {% if field.errors %}
+                        {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+                        {{ field(class=css_class, **kwargs) }}
+                        <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+                    {% else %}
+                        {{ field(**kwargs) }}
+                    {% endif %}
+                    </div>
+                {% endmacro %}
+
+                <a class="btn btn-md btn-success btn-block" href="/activity/list" >Back to Activity List</a>
                 {% if isAddActivity %}
                     <h2 class="form-signin-heading" style="color:#FFFFFF">Add</h2>
                 {%  else %}
@@ -72,7 +86,7 @@
                     </div>
                     <div class="col-lg-1" style="width:50%">
                         Begin Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.beginDate) }}
-                        End Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.endDate) }}
+                        End Date: {{ form.endDate(class="form-control", type="date", required=false, value=activity.endDate) }}
                         Distance (miles): {{ form.distance(class="form-control", disabled="disabled", required=false, placeholder="100",value=activity.distance) }}
                     </div>
                 </div>

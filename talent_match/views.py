@@ -230,8 +230,6 @@ def editCategory():
         if categoryID != None:
             isAddTalent = False
             category = Category.query.get(categoryID)
-            #print(category.name)
-            #print(category.description)
             form.description.data = category.description
             form.id.data = categoryID
         else:
@@ -254,9 +252,6 @@ def editSkill():
         categoryList = Category.query.all()
         categoryList.sort(key= lambda category: category.name)
         for category in categoryList:
-            #print category.name
-            # categoryChoices.append( (category.name, category.id) )
-            # categoryChoices.append( (category.id, category.name) )
             categoryChoices.append( (category.name, category.name) )
         form.category.choices = categoryChoices
 
@@ -310,24 +305,10 @@ def editSkill():
         return redirect('/skills')
 
     else:
-        print('here - in the regular render')
-
-        if (form.errors):
-            print(form.errors)
-        if form.category.errors:
-            print(form.category.errors)
-        if form.description.errors:
-            print(form.description.errors)
-        if form.id.errors:
-            print(form.id.errors)
-        if form.name.errors:
-            print(form.name.errors)
-
         skillID = request.values.get('id')
         skill = None
         print(request.values)
         if skillID:
-            print('Checking the skill ... skip this for now' )
             isAddSkill = False
             skill = Skill.query.get(skillID)
 
@@ -348,22 +329,25 @@ def editSkill():
             isAddSkill = True
             form.id.data = None
 
-
-
-        # <!-- {{ form.category(class="form-control", required=true, autofocus=true) }} -->
-
-
         return render_template("edit_skill.html", editSkill=skill, form=form, isAddSkill=isAddSkill)
 
+# This should be removed with the merge
 @login_required
 @admin_required
 @app.route('/activity/listAll', methods=['GET', 'POST'])
 def listAllActivities():
     pass
 
+# Project 3 - Steve
+# Either create a new activity for the current user or edit an existing activity.
+#
+# Example: /activity/edit?id=4      (edit)
+# Example: /activity/edit           (create)
+#
 @login_required
 @app.route('/activity/edit', methods=['GET', 'POST'])
 def editActivity():
+    print(request)
     isAddActivity = True # assume add to start
     activityID = None
     form = ActivityForm()
@@ -371,24 +355,67 @@ def editActivity():
     # Validate the submitted data
     if form.validate_on_submit():
         print(form.data)
-        return redirect('/activities/list')
+        isCreate = False # initialization
+        name = form.name.data
+        description = form.description.data
+        beginDate = form.beginDate.data
+        endDate = form.endDate.data
+        user = g.user
+        activity = None
+
+        if (form.id.data == ''):
+            isCreate = True
+        if (isCreate):
+            activity = Activity(name,description,user)
+            db.session.add(activity)
+        else:
+            activity = Activity.query.get(form.id.data)
+            activity.description = description
+            activity.name = name
+
+        if (beginDate):
+            activity.beginDate = beginDate
+            form.beginDate.data = activity.beginDate
+        if (endDate):
+            activity.endDate = endDate
+            form.endDate.data = activity.endDate
+        ##
+        ## Future: include location, distance
+        ##
+
+        # one save for add/update
+        db.session.commit()
+        form.description.data = activity.description
+        form.name.data = activity.name
+        form.id.data = activity.id
+        form.beginDate.data = activity.beginDate
+        form.endDate.data = activity.endDate
+
+        # transition from (or back to) the edit skill view:
+        # bug fix: must redirect here to get the appropriate edit/value set in place.
+        return redirect('/activity/edit?id=' + str(activity.id))
     else:
         activityID = request.values.get('id')
         activity = None
 
-        if activityID != None:
+        if (activityID):
             isAddActivity = False
             activity = Activity.query.get(activityID)
 
             form.description.data = activity.description
             form.name.data = activity.name
             form.id.data = activity.id
+            form.beginDate.data = activity.beginDate
+            form.endDate.data = activity.endDate
+            ## Future: forZipCode, distance
         else:
             isAddActivity = True
             form.id.data = None
 
     return render_template("edit_activity.html", activity=activity, form=form, activityID=activityID, isAddActivity=isAddActivity)
 
+# Project 3 - Steve
+#
 # Return a list of categories in JSON form.
 # The data format is designed to be friendly to an Ext.js data store.
 #
@@ -416,6 +443,8 @@ def categoriesAsJson():
     # return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
     return result
 
+# Project 3 - Steve
+#
 # Return a list of skills in JSON form.
 # The data format is designed to be friendly to an Ext.js data store.
 #
@@ -450,6 +479,7 @@ def skillsAsJson():
         })
         return result
 
+# Project 3 - Steve
 ## ------------------------------------------------------------------
 ## For an Ext.js Data Store for an Activity Skill model,
 ## this provides the appropriate REST endpoint for get 1, put, delete
@@ -512,6 +542,12 @@ def activitySkillInstance(activitySkillID):
 
     return result
 
+# Project 3 - Steve
+## ------------------------------------------------------------------------
+## For an Ext.js Data Store for an Activity Skill model,
+## this provides the appropriate REST endpoint for get many(list), and add
+## operations
+## ------------------------------------------------------------------------
 @app.route('/activity_ds/activitySkills/', methods=['GET', 'POST'])
 def activitySkillsAsJson():
     # To get a list of activity skills, the caller must provide the activity ID
@@ -573,19 +609,24 @@ def activitySkillsAsJson():
             })
         return result
 
-@app.route('/activity/test', methods=['GET', 'POST'])
-def testExtJs():
-    return render_template("test.html")
-
+# Project 3 - Steve
+#
+# This is an internal test function to show the skill editing grid for an Activity
+# While internal, it can be used to help debug issues if they occur.
+#
+# Example:
+# /activity/test?id=4   where id=the activity ID (key)
+#
 @app.route('/activity/test2', methods=['GET', 'POST'])
 def testSteveExtJsPrototype():
-    return render_template("test2.html", activityID="1", temp="Hi Steve This is Steve Again")  # replace this later
+    activityID = 1
+    tempID = request.values.get('id')
+    if (tempID):
+        activityID = tempID
+    else:
+        tempID = request.values.get('activityID')
+        if (tempID):
+            activityID = tempID
 
-"""
-                {{ form.description(class="form-control", required=true, placeholder="Begin Date",value=activity.beginDate) }}
-                {{ form.description(class="form-control", required=true, placeholder="End date",value=activity.endDate) }}
-                {{ form.description(class="form-control", required=true, placeholder="ZIP",value=activity.forZipCode) }}
-                {{ form.description(class="form-control", required=true, placeholder="Distance",value=activity.distance) }}
+    return render_template("test2.html", activityID=activityID, temp="Hi Steve This is Steve Again")  # replace this later
 
-                {{ form.skillList(class="form-edit", required=true, placeholder="Skills",value=activitySkillList) }}
-"""

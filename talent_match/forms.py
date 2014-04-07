@@ -43,11 +43,13 @@ class EditProfileForm(Form):
 class SearchForm(Form):
 	query = TextField('query', validators=[Required()])
 
-
+##
+## Project 3 - Steve
+##
+## This is the input form for creating and editing (some) Activity-related data.
+## Note that maintaining the skills is actually done with a client side JavaScript component.
+##
 class ActivityForm(Form):
-	#def __init__(self, temp):
-	#	self.temp = temp
-
 	id = HiddenField('id')
 	name = TextField('Name', validators=[Required()])
 	description = TextAreaField('Description')
@@ -55,7 +57,6 @@ class ActivityForm(Form):
 	endDate = DateField()
 	forZipCode = IntegerField('ZIP Code')
 	distance = IntegerField('Within X miles')
-
 	# Future candidate fields ...
 	#hourDuration = db.Column(db.INTEGER, nullable=True)
     #dayDuration = db.Column(db.INTEGER, nullable=True)
