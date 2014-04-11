@@ -19,10 +19,19 @@ gravatar = Gravatar(app,
 			use_ssl=True,
 			base_url=None)
 
-from talent_match import views, models, forms
+from talent_match import models, forms
+from .views import auth, profile, index, invites, skills, categories, api
 from talent_match.startup import addTestData
 
 app.createTestData = addTestData
+
+app.register_blueprint(index.app)
+app.register_blueprint(auth.app)
+app.register_blueprint(profile.app)
+app.register_blueprint(invites.app)
+app.register_blueprint(skills.app)
+app.register_blueprint(categories.app)
+app.register_blueprint(api.app)
 
 # Provide the user loader to the login manager
 @login_manager.user_loader
