@@ -20,12 +20,13 @@ gravatar = Gravatar(app,
 			base_url=None)
 
 from talent_match import models, forms
-from .views import auth, profile, index, invites, skills, categories, api
+from .views import auth, profile, index, invites, skills, categories, api, activity
 from talent_match.startup import addTestData
 
 app.createTestData = addTestData
 
 app.register_blueprint(index.app)
+app.register_blueprint(activity.app)
 app.register_blueprint(auth.app)
 app.register_blueprint(profile.app)
 app.register_blueprint(invites.app)
