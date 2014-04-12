@@ -87,13 +87,6 @@ Ext.define('ActivitySkill', {
             min: 1
         }
     ]
-    /*
-    proxy:
-    {
-        type: 'rest',
-        url: '/activity_ds/activitySkills.json?activityID' + talent_match_global['activityID']
-    }
-    */
 });
 
 Ext.onReady(function(){
@@ -110,10 +103,7 @@ Ext.onReady(function(){
             pageParam: false, //to remove param "page"
             startParam: false, //to remove param "start"
             limitParam: false,
-            // The activity ID is set on the page load in a simple script where the Jinja2 engine substitutes
-            // the desired value.
-            //url: '/activity/activitySkills.json?activityID' + talent_match_global['activityID'],
-            url: '/categories_ds/categories.json',
+            url: '/api/categories/categories.json',
             reader:
             {
                 type: 'json',
@@ -129,68 +119,13 @@ Ext.onReady(function(){
         }
     });
 
-    /*
-    var  skillListStore =Ext.create('Ext.data.Store', {
-        autoLoad: true,
-        model: 'Skill',
-        proxy:
-        {
-            type: 'rest',
-            pageParam: false, //to remove param "page"
-            startParam: false, //to remove param "start"
-            limitParam: false,
-            url: '/skill_ds/skills.json',
-            extraParams: {
-                id: 1
-            },
-            reader:
-            {
-                type: 'json',
-                idProperty: 'id',               //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
-                messageProperty: 'message',     //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
-                root: 'data',
-                model : 'Skill'
-            },
-            writer:
-            {
-                type: 'json'
-            }
-        }
-    });
-*/
-
-    var  skillListStoreBad =Ext.create('Ext.data.Store', {
-        autoLoad: true,
-        model: 'Skill',
-            type: 'rest',
-            pageParam: false, //to remove param "page"
-            startParam: false, //to remove param "start"
-            limitParam: false,
-            // The activity ID is set on the page load in a simple script where the Jinja2 engine substitutes
-            // the desired value.
-            //url: '/activity/activitySkills.json?activityID' + talent_match_global['activityID'],
-            url: '/skills_ds/skills.json',
-            extraParams: {
-                id: 1   // This will need to be replaced in later calls.
-            },
-            reader:
-            {
-                type: 'json',
-                idProperty: 'id',               //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
-                messageProperty: 'message',     //# Added from a different the example in case it helps (http://www.sencha.com/forum/showthread.php?275922-REST-Store-autosyncing-empty-inserted-row)
-                root: 'data',
-                model : 'Skill'
-            },
-            writer:
-            {
-                type: 'json'
-            }
-        });
 
     var store = Ext.create('Ext.data.Store', {
         autoLoad: true,
         autoSync: true,
         model: 'ActivitySkill',
+
+        // this can be used for test data
         /*data : sampleData,
         proxy:
         {
@@ -201,6 +136,7 @@ Ext.onReady(function(){
             }
         },
         */
+
         onCreateRecords: function(records, operation, success) {
             console.log(records);
         },
@@ -224,7 +160,7 @@ Ext.onReady(function(){
             // The activity ID is set on the page load in a simple script where the Jinja2 engine substitutes
             // the desired value.
             //url: '/activity/activitySkills.json?activityID' + talent_match_global['activityID'],
-            url: '/activity_ds/activitySkills/',
+            url: '/api/activitySkills',
             extraParams:
                 {
                     activityID : talent_match_global['activityID']
@@ -367,7 +303,7 @@ Ext.onReady(function(){
                             pageParam: false, //to remove param "page"
                             startParam: false, //to remove param "start"
                             limitParam: false,
-                            url: '/skills_ds/skills.json',
+                            url: '/api/skills/skills.json',
                             extraParams: {
                                 id: 1  // This needs to be changed?
                             },

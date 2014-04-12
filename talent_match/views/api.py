@@ -51,7 +51,7 @@ def categoriesAsJson():
 #   'data'    : [ (skill data goes here) ]
 # }
 @app.route('/skills', methods=['GET', 'POST'])
-@app.route('/skills.json', methods=['GET', 'POST'])
+@app.route('/skills/skills.json', methods=['GET', 'POST'])
 def skillsAsJson():
     # To get a list of skills, the caller must provide a
     categoryID = request.values.get('id')
@@ -143,6 +143,7 @@ def activitySkillInstance(activitySkillID):
 ## operations
 ## ------------------------------------------------------------------------
 @app.route('/activitySkills', methods=['GET', 'POST'])
+#@app.route('/activitySkills/', methods=['GET', 'POST'])
 @app.route('/activitySkills.json')
 def activitySkillsAsJson():
     # To get a list of activity skills, the caller must provide the activity ID
