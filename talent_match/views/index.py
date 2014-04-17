@@ -3,12 +3,16 @@ from flask.ext.login import login_user, login_required, logout_user
 from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
 from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
 import json
+from talent_match import db
 from config import POSTS_PER_PAGE
 
 app = Blueprint('index', __name__, template_folder="templates")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    if g.user.is_authenticated():
+	    pending_invites = db.session.query(Invitation).filter(Invitation.receivingUserID == g.user.id, Invitation.accepted == None).count()
+	    return render_template('index.html', invite_count=pending_invites)
     return render_template('index.html')
 
 @app.route('/search', methods=['GET', 'POST'])
