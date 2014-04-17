@@ -45,6 +45,7 @@ class SearchForm(Form):
 class CreateInviteForm(Form):
 	activities = SelectField(u'Activities', validators=[Required()])
 	skills = SelectField(u'Skills', validators=[Required()])
+	inviteUserID = IntegerField('InviteUserID')
 
 ##
 ## Project 3 - Steve

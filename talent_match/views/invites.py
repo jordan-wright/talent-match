@@ -7,6 +7,8 @@ import json
 
 app = Blueprint('invites', __name__, template_folder="templates", url_prefix="/invites")
 
+
+# View all of the invites that the user has
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def invites():
@@ -18,6 +20,8 @@ def invites():
 
     return render_template("invites.html", invitationList=invitationList)
 
+
+# Submit a status update for an Accept/Reject
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
 def inviteSubmit():
@@ -45,32 +49,24 @@ def inviteSubmit():
 
     return redirect(url_for('.invites'))
 
-@app.route('/send', methods=['GET', 'POST'])
-@login_required
-def sendInvite():
-    receivingUserID = request.values.get('inviteUserID')
-    activityID = request.values.get('activityID')
-    skillID = request.values.get('skillID')
 
-    if (inviteUserID and activityID and skillID):
-        invitation = Invitation(activityID, skillID, g.user.id, receivingUserID)
-        db.session.add(invitation)
-        db.session.commit()
-
-    return redirect(url_for('profile.profile(inviteUser.username)'))
-
+# Create an Invation to send
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
 def createInvite():
     form = CreateInviteForm()
     inviteUserID = request.values.get('id')
     skillsList = []
+    activityList = []
 
     if (inviteUserID != None):
         inviteUser = User.query.get(inviteUserID)
         if (form.activities.choices == None):
-            form.activities.choices = db.session.query(Activity).join(Seeker).\
-                filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).add_column(Activity.name)
+            activities = db.session.query(Activity).join(Seeker).\
+                filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).all()
+            for activity in activities:
+                activityList.append((activity.name, activity.name))
+        form.activities.choices = activityList
         
         if (form.skills.choices == None):
             providerSkills = db.session.query(Skill).join(ProviderSkill).\
@@ -78,5 +74,25 @@ def createInvite():
             for skill in providerSkills:
                  skillsList.append((skill.name, skill.name))
         form.skills.choices = skillsList
+        form.inviteUserID.data = inviteUserID
+
+    if (g.user.id == int(inviteUserID)):
+        flash('Invitation Cannot Be Sent!', 'danger') 
+    elif form.validate_on_submit():
+        receivingUser = User.query.filter_by(id=form.inviteUserID.data).limit(1).first()
+        activity = Activity.query.filter_by(name=form.activities.data).limit(1).first()
+        skill = Skill.query.filter_by(name=form.skills.data).limit(1).first()
+        if (receivingUser.id and activity.id and skill.id):
+            invitation = Invitation(activity.id, skill.id, g.user.id, receivingUser.id)
+            db.session.add(invitation)
+            db.session.commit()
+
+            flash('Invitation Has Been Sent!', 'success')
+            return redirect(url_for('profile.profile', username=receivingUser.username))
+
 
     return render_template("invites_create.html", form=form, inviteUser=inviteUser, user=g.user)
+
+
+
+

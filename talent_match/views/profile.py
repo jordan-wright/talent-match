@@ -33,7 +33,7 @@ def editProfile():
         db.session.commit()
         flash('Profile Update Successful!', 'success')
         return redirect(url_for('.profile'))
-    form.quickIntro.data = g.user.quickIntro # or "Default Quick Intro"
+    form.quickIntro.data = g.user.quickIntro
     return render_template("profile_edit.html", form=form)
     form.background.data = g.user.background
     skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == g.user.id).all()
