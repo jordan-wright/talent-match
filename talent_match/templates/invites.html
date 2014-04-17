@@ -6,6 +6,13 @@
 {% block content %}  
 
   <div class="container" style="padding-top:80px;">
+        {% with flashes = get_flashed_messages(with_categories=true) %}
+            {% if flashes %}
+                {% for category, message in flashes %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <div class="row">
             <br/>
             <h1 style="text-align:center;">

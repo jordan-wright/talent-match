@@ -22,19 +22,27 @@ def invites():
 @login_required
 def inviteSubmit():
     invitationID = request.values.get('id')
-    print("id is: " + invitationID)
     status = request.values.get('status')
-    invitation = None
-    newStatus = False
-    if (status == '1'): 
-        newStatus = True
+    invitionList = []
+    invition = db.session.query(Invitation).filter(Invitation.receivingUserID == g.user.id).all()
+    for invites in invition:
+        invitionList.append(invites.id)
 
-    if (invitationID != None):
-        invitation = Invitation.query.get(invitationID)
-        invitation.accepted = newStatus
-        db.session.commit()
+    if (int(invitationID) in invitionList):
+            invitation = None
+            newStatus = False
+            if (status == '1'): 
+                newStatus = True
 
-    form = None
+            if (invitationID != None):
+                invitation = Invitation.query.get(invitationID)
+                invitation.accepted = newStatus
+                db.session.commit()
+
+            flash('Status Has Been Updated!', 'success')
+    else:
+        flash('Something Went Wrong, Try Again!', 'danger')
+
     return redirect(url_for('.invites'))
 
 @app.route('/send', methods=['GET', 'POST'])
@@ -65,9 +73,9 @@ def createInvite():
                 filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).add_column(Activity.name)
         
         if (form.skills.choices == None):
-            providerSkills = db.session.query(Skill).join(ProviderSkill).filter(Provider.userID == inviteUserID, ProviderSkill.skillID == Skill.id , ProviderSkill.providerID == inviteUserID).all()
+            providerSkills = db.session.query(Skill).join(ProviderSkill).\
+                filter(Provider.userID == inviteUserID, ProviderSkill.skillID == Skill.id , ProviderSkill.providerID == inviteUserID).all()
             for skill in providerSkills:
-                 print(skill.name)
                  skillsList.append((skill.name, skill.name))
         form.skills.choices = skillsList
 
