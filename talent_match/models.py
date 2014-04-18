@@ -418,7 +418,7 @@ class Invitation(db.Model):
     canceled = db.Column(db.Boolean, default=False)
 
     ## Project 4 - Steve - adding a completed column as well.
-    canceled = db.Column(db.Boolean, default=False, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
 
