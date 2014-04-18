@@ -1,5 +1,5 @@
 
-from talent_match.models import User,Skill,Category,Seeker,Provider,ProviderSkill,Invitation,Activity,ActivitySkill
+from talent_match.models import User,Skill,Category,Seeker,Provider,ProviderSkill,Invitation,Activity,ActivitySkill,ActivityFeedback
 from talent_match import db
 
 __author__ = 'Steve'
@@ -506,10 +506,45 @@ def addTestData() :
         else:
             print("Invitation navigation failed.")
 
+        ##
+        ## Project 4: Adding some test loading for the ActivityFeedback
+        ##
+        print("Testing feedback creation - reusing last used activity users" )
+        print("Trying to create a feedback item - reviewing a talent provider" )
+        feedback = ActivityFeedback()
+        feedback.activityID = activity.id
+        feedback.reviewedUserID = invitedUser.id
+        feedback.feedbackUserID = invitingUser.id
+        feedback.reviewedUserRole = "seeker"
+        feedback.feedbackUserRole = "provider"
+        feedback.rating = 5
+        feedback.review_comments = "Sally did a great job!"
+        db.session.add(feedback)
+        db.session.commit()
 
+        print("Trying to create a feedback item - reviewing a talent seeker")
+        feedback = ActivityFeedback()
+        feedback.activityID = activity.id
+        feedback.reviewedUserID = invitingUser.id
+        feedback.feedbackUserID = invitedUser.id
+        feedback.feedbackUserRole = "seeker"
+        feedback.reviewedUserRole = "provider"
+        feedback.rating = 3
+        feedback.review_comments = "Steve did an okay job; we were paid a little late for our work."
+        db.session.add(feedback)
+        db.session.commit()
 
+        print("Checking feedback lookup(s) for each user ... ")
+        feedbackList = invitingUser.getFeedbackReceived()
+        if (feedbackList):
+            for feedback in feedbackList:
+                print(feedback)
 
-
+        print("Checking feedback lookup(s) for each user ... ")
+        feedbackList = invitedUser.getFeedbackReceived()
+        if (feedbackList):
+            for feedback in feedbackList:
+                print(feedback)
 
 
 

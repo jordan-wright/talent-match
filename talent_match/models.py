@@ -104,6 +104,12 @@ class User(db.Model):
 
         return result
 
+    ##db.relationship('ActivityFeedback', uselist=True, backref='user', foreign_keys=[id])
+    ## Project 4: Steve - providing direct access from the user to feedback on this user.
+    def getFeedbackReceived(self):
+        temp = ActivityFeedback.query.filter_by(reviewedUserID=self.id).all()
+        return temp
+
     def __repr__(self):
         return '<User %r>' % (self.username)
 
@@ -226,6 +232,9 @@ class Category(db.Model):
     ## Project 3:  Steve - adding relationships and navigation
     skillList = db.relationship('Skill', lazy='joined')
 
+    ## Project 4: Steve/Nick - adding deleted flag.
+    deleted = db.Column(db.Boolean, default=False, nullable=False)
+
     def __init__(self, name, description):
         self.name = name
         self.description = description
@@ -280,6 +289,9 @@ class Skill(db.Model):
 
     ## Project 3:  Steve - adding relationships and navigation
     category = db.relationship('Category', backref='skill', uselist=False, lazy='joined')
+
+    ## Project 4: Steve/Nick - adding deleted flag.
+    deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, categoryID, name, description):
         self.categoryID = categoryID
@@ -399,14 +411,14 @@ class Invitation(db.Model):
     ## Project 3:  Steve - adding relationships and navigation
     skill = db.relationship('Skill', backref='invitation', uselist=False, lazy='joined')
     activity = db.relationship('Activity', backref='invitation', uselist=False, lazy='joined')
-
-    #invitingUser = db.relationship('User', backref='invitation', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
-    #receivingUser = db.relationship('User', backref='invitation', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
     invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
     receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
 
     accepted = db.Column(db.Boolean)
     canceled = db.Column(db.Boolean, default=False)
+
+    ## Project 4 - Steve - adding a completed column as well.
+    canceled = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
 
@@ -427,6 +439,33 @@ class Company(db.Model):
     name = db.Column(db.String(80), nullable=False)
     pointOfContact = db.Column(db.String(120), nullable=False)
     is_available = db.Column(db.Boolean, nullable=False, default=False)
+    def __init__(self):
+        pass
+    def __repr__(self):
+        return modelToString(self)
+
+#
+# Added for Project 4 - adding a Feedback class to track/store feedback
+# in a bigger system or a future release, this might also need some options for dispute resolution
+#
+class ActivityFeedback(db.Model):
+    __tablename__ = 'activity_feedback'
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
+    activityID = db.Column(db.INTEGER, db.ForeignKey('activity.id'))
+    reviewedUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+
+    # User role is still to be determined; it should track whether the user was a provider or a seeker
+    reviewedUserRole = db.Column(db.String, nullable=True)
+    feedbackUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    feedbackUserRole = db.Column(db.String, nullable=True)
+
+    rating = db.Column(db.INTEGER, nullable=False)  # if we use numeric - 1 .. 5 for now?
+    review_comments = db.Column(db.String(500), nullable=False)
+
+    reviewedUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[reviewedUserID])
+    feedbackUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[feedbackUserID])
+    activity = db.relationship('Activity', uselist=False, lazy='joined')
+
     def __init__(self):
         pass
     def __repr__(self):
