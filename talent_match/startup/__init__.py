@@ -8,53 +8,54 @@ __author__ = 'Steve'
 
 initialized = False
 
+def testLoadFunction():
+    addZipCodeData('zipCodeData.txt')
+    addInternalTestData()
+
 def addZipCodeData(fileName):
-    print (time.strftime("%H:%M:%S"))
-    print "DB initialization - adding ZIP code entries."
-    commitInterval = 25
-    count = 0
+    testZip = USZipCodeToLatitudeLongitude.query.limit(1).all()
 
-    with open(fileName, "r") as zipCodeFile:
-        for zipCodeLine in zipCodeFile:
-            # parse the line
-            zipCodeEntry = re.split('\t|\n', zipCodeLine)
+    if not testZip:
+        #pnotrint (time.strftime("%H:%M:%S"))
+        print "DB initialization - adding ZIP code entries."
+        commitInterval = 25
+        count = 0
 
-            # create the new Zip code entry.
-            zip = USZipCodeToLatitudeLongitude()
-            zip.zipCode= int(zipCodeEntry[0])
-            zip.latitude = float(zipCodeEntry[1])
-            zip.longitude = float(zipCodeEntry[2])
-            zip.locationName = zipCodeEntry[3]
-            zip.stateAbbreviation = zipCodeEntry[4]
+        with open(fileName, "r") as zipCodeFile:
+            for zipCodeLine in zipCodeFile:
+                # parse the line
+                zipCodeEntry = re.split('\t|\n', zipCodeLine)
 
-            db.session.add(zip)
+                # create the new Zip code entry.
+                zip = USZipCodeToLatitudeLongitude()
+                zip.zipCode= int(zipCodeEntry[0])
 
-            # Only commit once every commit interval
-            #if ((count > 0) and (count % commitInterval == 0)):
-            #    db.session.commit()
-            #count += 1
+                latitude = float(zipCodeEntry[1])
+                longitude = float(zipCodeEntry[2])
+
+                # As a reminder, the sql lite database does not natively support numeric SQL data types
+                # So, we're using a fixed exponent integer approach to avoid SQL Alchemy complaints.
+                # As a side note, it looks like SQL Alchemy will convert values to
+                zip.latitudeTimes1000 = (latitude * 1000)
+                zip.longitudeTimes1000 = (longitude * 1000)
+                zip.locationName = zipCodeEntry[3]
+                zip.stateAbbreviation = zipCodeEntry[4]
+
+                db.session.add(zip)
+
+                # Only commit once every commit interval
+                #if ((count > 0) and (count % commitInterval == 0)):
+                #    db.session.commit()
+                #count += 1
 
 
-        db.session.commit() # last save
-        print (time.strftime("%H:%M:%S"))
-
-
-
-
-
+            db.session.commit() # last save
+            print (time.strftime("%H:%M:%S"))
 
 def addTestData() :
-    ## Adding a safety check to prevent more than one initialization.
-    global initialized
-    if initialized:
-        return
-    else:
-        initialized = True
+    print 'This should not be called anymore.'
 
-    print "\nDB initialization - adding needed system data (ZIP code).\n"
-    addZipCodeData('zipCodeData.txt')
-
-    print "\nDB initialization - adding test data."
+def addInternalTestData() :
     userList = None
     userList = User.query.filter_by(is_admin=True)
 

@@ -6,6 +6,7 @@ from flask.ext.gravatar import Gravatar
 
 app = Flask(__name__)
 app.config.from_object('config')
+
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -21,9 +22,10 @@ gravatar = Gravatar(app,
 
 from talent_match import models, forms
 from .views import auth, profile, index, invites, skills, categories, api, activity
-from talent_match.startup import addTestData
+from talent_match.startup import addTestData, testLoadFunction
 
 app.createTestData = addTestData
+app.testLoadFunction = testLoadFunction
 
 app.register_blueprint(index.app)
 app.register_blueprint(activity.app)

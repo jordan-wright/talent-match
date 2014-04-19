@@ -502,12 +502,22 @@ class USZipCodeToLatitudeLongitude(db.Model):
     ## Note: one ZIP code may map to multiple locations (cities)
     ## We will only use the first one.  This is approximate enough for our needs.
     zipCode = db.Column(db.INTEGER, nullable=False, index=True)
-    latitude = db.Column(db.NUMERIC, nullable=False)
-    longitude = db.Column(db.NUMERIC, nullable=False)
+
+    ## SQLite does not natively support the Numeric type.
+    ## Instead we are going to use an integer-based approach with a fixed precision.
+    #latitude = db.Column(db.NUMERIC, nullable=False)
+    #longitude = db.Column(db.NUMERIC, nullable=False)
+    latitudeTimes1000 = db.Column(db.INTEGER, nullable=False)
+    longitudeTimes1000 = db.Column(db.INTEGER, nullable=False)
+
     ## Location (city) and state abbreviation are being included for internal testing and debugging.
     stateAbbreviation = db.Column(db.String(10), nullable=True)
     locationName = db.Column(db.String(120), nullable=True)
 
+    def __init__(self):
+        pass
+    def __repr__(self):
+        return modelToString(self)
 
 
 

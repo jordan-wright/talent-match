@@ -6,6 +6,7 @@ import os.path
 if not os.path.exists(os.path.join(basedir, 'talent-match.db')):
 	print "Creating database..."
 	db.create_all()
-	app.createTestData()
+
+app.testLoadFunction()
 
 app.run(debug=True)
