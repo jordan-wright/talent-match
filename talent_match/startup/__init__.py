@@ -1,10 +1,60 @@
 
-from talent_match.models import User,Skill,Category,Seeker,Provider,ProviderSkill,Invitation,Activity,ActivitySkill,ActivityFeedback
+from talent_match.models import User,Skill,Category,Seeker,Provider,ProviderSkill,Invitation,Activity,ActivitySkill,ActivityFeedback,USZipCodeToLatitudeLongitude
 from talent_match import db
+import re
+import time
 
 __author__ = 'Steve'
 
+initialized = False
+
+def addZipCodeData(fileName):
+    print (time.strftime("%H:%M:%S"))
+    print "DB initialization - adding ZIP code entries."
+    commitInterval = 25
+    count = 0
+
+    with open(fileName, "r") as zipCodeFile:
+        for zipCodeLine in zipCodeFile:
+            # parse the line
+            zipCodeEntry = re.split('\t|\n', zipCodeLine)
+
+            # create the new Zip code entry.
+            zip = USZipCodeToLatitudeLongitude()
+            zip.zipCode= int(zipCodeEntry[0])
+            zip.latitude = float(zipCodeEntry[1])
+            zip.longitude = float(zipCodeEntry[2])
+            zip.locationName = zipCodeEntry[3]
+            zip.stateAbbreviation = zipCodeEntry[4]
+
+            db.session.add(zip)
+
+            # Only commit once every commit interval
+            #if ((count > 0) and (count % commitInterval == 0)):
+            #    db.session.commit()
+            #count += 1
+
+
+        db.session.commit() # last save
+        print (time.strftime("%H:%M:%S"))
+
+
+
+
+
+
 def addTestData() :
+    ## Adding a safety check to prevent more than one initialization.
+    global initialized
+    if initialized:
+        return
+    else:
+        initialized = True
+
+    print "\nDB initialization - adding needed system data (ZIP code).\n"
+    addZipCodeData('zipCodeData.txt')
+
+    print "\nDB initialization - adding test data."
     userList = None
     userList = User.query.filter_by(is_admin=True)
 
