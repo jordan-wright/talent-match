@@ -15,10 +15,25 @@ def invites():
     invitationList = []
     for invite, active in db.session.query(Invitation, Activity).\
         filter(Invitation.activityID == Activity.id, Invitation.receivingUserID == g.user.id).all():
-            newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id)
+            newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id,
+                           user=invite.invitingUser)  # adding for project 4 - Steve
             invitationList.append(newInvite)
 
-    return render_template("invites.html", invitationList=invitationList)
+    ## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
+    return render_template("invites.html", invitationList=invitationList, isRecepientRole=True)
+
+##
+## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
+##
+@app.route('/sent', methods=['GET', 'POST'])
+def invitesFromThisUser():
+    invitationList = []
+    for invite, active in db.session.query(Invitation, Activity).\
+        filter(Invitation.activityID == Activity.id, Invitation.invitingUserID == g.user.id).all():
+            newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id, user=invite.receivingUser)
+            invitationList.append(newInvite)
+
+    return render_template("invites.html", invitationList=invitationList, isRecepientRole=False)
 
 
 # Submit a status update for an Accept/Reject

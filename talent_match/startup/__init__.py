@@ -38,6 +38,9 @@ def addZipCodeData(fileName):
                 # As a side note, it looks like SQL Alchemy will convert values to
                 zip.latitudeTimes1000 = (latitude * 1000)
                 zip.longitudeTimes1000 = (longitude * 1000)
+
+                zip.latitude = latitude
+                zip.longitude = longitude
                 zip.locationName = zipCodeEntry[3]
                 zip.stateAbbreviation = zipCodeEntry[4]
 

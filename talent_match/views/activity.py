@@ -13,6 +13,10 @@ def listActivityRequests():
     activities = db.session.query(Activity).join(Seeker).\
         filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).all()
 
+    for activity in activities:
+        invitationCount = 0
+        invitationAcceptedCount = 0
+
     form = None
     return render_template("activity_list.html", activities=activities, user=g.user)
 
