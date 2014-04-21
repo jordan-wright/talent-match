@@ -13,7 +13,7 @@ class TalentMatchTestCase(unittest.TestCase):
         self.app = app.test_client()
         print 'Creating database'
         db.create_all()
-        app.createTestData()
+        app.testLoadFunction()
 
     def tearDown(self):
         os.unlink(os.path.join(basedir, 'talent-match.db'))
