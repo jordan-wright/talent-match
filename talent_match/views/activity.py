@@ -98,3 +98,25 @@ def editActivity():
             form.id.data = None
 
     return render_template("edit_activity.html", activity=activity, form=form, activityID=activityID, isAddActivity=isAddActivity)
+
+
+## Project 4 - Steve - Mark activity as complete
+#
+# Mark an existing activity created by the user as complete.
+#
+# Example: /activity/complete?id=4
+#
+@login_required
+@app.route('/complete', methods=['GET', 'POST'])
+def markActivityAsComplete():
+
+    activityID = request.values.get('id')
+    if ( activityID == None):
+        activityID = request.values.get('activityID')
+    if (activityID):
+        activity = Activity.query.get(activityID)
+        if (activity):
+            activity.completionStatus = True
+        db.session.commit()
+
+    return redirect('/activity/list')

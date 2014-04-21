@@ -357,6 +357,9 @@ class Activity(db.Model):
     ## Project 4: Steve - adding preferred radius in miles
     distanceInMiles = db.Column(db.INTEGER, default=100, nullable=False)
 
+    ## Project 4: Steve - adding completion status (boolean)
+    completionStatus = db.Column(db.Boolean, default=False, nullable=False)
+
     def addSkill(self, skill, quantity = 1, exclusiveResource=True):
         try:
             activitySkill = ActivitySkill(self.id, skill.id, quantity, exclusiveResource)

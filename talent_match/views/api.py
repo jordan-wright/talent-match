@@ -211,9 +211,6 @@ def activitySkillsAsJson():
             })
         return result
 
-
-
-
 # Project 4 - Steve
 ## ------------------------------------------------------------------
 ## For an Ext.js Data Store for an Provider Skill model,

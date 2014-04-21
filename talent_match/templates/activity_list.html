@@ -1,3 +1,6 @@
+<!--
+   This view template displays a list of Activity objects created by the currently logged in user.
+-->
 {% extends "base.html" %}
 {% block title %}Activity Requests{% endblock %}
 {% block head %}
@@ -23,6 +26,11 @@
                         <th><h3><b>Activity</b></h3></th>
                         <th><h3><b>Description</b></h3></th>
                         <th><h3><b>Action</b></h3></th>
+                        <!-- Added for Project 4 - Steve Added view invitations and activity completion status -->
+                        <th><h3><b>View Invites</b></h3></th>
+                        <th><h3><b>Complete?</b></h3></th>
+                        <!-- Added for Project 4 - Steve - placeholder for Feedback in Project 5-->
+                        <th><h3><b>Feedback</b></h3></th>
                     </thead>
                     <thead>
                 {% for activity in activities %}
@@ -30,6 +38,16 @@
                         <td> <h5 class="h5" style="color:black"> {{ activity.name }} </h5> </td>
                         <td> <h5 class="h5" style="color:black"> {{ activity.description }} </h5> </td>
                         <td> <h5 class="h5"> <a class="btn btn-sm btn-success" href="/activity/edit?id={{activity.id}}">Edit</a> </h5> </td>
+                        <!-- Project 4 - Steve - Added activity completion status -->
+                        <td> <h5 class="h5"> <a class="btn btn-sm btn-success" href="/invites/sent?id={{activity.id}}">View Invites</a> </h5> </td>
+                        {% if  activity.completionStatus  %}
+                            <td> <h5 class="h5" style="color:black"> Complete </h5> </td>
+                            <td> <h5 class="h5" style="color:black"> Feedback (placeholder) </h5> </td>
+                        {%  else %}
+                            <td> <h5 class="h5"> <a class="btn btn-sm btn-success" href="/activity/complete?id={{activity.id}}">Mark as Complete</a> </h5> </td>
+                            <td> <h5 class="h5" style="color:black"> n/a </h5> </td>
+                        {%  endif %}
+
                     </tr>
                 {% endfor %}
                 </table>

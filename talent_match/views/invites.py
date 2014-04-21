@@ -23,15 +23,30 @@ def invites():
     return render_template("invites.html", invitationList=invitationList, isRecepientRole=True)
 
 ##
-## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
+## Project 4 - Steve - changes to allow the same template to display invitations sent and invitations received.
+## This method requires a logged in user and will accept an optional Activity identifier parameter to filter
+## the displayed invitations to a specific Activity.
 ##
 @app.route('/sent', methods=['GET', 'POST'])
+@login_required
 def invitesFromThisUser():
     invitationList = []
-    for invite, active in db.session.query(Invitation, Activity).\
-        filter(Invitation.activityID == Activity.id, Invitation.invitingUserID == g.user.id).all():
-            newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id, user=invite.receivingUser)
-            invitationList.append(newInvite)
+    # Extract the activity ID parameter if present (either by 'id' or 'activityID')
+    activityID = request.values.get('id')
+    if ( activityID == None):
+        activityID = request.values.get('activityID')
+    # If the activity ID parameter is present, display only those invitations associated with that activity.
+    if (activityID):
+        for invite, active in db.session.query(Invitation, Activity).\
+            filter(Invitation.activityID == Activity.id, Invitation.invitingUserID == g.user.id, Activity.id == activityID).all():
+                newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id, user=invite.receivingUser)
+                invitationList.append(newInvite)
+    # If no activity ID parameter is present, display all invitations associated with that the user
+    else:
+        for invite, active in db.session.query(Invitation, Activity).\
+            filter(Invitation.activityID == Activity.id, Invitation.invitingUserID == g.user.id).all():
+                newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id, user=invite.receivingUser)
+                invitationList.append(newInvite)
 
     return render_template("invites.html", invitationList=invitationList, isRecepientRole=False)
 
