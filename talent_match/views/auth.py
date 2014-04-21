@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
 from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
+from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm, DeleteProfileForm, PasswordResetForm
 from talent_match import bcrypt, db
 import json
 
@@ -52,3 +52,19 @@ def register():
         flash('Registration Successful!', 'success')
         return redirect(url_for('.login'))
     return render_template('register.html', form=form)
+
+@app.route('/password_reset', methods=['POST'])
+@login_required
+def change_password():
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        # Check that the user exists, and that the password is correct
+        if bcrypt.check_password_hash(g.user.pwd_hash, form.current_password.data):
+            g.user.pwd_hash = bcrypt.generate_password_hash(form.new_password.data)
+            db.session.commit()
+            # Redirect to the URL for the profile page
+            flash('Password updated successfully!', 'success')
+            return redirect(url_for('profile.settingsProfile'))
+        else:
+            flash('Invalid Password', 'danger')
+    return render_template('settings.html', password_form=form, delete_form=DeleteProfileForm())

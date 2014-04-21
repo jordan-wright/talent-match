@@ -65,3 +65,11 @@ class ActivityForm(Form):
 	#hourDuration = db.Column(db.INTEGER, nullable=True)
     #dayDuration = db.Column(db.INTEGER, nullable=True)
     #monthDuration = db.Column(db.INTEGER, nullable=True)
+
+class DeleteProfileForm(Form):
+	pass
+
+class PasswordResetForm(Form):
+	current_password = PasswordField('current_password', validators=[Required()])
+	new_password = PasswordField('new_password', validators=[Required(), EqualTo('confirm_password', message='Passwords must match')])
+	confirm_password = PasswordField('confirm_password', validators=[Required()])

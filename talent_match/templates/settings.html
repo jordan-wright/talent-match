@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Edit{% endblock %}
+{% block head %}
+    {{ super() }} 
+{% endblock %} 
+{% block content %}
+<div class="container" style="margin-top:80px;">
+{% with flashes = get_flashed_messages(with_categories=true) %}
+    {% if flashes %}
+        {% for category, message in flashes %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<h1 style="text-align:center;">Settings</h1>
+<form class="form-signin" action="/password_reset" method="POST">
+    <h2 class="form-signin-heading">Change Password</h2>
+    {{ password_form.current_password(class="form-control", required=true, placeholder="Current Password") }}
+    {{ password_form.new_password(class="form-control", required=true, placeholder="Password") }}
+    {{ password_form.confirm_password(class="form-control", required=true, placeholder="Confirm Password") }}
+    {{ password_form.hidden_tag() }}
+    <button class="btn btn-lg btn-success btn-block" type="submit">Change Password</button>
+</form>
+<form class="form-signin" method="post" action="/profile/delete" onsubmit="return confirm('This action cannot be reversed!');" role="form">
+    <h2 class="form-signin-heading">Delete Profile</h2>
+    <div style="padding-bottom:60px;" class="col-lg-8 col-lg-offset-2">
+        <button class="btn btn-lg btn-danger btn-block" type="submit">Delete Profile</button>
+    </div>
+    {{ delete_form.hidden_tag() }}
+</form>
+</div>
+{% endblock %}

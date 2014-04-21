@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
 from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
+from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm, DeleteProfileForm, PasswordResetForm
 from talent_match import db
 import json
 
@@ -38,3 +38,32 @@ def editProfile():
     form.background.data = g.user.background
     skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == g.user.id).all()
     return render_template("profile_edit.html", form=form, skills=skills)
+
+@app.route('/settings', methods=['GET'])
+@login_required
+def settingsProfile():
+    return render_template('settings.html', delete_form=DeleteProfileForm(), password_form=PasswordResetForm())
+
+@app.route('/delete', methods=['POST'])
+@login_required
+def deleteProfile():
+    form = DeleteProfileForm()
+    if form.validate_on_submit():
+        # Delete all invitations created by the user
+        Invitation.query.filter_by(invitingUserID=g.user.id).delete()
+        # Delete all activities and activitySkills owned by the user
+        for activity in Activity.query.filter_by(seekerID=g.user.id).all():
+            ActivitySkill.query.filter_by(activityID=activity.id).delete()
+            db.session.delete(activity)
+        # Delete the seeker profile
+        db.session.delete(Seeker.query.filter_by(userID=g.user.id).first())
+        # Delete the providerSkills
+        ProviderSkill.query.filter_by(providerID=g.user.id).delete()
+        # Delete the provider profile
+        db.session.delete(Provider.query.filter_by(userID=g.user.id).first())
+        # Delete the user profile
+        db.session.delete(g.user)
+        # Commit the changes
+        db.session.commit()
+        flash('Profile deleted successfully', 'success')
+        return redirect(url_for('index.index'))
