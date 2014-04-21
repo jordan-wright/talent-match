@@ -37,6 +37,7 @@ class User(db.Model):
     lastName = db.Column(db.String(80), nullable=True)
     city = db.Column(db.String(80), nullable=True, index=True)
     state = db.Column(db.String(16), nullable=True, index=True)
+    zipCode = db.Column(db.INTEGER, nullable=True)   ## Steve - added in Project 4
     quickIntro = db.Column(db.String(200), nullable=True)
     background = db.Column(db.String(400), nullable=True)
     phoneNumber = db.Column(db.String(10), nullable=True)
@@ -276,6 +277,19 @@ class ProviderSkill(db.Model):
         self.will_volunteer = will_volunteer
     def __repr__(self):
         return modelToString(self)
+
+    ## Project 4 - Steve - adapting the ActivitySkill serialize to the ProviderSkill class, too.
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'will_volunteer': self.will_volunteer,
+            'skillID' : self.skill.id,
+            'skill' : self.skill.name,
+            'categoryID' : self.skill.categoryID,
+            'category' : self.skill.category.name,
+       }
 
 ##
 ## This class represents a particular skill or talent for a user or a person seeking talent for an activity.

@@ -1,0 +1,59 @@
+<!--
+    Project 4 - Steve - this file is view template is used to associate/edit skills to a user's profile as
+    a talent (skill) provider.
+
+    This is similar to the view template for associating a skill to an activity in 2nd half of the edit_activity.html.
+
+    For the actual code that displays the grid, see /static/js/extjs_providerskill.js
+ -->
+{% extends "base.html" %}
+{% block title %}Edit Your Skills{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+    body {
+        background-color:#3498db;
+    }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="/static/extjs/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="/static/extjs/example/example.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/ext_js_grid_example.css" />
+
+    <script>
+        if (talent_match_global === undefined)
+        {
+            var talent_match_global = {};
+        }
+
+        talent_match_global.userID = {{ userID }};
+    </script>
+
+    <script type="text/javascript" src="/static/js/ext-all-debug.js"></script>
+    <script type="text/javascript" src="/static/extjs/example/examples.js"></script>
+    <script type="text/javascript" src="/static/js/extjs_providerskill.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="container" id="headerwrap" style="padding-top:80px;">
+        <div class="row" class="form-activity">
+        </div>
+    <div id="skill-panel" class="form-activity">
+            {%  if editProfile %}
+                <a class="btn btn-md btn-success btn-block" href="/profile/#skill" >Back to Edit Profile</a>
+            {%  else %}
+                <a class="btn btn-md btn-success btn-block" href="/profile/#skill" >Back to Profile</a>
+            {%  endif %}
+            <br/>
+        <div class="row">
+            <P>Skills are edited in the grid, below, and changes are applied immediately.
+               Double-click an existing skill to edit.</P>
+            </div>
+    </div>
+
+ </div>
+{% endblock %}
+
+

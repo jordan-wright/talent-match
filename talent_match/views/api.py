@@ -20,6 +20,12 @@ app = Blueprint('api', __name__, template_folder="templates", url_prefix="/api")
 #   'message' : 'Loaded data'
 #   'data'    :  [ (category data goes here) ]
 # }
+##
+## Project 4 - added what looks like a redundant route, below; however, this may be necessary based
+## on recent testing and debugging.  Please do not remove without talking to Steve.
+##
+@app.route('/categories/categories', methods=['GET'])
+@app.route('/categories/categories.json', methods=['GET'])
 @app.route('/categories', methods=['GET'])
 @app.route('/categories.json', methods=['GET'])
 def categoriesAsJson():
@@ -196,6 +202,148 @@ def activitySkillsAsJson():
         if (activitySkillList == None):
             activitySkillList = []
         data = [activitySkill.serialize for activitySkill in activitySkillList]
+
+        result = json.dumps(
+            {
+                "success": True,
+                "message": "Loaded data",
+                "data" : data
+            })
+        return result
+
+
+
+
+# Project 4 - Steve
+## ------------------------------------------------------------------
+## For an Ext.js Data Store for an Provider Skill model,
+## this provides the appropriate REST endpoint for get 1, put, delete
+## ------------------------------------------------------------------
+@app.route('/providerSkills/<int:providerSkillID>', methods=['GET','PUT','DELETE'])
+@app.route('/providerSkills/<int:providerSkillID>.json', methods=['GET','PUT', 'DELETE'])
+def providerSkillInstance(providerSkillID):
+    result = json.dumps(
+    {
+        "success": False,
+        "message": "Invalid provider skill ID provided.",
+    })
+
+    print request
+    print request.data
+
+
+    providerSkill = ProviderSkill.query.get(providerSkillID)
+    if (providerSkill):
+        # read a single ActivitySkill object:
+        if request.method == 'GET':
+            providerSkillList = [ providerSkill ]
+            data = [providerSkill.serialize for providerSkill in providerSkillList]
+            result = json.dumps(
+                {
+                    "success": True,
+                    "message": "Loaded data",
+                    "data" : data
+                })
+        # Update an existing ActivitySkill object:
+        elif request.method == 'PUT':
+            ## This is similar to the POST (add) code in the next route, below:
+            existingSkillString = request.data
+            if (existingSkillString):
+                # convert the form/input data:
+                existingSkillInfo = json.loads(existingSkillString)
+                category = Category.query.filter_by(name=existingSkillInfo['category']).first()
+                skill = Skill.query.filter_by(categoryID=category.id, name=existingSkillInfo['skill']).first()
+                # make the changes and save:
+                providerSkill.skillID = skill.id
+                providerSkill.will_volunteer = existingSkillInfo['will_volunteer']
+                db.session.commit()
+                # return the serialized object (same as GET, above):
+                providerSkillList = [ providerSkill ]
+                data = [providerSkill.serialize for providerSkill in providerSkillList]
+                result = json.dumps(
+                    {
+                        "success": True,
+                        "message": "Loaded data",
+                        "data" : data
+                    })
+        # Delete an existing ActivitySkill object:
+        elif request.method == 'DELETE':
+            db.session.delete(providerSkill)
+            db.session.commit()
+            result = json.dumps(
+            {
+                "success": True,
+                "message": "Deleted activity skill"
+            })
+
+    return result
+
+# Project 4 - Steve
+## ------------------------------------------------------------------------
+## For an Ext.js Data Store for an Activity Skill model,
+## this provides the appropriate REST endpoint for get many(list), and add
+## operations
+## ------------------------------------------------------------------------
+@app.route('/providerSkills', methods=['GET', 'POST'])
+@app.route('/providerSkills.json')
+def providerSkillsAsJson():
+    # To get a list of activity skills, the caller must provide the activity ID
+    userID = request.values.get('id')
+    if (userID == None):
+        userID = request.values.get('userID')
+    if (userID == None):
+        return redirect(url_for('index.index'))  # this could be improved; this is an error
+    user = User.query.get(userID)
+    if (not user):
+        return redirect(url_for('index.index'))  # this could be improved; this is an error
+
+    if request.method == 'POST':
+        newSkillString = request.data
+        providerSkill = None
+        if (newSkillString):
+            # this seems to come to us as a string, so we'll convert it back to an object
+            newSkill = json.loads(newSkillString)
+            result = \
+            {
+                "success": False,
+                "message": "Invalid activity skill ID provided.",
+            }
+            if (newSkill):
+                # look up the skill and category
+                category = Category.query.filter_by(name=newSkill['category']).first()
+                skill = Skill.query.filter_by(categoryID=category.id, name=newSkill['skill']).first()
+                providerSkill = ProviderSkill()
+                providerSkill.skillID = skill.id
+                providerSkill.providerID = user.providerProfile.id
+                providerSkill.will_volunteer = newSkill['will_volunteer']
+                db.session.add(providerSkill)
+                db.session.commit()
+
+        if (providerSkill):
+            # This should be all that we need to use:
+            #data = activitySkill.serialize
+            #
+            # However, we are re-using the same serialization used in the collection request to try to see if this
+            # works better, instead.
+            providerSkillList = [ providerSkill ]
+            data = [providerSkill.serialize for providerSkill in providerSkillList]
+
+            result = json.dumps(
+                {
+                    "success": True,
+                    "message": "Loaded data",
+                    "data" : data
+                })
+        return result
+
+
+    if request.method == 'GET':
+        providerSkillList = user.getProviderSkillList()
+
+        # Coerce the result to return an empty array instead of a null.
+        if (providerSkillList == None):
+            providerSkillList = []
+        data = [providerSkill.serialize for providerSkill in providerSkillList]
 
         result = json.dumps(
             {

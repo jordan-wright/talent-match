@@ -1,3 +1,6 @@
+<!--
+    This is the user's main profile page.   It includes background, skills, and contact information for a user.
+-->
 {% extends "base.html" %}
 {% block title %}Profile{% endblock %}
 {% block head %}
@@ -43,22 +46,42 @@
         </div>
     </div>
     <div class="container" id="about-2" >
-        <div class="row mt centered">
+        <div id="skill" class="row mt centered">
             <h1>Skills</h1>
             <hr>
             <div class="col-lg-8 col-lg-offset-2">
+                <!-- Project 4: Adding the ability to edit skills. -->
+                <!--
+                     Project 4 - Steve - this value is passed in as a parameter when being rendered by the template engine.
+                     If true, then the current user is the same as the user for this profile.
+                -->
+                {%  if canEditSkills %}
+                    <a class="btn btn-md btn-success btn-block" href="/profile/edit/skill?editProfile={{editProfile}}" >Edit Your Skills</a>
+                {% endif %}
                 {% if skills %}
                     <table class="table table-bordered">
                     <thead>
                         <th><h3><b>Category</b></h3></th>
                         <th><h3><b>Skill</b></h3></th>
                         <th><h3><b>Description</b></h3></th>
+                        <!-- Project 4 - Steve - added displaying the volunteer flag. -->
+                        <th><h3><b>Volunteer?</b></h3></th>
                     </thead>
-                    {% for skill in skills %}
+                    <!--
+                        Project 4 - Steve - added displaying the volunteer flag.
+                        This also required a small change to pass in the list of provider skills instead of the
+                        skill list.
+                    -->
+                    {% for providerSkill in skills %}
                         <tr style="text-align:left;">
-                            <td><h4> {{ skill.category.name }} </h5> </td>
-                            <td> <h4> {{ skill.name }} </h5></td>
-                            <td> <h4> {{ skill.description }} </h5></td>
+                            <td> <h5> {{ providerSkill.skill.category.name }} </h5> </td>
+                            <td> <h5> {{ providerSkill.skill.name }} </h5></td>
+                            <td> <h5> {{ providerSkill.skill.description }} </h5></td>
+                            {% if providerSkill.will_volunteer %}
+                                <td> <h5> Yes </h5></td>
+                            {% else %}
+                                <td> <h5> No </h5></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
             		</table>
@@ -67,7 +90,8 @@
 	                    <span class="glyphicon glyphicon-info-sign"></span> No skills listed.
 	                </div>
                 {% endif %}
-            </div>   
+
+            </div>
         </div>
     </div>
     <div class="container" id="about" >

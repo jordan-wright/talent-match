@@ -15,8 +15,12 @@ def profile(username):
     if username and username != g.user.username:
         user = User.query.filter_by(username=username).first_or_404()
 
-    skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
-    return render_template("profile.html", user=user, skills=skills, gUser=g.user) 
+    # This was the original query; it was replaced so that we could display the "volunteer" flag.
+    # skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
+    #
+    # Project 4 - minor change to display the volunteer flag.
+    skills = ProviderSkill.query.join(Provider).join(User).filter(User.id == user.id).all()
+    return render_template("profile.html", user=user, skills=skills, gUser=g.user, canEditSkills=(user.id==g.user.id), editProfile=False)
 
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
@@ -34,10 +38,11 @@ def editProfile():
         flash('Profile Update Successful!', 'success')
         return redirect(url_for('.profile'))
     form.quickIntro.data = g.user.quickIntro
-    return render_template("profile_edit.html", form=form)
+    #return render_template("profile_edit.html", form=form)
     form.background.data = g.user.background
-    skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == g.user.id).all()
-    return render_template("profile_edit.html", form=form, skills=skills)
+    # Project 4 - minor change to display the volunteer flag.
+    skills = ProviderSkill.query.join(Provider).join(User).filter(g.user.id == User.id).all()
+    return render_template("profile_edit.html", form=form,  user=g.user, skills=skills, editProfile=True)
 
 @app.route('/settings', methods=['GET'])
 @login_required
@@ -67,3 +72,10 @@ def deleteProfile():
         db.session.commit()
         flash('Profile deleted successfully', 'success')
         return redirect(url_for('index.index'))
+		
+@login_required
+@app.route('/edit/skill/', methods=['GET', 'POST'])
+def editProviderSkills():
+    form = None
+    skills = ProviderSkill.query.join(Provider).join(User).filter(g.user.id == User.id).all()
+    return render_template("edit_provider_skill.html", form=form,  user=g.user, skills=skills, userID=g.user.id)
