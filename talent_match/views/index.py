@@ -22,6 +22,6 @@ def search(page = 1): #, setquery = ''):
     form = SearchForm(csrf_enabled=False)
 
     query = form.query.data or request.values.get('query')
-    users = User.query.join(Provider).join(ProviderSkill).join(Skill).filter(Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
+    users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
 
     return render_template('search.html', query=query, users=users, gUser=g.user)

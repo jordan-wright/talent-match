@@ -43,10 +43,35 @@ def listCategories():
         myCount = 0
         if (cat.skillList):
             myCount = len(cat.skillList)
-        categories.append(dict(id=cat.id, name=cat.name, description=cat.description, count=myCount))
+        categories.append(dict(id=cat.id, name=cat.name, description=cat.description, count=myCount, deleted=cat.deleted))
     categories.sort(key= lambda category: category['name'])
 
     return render_template("categories.html", form=form, categories=categories, user=g.user)
+
+
+@app.route('/delete', methods=['GET', 'POST'])
+@admin_required
+def deleteCategory():
+    categoryID = request.values.get('id')
+    if categoryID:
+        category = Category.query.get(categoryID)
+        if (category):
+            category.deleted = True
+            db.session.commit()
+    return redirect('/categories')
+
+
+@app.route('/restore', methods=['GET', 'POST'])
+@admin_required
+def restoreCategory():
+    categoryID = request.values.get('id')
+    if categoryID:
+        category = Category.query.get(categoryID)
+        if (category):
+            category.deleted = False
+            db.session.commit()
+    return redirect('/categories')
+
 
 @app.route('/edit', methods=['GET', 'POST'])
 @admin_required

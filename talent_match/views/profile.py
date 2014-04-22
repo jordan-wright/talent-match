@@ -19,7 +19,7 @@ def profile(username):
     # skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
     #
     # Project 4 - minor change to display the volunteer flag.
-    skills = ProviderSkill.query.join(Provider).join(User).filter(User.id == user.id).all()
+    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(User.id == user.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
     return render_template("profile.html", user=user, skills=skills, gUser=g.user, canEditSkills=(user.id==g.user.id), editProfile=False)
 
 @app.route('/edit', methods=['GET', 'POST'])
@@ -41,7 +41,7 @@ def editProfile():
     #return render_template("profile_edit.html", form=form)
     form.background.data = g.user.background
     # Project 4 - minor change to display the volunteer flag.
-    skills = ProviderSkill.query.join(Provider).join(User).filter(g.user.id == User.id).all()
+    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(g.user.id == User.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
     return render_template("profile_edit.html", form=form,  user=g.user, skills=skills, editProfile=True)
 
 @app.route('/settings', methods=['GET'])
@@ -77,5 +77,5 @@ def deleteProfile():
 @app.route('/edit/skill/', methods=['GET', 'POST'])
 def editProviderSkills():
     form = None
-    skills = ProviderSkill.query.join(Provider).join(User).filter(g.user.id == User.id).all()
+    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(g.user.id == User.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
     return render_template("edit_provider_skill.html", form=form,  user=g.user, skills=skills, userID=g.user.id)
