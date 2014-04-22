@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation
+from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation, InvitationRequest
 from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
 from talent_match import db
 import json
@@ -19,11 +19,11 @@ def invites():
     for invite, active in db.session.query(Invitation, Activity).\
         filter(Invitation.activityID == Activity.id, Invitation.receivingUserID == g.user.id).all():
             newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id,
-                           user=invite.invitingUser)  # adding for project 4 - Steve
+                           user=invite.invitingUser, requestSent=invite.requestSent)  # adding for project 4 - Steve
             invitationList.append(newInvite)
 
     ## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
-    return render_template("invites.html", invitationList=invitationList, isRecepientRole=True)
+    return render_template("invites.html", invitationList=invitationList, isRecepientRole=True, isRequest=False)
 
 ##
 ## Project 4 - Steve - changes to allow the same template to display invitations sent and invitations received.
@@ -51,7 +51,7 @@ def invitesFromThisUser():
                 newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id, user=invite.receivingUser)
                 invitationList.append(newInvite)
 
-    return render_template("invites.html", invitationList=invitationList, isRecepientRole=False)
+    return render_template("invites.html", invitationList=invitationList, isRecepientRole=False, isRequest=False)
 
 
 # Submit a status update for an Accept/Reject
@@ -79,6 +79,37 @@ def inviteSubmit():
             flash('Status Has Been Updated!', 'success')
     else:
         flash('Something Went Wrong, Try Again!', 'danger')
+
+    return redirect(url_for('.invites'))
+
+
+@app.route('/view/request', methods=['GET', 'POST'])
+@login_required
+def viewInviteRequest():
+    requestList = []
+    for request, active in db.session.query(InvitationRequest, Activity).\
+        filter(InvitationRequest.activityID == Activity.id, InvitationRequest.activityUserID == g.user.id).all():
+            newRequest=dict(activityName=active.name, description=active.description, user=request.requesterUserID) 
+            requestList.append(newInvite)
+
+    ## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
+    return render_template("invites.html", invitationList=requestList, isRequest=True)
+
+
+@app.route('/requests', methods=['GET', 'POST'])
+@login_required
+def inviteRequests():
+    invitationID = request.values.get('inviteID')
+    invition = Invitation.query.filter_by(id=invitationID).limit(1).first()
+    activity = Activity.query.filter_by(id=invition.activityID).limit(1).first()
+    seeker = Seeker.query.filter_by(id=activity.seekerID).limit(1).first()
+
+    if (activity.id and seeker.userID):
+        invition.requestSent = True
+        newRequest = InvitationRequest(activity.id, g.user.id, seeker.userID)
+        db.session.add(newRequest)
+        db.session.commit()
+        flash('Request Has Been Sent!', 'success')
 
     return redirect(url_for('.invites'))
 

@@ -444,7 +444,7 @@ class Invitation(db.Model):
     activity = db.relationship('Activity', backref='invitation', uselist=False, lazy='joined')
     invitingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[invitingUserID])
     receivingUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[receivingUserID])
-
+    requestSent = db.Column(db.Boolean, default=False)
     accepted = db.Column(db.Boolean)
     canceled = db.Column(db.Boolean, default=False)
 
@@ -457,6 +457,25 @@ class Invitation(db.Model):
         self.invitingUserID = invitingUserID
         self.receivingUserID = receivingUserID
         self.skillID = skillID
+
+    def __repr__(self):
+        return modelToString(self)
+
+
+class InvitationRequest(db.Model):
+    __tablename__ = 'invitation_request'
+
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True, nullable=False, index=True)
+    requesterUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    activityUserID = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    activityID = db.Column(db.INTEGER, db.ForeignKey('activity.id'))
+    accepted = db.Column(db.Boolean)
+
+    def __init__(self, activityID, requesterUserID, activityUserID):
+
+        self.activityID = activityID
+        self.requesterUserID = requesterUserID
+        self.activityUserID = activityUserID
 
     def __repr__(self):
         return modelToString(self)

@@ -15,14 +15,21 @@
         {% endwith %}
         <div class="row">
             <br/>
-            {%  if isRecepientRole %}
-            <h1 style="text-align:center;">
-                <span class="glyphicon"></span> <b>Invitations Received</b>
-            </h1>
-            {% else %}
-            <h1 style="text-align:center;">
-                <span class="glyphicon"></span> <b>Invitations Sent</b>
-            </h1>            {%  endif %}
+                {%  if isRequest %}
+                    <h1 style="text-align:center;">
+                        <span class="glyphicon"></span> <b>Invitations Request</b>
+                    </h1>
+                {% else %}
+                    {%  if isRecepientRole %}
+                    <h1 style="text-align:center;">
+                        <span class="glyphicon"></span> <b>Invitations Received</b>
+                    </h1>
+                    {% else %}
+                    <h1 style="text-align:center;">
+                        <span class="glyphicon"></span> <b>Invitations Sent</b>
+                    </h1>            
+                    {%  endif %}
+                {%  endif %}
             <br/>
         </div>
         <div class="container" id="catlist" style="padding-left:20px">
@@ -32,16 +39,19 @@
                     <thead>
                         <th><h3><b>Activity</b></h3></th>
                         <th><h3><b>Description</b></h3></th>
-
-                        {%  if isRecepientRole %}
-                            <th><h3><b>From User</b></h3></th>
-                            <th><h3><b>Status</b></h3></th>
-                            <th><h3><b>Accept</b></h3></th>
-                            <th><h3><b>Reject</b></h3></th>
+                        {%  if isRequest %}
+                            <th><h3><b>From User</b></h3></th> 
                         {% else %}
-                           <th><h3><b>To User</b></h3></th>
-                            <th><h3><b>Status</b></h3></th>
-                            <th><h3><b>Cancel</b></h3></th>
+                            {%  if isRecepientRole %}
+                                <th><h3><b>From User</b></h3></th>
+                                <th><h3><b>Status</b></h3></th>
+                                <th><h3><b>Accept</b></h3></th>
+                                <th><h3><b>Reject</b></h3></th>
+                            {% else %}
+                                <th><h3><b>To User</b></h3></th>
+                                <th><h3><b>Status</b></h3></th>
+                                <th><h3><b>Cancel</b></h3></th>
+                            {%  endif %}
                         {%  endif %}
                     </thead>
                     <thead>
@@ -50,29 +60,38 @@
                         <td> <h5 class="h5" style="color:black"> {{ invite.activityName }} </h5> </td>
                         <td> <h5 class="h5" style="color:black"> {{ invite.description }} </h5> </td>
                         <td align="center"> <h5 class="h5" style="color:black"> <a href="/profile/{{invite.user.username}}">{{ invite.user.firstName }} {{ invite.user.lastName }}</a></h5> </td>
-
-                        {% if invite.accepted == True  %}
-                            <td> <h5 class="h5" style="color:black"> Accepted </h5> </td>
-                        {% else %}
-                            {% if invite.accepted == False  %}
-                                <td> <h5 class="h5" style="color:black"> Rejected </h5> </td>
+                        {%  if not isRequest %}
+                            {% if invite.accepted == True  %}
+                                <td align="center"> <h5 class="h5" style="color:black"> Accepted </h5> </td>
                             {% else %}
-                                <td> <h5 class="h5" style="color:black"> Unknown </h5> </td>
+                                {% if invite.accepted == False  %}
+                                    <td align="center"> <h5 class="h5" style="color:black"> Rejected </h5> </td>
+                                {% else %}
+                                    <td align="center"> <h5 class="h5" style="color:black"> Unknown </h5> </td>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                        {% if invite.accepted == None  %}
-                            {%  if isRecepientRole %}
-                                <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=1 "> Accept </a> </td>
-                                <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
+                            {% if invite.accepted == None  %}
+                                {%  if isRecepientRole %}
+                                    <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=1 "> Accept </a> </td>
+                                    <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
+                                {% else %}
+                                    <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/cancel?id={{invite.id}}&cancel=1 "> Cancel </a> </td>
+                                {% endif %}
                             {% else %}
-                                <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/cancel?id={{invite.id}}&canel=1 "> Cancel </a> </td>
-                            {% endif %}
-                        {% else %}
-                            {%  if isRecepientRole %}
-                                <td align="center"></td>
-                                <td align="center"></td>
-                            {% else %}
-                                <td align="center"></td>
+                                {%  if isRecepientRole %}
+                                    {% if  invite.accepted == True %}
+                                        <td align="center"></td>
+                                        <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
+                                    {% else %}
+                                        {% if invite.requestSent  %}
+                                            <td align="center" colspan="2"> <h5 class="h5" style="color:Green"> Request Sent </h5> </td>
+                                        {% else %}
+                                            <td align="center" colspan="2"> <a class="btn btn-sm btn-action" href=" /invites/requests?inviteID={{invite.id}} "> Request Invitation </a> </td>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <td align="center"></td>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </tr>
