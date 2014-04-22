@@ -88,7 +88,7 @@ def inviteSubmit():
 def viewInviteRequest():
     requestList = []
     for request, active in db.session.query(InvitationRequest, Activity).\
-        filter(InvitationRequest.activityID == Activity.id, InvitationRequest.activityUserID == g.user.id).all():
+        filter(InvitationRequest.activityID == Activity.id, InvitationRequest.activityUserID == g.user.id, InvitationRequest.accepted == None).all():
             newRequest=dict(activityName=active.name, description=active.description, user=request.requesterUser) 
             requestList.append(newRequest)
 
