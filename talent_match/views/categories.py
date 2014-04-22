@@ -6,6 +6,9 @@ from functools import wraps
 from sqlalchemy.sql import func
 from talent_match import db
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Blueprint('categories', __name__, template_folder="templates", url_prefix="/categories")
 
@@ -80,16 +83,16 @@ def editCategory():
     form = EditCategoryForm()
     # Validate the submitted data
     if form.validate_on_submit():
-        print(form.data)
-        print(form.name.data)
-        print(form.description.data)
+        logger.info(form.data)
+        logger.info(form.name.data)
+        logger.info(form.description.data)
         isCreate = False
         if (form.id.data == ''):
             isCreate = True
         if (isCreate):
             category = Category.query.filter_by(name=form.name.data).limit(1).first()
             if (category != None):
-                print('existing category error')
+                logger.info('existing category error')
                 flash('Category already exists', 'error')
                 return render_template("edit_category.html", editCategory=None, form=form, isAddTalent=True)
             else:

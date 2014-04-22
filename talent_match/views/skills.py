@@ -5,6 +5,9 @@ from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, 
 from functools import wraps
 from talent_match import db
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Blueprint('skills', __name__, template_folder="templates", url_prefix="/skills")
 

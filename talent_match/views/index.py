@@ -5,6 +5,9 @@ from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, 
 import json
 from talent_match import db
 from config import POSTS_PER_PAGE
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Blueprint('index', __name__, template_folder="templates")
 

@@ -4,6 +4,9 @@ from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Act
 from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm, DeleteProfileForm, PasswordResetForm
 from talent_match import db
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Blueprint('profile', __name__, template_folder="templates", url_prefix="/profile")
 

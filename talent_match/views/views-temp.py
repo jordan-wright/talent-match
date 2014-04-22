@@ -7,6 +7,9 @@ from sqlalchemy.sql import func
 from functools import wraps
 from config import POSTS_PER_PAGE
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Jordan - We can remove this file soon.
 

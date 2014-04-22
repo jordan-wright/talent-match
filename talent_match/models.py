@@ -1,5 +1,8 @@
 import sys
 from talent_match import db
+import logging
+
+logger = logging.getLogger(__name__)
 
 ## Project 3:  Steve - adding relationships and navigation
 ## Adapted from: https://bitbucket.org/zzzeek/sqlalchemy/wiki/UsageRecipes/GenericOrmBaseClass
@@ -169,7 +172,7 @@ class Provider(db.Model):
                     db.session.commit()
             except:
                 exception = sys.exc_info()[0]
-                print "Unexpected exception: " + exception
+                logger.info("Unexpected exception: " + exception)
                 result = False
 
         return result

@@ -3,6 +3,9 @@ from talent_match.models import User,Skill,Category,Seeker,Provider,ProviderSkil
 from talent_match import db
 import re
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 __author__ = 'Steve'
 
@@ -17,7 +20,7 @@ def addZipCodeData(fileName):
 
     if not testZip:
         #pnotrint (time.strftime("%H:%M:%S"))
-        print "DB initialization - adding ZIP code entries."
+        logger.info("DB initialization - adding ZIP code entries.")
         commitInterval = 25
         count = 0
 
@@ -53,10 +56,10 @@ def addZipCodeData(fileName):
 
 
             db.session.commit() # last save
-            print (time.strftime("%H:%M:%S"))
+            logger.info (time.strftime("%H:%M:%S"))
 
 def addTestData() :
-    print 'This should not be called anymore.'
+    logger.info('This should not be called anymore.')
 
 def addInternalTestData() :
     userList = None
@@ -66,9 +69,9 @@ def addInternalTestData() :
     skillList = Skill.query.order_by(Skill.name)
 
     if (userList == None) or (userList.count() < 1):
-        print("Adding default user(s)")
+        logger.info("Adding default user(s)")
 
-        print("Adding user='admin'")
+        logger.info("Adding user='admin'")
         admin = User()
         admin.is_admin = True; admin.username = 'admin'; admin.email = 'admin@talent-match.us'
         admin.pwd_hash ='$2a$12$5XpK1rXasJv1Zdz7ABxMN.EyHERZ7WqMUjmRQeFALP7LEbrNB8tb2' # admin!
@@ -80,7 +83,7 @@ def addInternalTestData() :
         db.session.add(provider)
         db.session.commit()
 
-        print("Adding user='sally'")
+        logger.info("Adding user='sally'")
         sally = User()
         sally.is_admin = True; sally.username = 'sally'; sally.email = 'sally@talent-match.us'
         sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' # sally!
@@ -96,7 +99,7 @@ def addInternalTestData() :
         db.session.add(sallyProvider)
         db.session.commit()
 
-        print("Adding user='sally.smith'")
+        logger.info("Adding user='sally.smith'")
         sally = User()
         sally.is_admin = False; sally.username = 'sally.smith'; sally.email = 'sally.smith@talent-match.us'
         sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' # sally!
@@ -113,7 +116,7 @@ def addInternalTestData() :
         db.session.add(sallyProvider)
         db.session.commit()
 
-        print("Adding user='steve'")
+        logger.info("Adding user='steve'")
         steve = User()
         steve.is_admin = True
         steve.username = 'steve'
@@ -132,7 +135,7 @@ def addInternalTestData() :
         db.session.commit()
 
 
-        print("Adding user='sam.smith'")
+        logger.info("Adding user='sam.smith'")
         sam = User()
         sam.is_admin = False; sam.username = 'sam.smith'; sam.email = 'sam.smith@talent-match.us'
         sam.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
@@ -148,7 +151,7 @@ def addInternalTestData() :
         db.session.add(samProvider)
         db.session.commit()
 
-        print("Adding user='sammy.smith'")
+        logger.info("Adding user='sammy.smith'")
         sammy = User()
         sammy.is_admin = False; sammy.username = 'sammy.smith'; sammy.email = 'sammy.smith@talent-match.us'
         sammy.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
@@ -165,7 +168,7 @@ def addInternalTestData() :
         db.session.commit()
 
 
-        print("Adding user='mike.smith'")
+        logger.info("Adding user='mike.smith'")
         mike = User()
         mike.is_admin = False; mike.username = 'mike.smith'; mike.email = 'mike.smith@talent-match.us'
         mike.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
@@ -181,7 +184,7 @@ def addInternalTestData() :
         db.session.add(mikeProvider)
         db.session.commit()
 
-        print("Adding user='mikey.smith'")
+        logger.info("Adding user='mikey.smith'")
         mikey = User()
         mikey.is_admin = False; mikey.username = 'mikey.smith'; mikey.email = 'mikey.smith@talent-match.us'
         mikey.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
@@ -217,7 +220,7 @@ def addInternalTestData() :
                   ['Acoustical', 'Manufacturing', 'Thermal', 'Vehicle', 'Oil/Petroleum', 'Fluid dynamics'],
               'EmptyCategoryTest' : [],
             }
-        print("Adding default categories")
+        logger.info("Adding default categories")
         for categoryName in categoryList:
             skillList = categoryList[categoryName]
             category = Category(categoryName, 'no description available')
@@ -229,7 +232,7 @@ def addInternalTestData() :
             # at the end of the skills ... one last commit
             db.session.commit()
 
-        print("Adding a couple of existing skills to our sample users ... ")
+        logger.info("Adding a couple of existing skills to our sample users ... ")
 
         mechEngrCategory = None
         mechSkill = None
@@ -249,174 +252,174 @@ def addInternalTestData() :
             softwareSkillJava = Skill.query.filter_by(name = 'Java').first()
             softwareSkillPython = Skill.query.filter_by(name = 'Python').first()
 
-        print("Checking the new category -> skill relationship ... ")
+        logger.info("Checking the new category -> skill relationship ... ")
         if (softwareCategory != None):
             mySkillList = softwareCategory.skillList
             for skill in mySkillList:
-                print( skill )
-        print("Checking the new skill -> category relationship ... ")
+                logger.info( skill )
+        logger.info("Checking the new skill -> category relationship ... ")
         if (softwareSkillCSharp != None):
             myCategory = softwareSkillCSharp.category
-            print myCategory
+            logger.info(myCategory)
 
-        print("Checking out the sally user ... ")
+        logger.info("Checking out the sally user ... ")
         user = User.query.filter_by(username='sally.smith').first()
         if (user != None):
-            print(user)
+            logger.info(user)
             if (user.seekerProfile):
-                print(user.seekerProfile)
+                logger.info(user.seekerProfile)
             else:
-                print("No seeker profile found.")
+                logger.info("No seeker profile found.")
             if (user.providerProfile):
-                print(user.providerProfile)
+                logger.info(user.providerProfile)
             else:
-                print("No provider profile found.")
+                logger.info("No provider profile found.")
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
                 # Let's add this skill to our user again.   The second time should fail
                 if (user.addSkill(mechSkill)):
-                    print "Fail - cannot add a skill to the same user twice."
+                    logger.info("Fail - cannot add a skill to the same user twice.")
                 else:
-                    print "Success - cannot add a skill to the same user twice."
+                    logger.info("Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
 
-        print("Checking out the sam user ... ")
+        logger.info("Checking out the sam user ... ")
         user = User.query.filter_by(username='sam.smith').first()
         if (user != None):
-            print(user)
+            logger.info(user)
             if (user.seekerProfile):
-                print(user.seekerProfile)
+                logger.info(user.seekerProfile)
             else:
-                print("No seeker profile found.")
+                logger.info("No seeker profile found.")
             if (user.providerProfile):
-                print(user.providerProfile)
+                logger.info(user.providerProfile)
             else:
-                print("No provider profile found.")
+                logger.info("No provider profile found.")
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
                 # Let's add this skill to our user again.   The second time should fail
                 if (user.addSkill(mechSkill)):
-                    print "Fail - cannot add a skill to the same user twice."
+                    logger.info("Fail - cannot add a skill to the same user twice.")
                 else:
-                    print "Success - cannot add a skill to the same user twice."
+                    logger.info("Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
 
-        print("Checking out the sammy user ... ")
+        logger.info("Checking out the sammy user ... ")
         user = User.query.filter_by(username='sammy.smith').first()
         if (user != None):
-            print(user)
+            logger.info(user)
             if (user.seekerProfile):
-                print(user.seekerProfile)
+                logger.info(user.seekerProfile)
             else:
-                print("No seeker profile found.")
+                logger.info("No seeker profile found.")
             if (user.providerProfile):
-                print(user.providerProfile)
+                logger.info(user.providerProfile)
             else:
-                print("No provider profile found.")
+                logger.info("No provider profile found.")
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
                 # Let's add this skill to our user again.   The second time should fail
                 if (user.addSkill(mechSkill)):
-                    print "Fail - cannot add a skill to the same user twice."
+                    logger.info("Fail - cannot add a skill to the same user twice.")
                 else:
-                    print "Success - cannot add a skill to the same user twice."
+                    logger.info("Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
 
 
-        print("Checking out the mike user ... ")
+        logger.info("Checking out the mike user ... ")
         user = User.query.filter_by(username='mike.smith').first()
         if (user != None):
-            print(user)
+            logger.info(user)
             if (user.seekerProfile):
-                print(user.seekerProfile)
+                logger.info(user.seekerProfile)
             else:
-                print("No seeker profile found.")
+                logger.info("No seeker profile found.")
             if (user.providerProfile):
-                print(user.providerProfile)
+                logger.info(user.providerProfile)
             else:
-                print("No provider profile found.")
+                logger.info("No provider profile found.")
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
                 # Let's add this skill to our user again.   The second time should fail
                 if (user.addSkill(mechSkill)):
-                    print "Fail - cannot add a skill to the same user twice."
+                    logger.info("Fail - cannot add a skill to the same user twice.")
                 else:
-                    print "Success - cannot add a skill to the same user twice."
+                    logger.info("Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
 
 
-        print("Checking out the mikey user ... ")
+        logger.info("Checking out the mikey user ... ")
         user = User.query.filter_by(username='mikey.smith').first()
         if (user != None):
-            print(user)
+            logger.info(user)
             if (user.seekerProfile):
-                print(user.seekerProfile)
+                logger.info(user.seekerProfile)
             else:
-                print("No seeker profile found.")
+                logger.info("No seeker profile found.")
             if (user.providerProfile):
-                print(user.providerProfile)
+                logger.info(user.providerProfile)
             else:
-                print("No provider profile found.")
+                logger.info("No provider profile found.")
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
                 # Let's add this skill to our user again.   The second time should fail
                 if (user.addSkill(mechSkill)):
-                    print "Fail - cannot add a skill to the same user twice."
+                    logger.info("Fail - cannot add a skill to the same user twice.")
                 else:
-                    print "Success - cannot add a skill to the same user twice."
+                    logger.info("Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
 
 
-        print("Checking out the sally user skill navigation ... ")
+        logger.info("Checking out the sally user skill navigation ... ")
 
         user = User.query.filter_by(username='sally.smith').first()
         sallySkillList = user.getProviderSkillList()
         if (sallySkillList):
             for sallySkill in sallySkillList:
                 # This is the provider skill object (association class)
-                print(sallySkill)
+                logger.info(sallySkill)
                 skill = sallySkill.skill
                 # This is the common/shared skill object.
-                print(skill)
+                logger.info(skill)
 
 
-        print("Checking out the steve user ... ")
+        logger.info("Checking out the steve user ... ")
         user = User.query.filter_by(username='steve').first()
         if (user != None):
-            print(user)
+            logger.info(user)
             if (user.seekerProfile):
-                print(user.seekerProfile)
+                logger.info(user.seekerProfile)
             else:
-                print("No seeker profile found.")
+                logger.info("No seeker profile found.")
             if (user.providerProfile):
-                print(user.providerProfile)
+                logger.info(user.providerProfile)
             else:
-                print("No provider profile found.")
+                logger.info("No provider profile found.")
             if (softwareSkillCSharp != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5, False)
@@ -424,7 +427,7 @@ def addInternalTestData() :
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillJava, True)
 
-        print("Creating an activity for user='steve'")
+        logger.info("Creating an activity for user='steve'")
 
         user = User.query.filter_by(username='steve').first()
         activity = user.addActivity('Flask-based Coding Activity', "Need some help for Project 4 in Dr. Mengel's class!")
@@ -455,7 +458,7 @@ def addInternalTestData() :
             activity.addSkill(softwareSkillHtml5, 1)
 
 
-        print("Creating an activity for user='sally.smith'")
+        logger.info("Creating an activity for user='sally.smith'")
 
         user = User.query.filter_by(username='sally.smith').first()
         activity = user.addActivity('Advance Coding Activity', "Need some help for a Coding Project")
@@ -502,25 +505,25 @@ def addInternalTestData() :
             activity.addSkill(softwareSkillHtml5, 1)
 
 
-        print("Checking the activity navigation ... ")
+        logger.info("Checking the activity navigation ... ")
 
         user = User.query.filter_by(username='steve').first()
         activityList = user.getActivityList()
         if (activityList):
             # The activity list
             for act in activityList:
-                print(act)
+                logger.info(act)
                 activitySkillList = act.activitySkillList
                 if (activitySkillList):
                     for activitySkill in activitySkillList:
-                        print activitySkill
-                        print activitySkill.skill
+                        logger.info(activitySkill)
+                        logger.info(activitySkill.skill)
                 else:
-                    print "Error - activity skill list is empty."
+                    logger.info("Error - activity skill list is empty.")
 
         # create a test invitation
         #softwareSkillHtml5
-        print 'Creating a sample invitation'
+        logger.info('Creating a sample invitation')
         invitedUser = User.query.filter_by(username = 'mike.smith').first()
         invitingUser = User.query.filter_by(username='steve').first()
         activity = Activity.query.filter_by(seekerID='4').first()
@@ -550,21 +553,21 @@ def addInternalTestData() :
         invitedUser = invitation.receivingUser
         invitingUser = invitation.invitingUser
 
-        print "Checking invitation navigation:"
+        logger.info("Checking invitation navigation:")
         if (invitingUser):
-            print(invitingUser)
+            logger.info(invitingUser)
         else:
-            print("Invitation navigation failed.")
+            logger.info("Invitation navigation failed.")
         if (invitedUser):
-            print(invitedUser)
+            logger.info(invitedUser)
         else:
-            print("Invitation navigation failed.")
+            logger.info("Invitation navigation failed.")
 
         ##
         ## Project 4: Adding some test loading for the ActivityFeedback
         ##
-        print("Testing feedback creation - reusing last used activity users" )
-        print("Trying to create a feedback item - reviewing a talent provider" )
+        logger.info("Testing feedback creation - reusing last used activity users" )
+        logger.info("Trying to create a feedback item - reviewing a talent provider" )
         feedback = ActivityFeedback()
         feedback.activityID = activity.id
         feedback.reviewedUserID = invitedUser.id
@@ -576,7 +579,7 @@ def addInternalTestData() :
         db.session.add(feedback)
         db.session.commit()
 
-        print("Trying to create a feedback item - reviewing a talent seeker")
+        logger.info("Trying to create a feedback item - reviewing a talent seeker")
         feedback = ActivityFeedback()
         feedback.activityID = activity.id
         feedback.reviewedUserID = invitingUser.id
@@ -588,17 +591,17 @@ def addInternalTestData() :
         db.session.add(feedback)
         db.session.commit()
 
-        print("Checking feedback lookup(s) for each user ... ")
+        logger.info("Checking feedback lookup(s) for each user ... ")
         feedbackList = invitingUser.getFeedbackReceived()
         if (feedbackList):
             for feedback in feedbackList:
-                print(feedback)
+                logger.info(feedback)
 
-        print("Checking feedback lookup(s) for each user ... ")
+        logger.info("Checking feedback lookup(s) for each user ... ")
         feedbackList = invitedUser.getFeedbackReceived()
         if (feedbackList):
             for feedback in feedbackList:
-                print(feedback)
+                logger.info(feedback)
 
 
 

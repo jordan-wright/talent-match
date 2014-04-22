@@ -4,6 +4,9 @@ from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Act
 from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
 from talent_match import db
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Blueprint('activity', __name__, template_folder="templates", url_prefix="/activity")
 
@@ -29,14 +32,14 @@ def listActivityRequests():
 @login_required
 @app.route('/edit', methods=['GET', 'POST'])
 def editActivity():
-    print(request)
+    logging.info(request)
     isAddActivity = True # assume add to start
     activityID = None
     form = ActivityForm()
 
     # Validate the submitted data
     if form.validate_on_submit():
-        print(form.data)
+        logging.info(form.data)
 
         isCreate = False # initialization
         name = form.name.data

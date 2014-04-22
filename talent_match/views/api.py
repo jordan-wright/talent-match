@@ -4,6 +4,9 @@ from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Act
 from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
 from talent_match import db
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = Blueprint('api', __name__, template_folder="templates", url_prefix="/api")
 
@@ -93,8 +96,8 @@ def activitySkillInstance(activitySkillID):
         "message": "Invalid activity skill ID provided.",
     })
 
-    print request
-    print request.data
+    logging.info(request)
+    logging.info(request.data)
 
 
     activitySkill = ActivitySkill.query.get(activitySkillID)
@@ -225,8 +228,8 @@ def providerSkillInstance(providerSkillID):
         "message": "Invalid provider skill ID provided.",
     })
 
-    print request
-    print request.data
+    logging.info(request)
+    logging.info(request.data)
 
 
     providerSkill = ProviderSkill.query.get(providerSkillID)
