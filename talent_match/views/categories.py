@@ -34,12 +34,16 @@ def listCategories():
     #
     # This still seems to have a bug with the EmptyCategoryTest (category with no skills).
     # There is something here that will need to be addressed long-term.
+
+    # Project 4 - Steve - bug fix for issue #6 (originally in Project 2)
+    # Using this is the fix to get the count correct for an empty category.
     categories = []
-    for cat, myCount in db.session.query(Category, func.count('Skill.*')).\
-        outerjoin(Skill).\
-        group_by(Category).all():
-            newCat=dict(id=cat.id, name=cat.name, description=cat.description, count=myCount)
-            categories.append(newCat)
+    categoryList = Category.query.all()
+    for cat in categoryList:
+        myCount = 0
+        if (cat.skillList):
+            myCount = len(cat.skillList)
+        categories.append(dict(id=cat.id, name=cat.name, description=cat.description, count=myCount))
     categories.sort(key= lambda category: category['name'])
 
     return render_template("categories.html", form=form, categories=categories, user=g.user)
