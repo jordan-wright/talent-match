@@ -471,6 +471,10 @@ class InvitationRequest(db.Model):
     activityID = db.Column(db.INTEGER, db.ForeignKey('activity.id'))
     accepted = db.Column(db.Boolean)
 
+
+    requesterUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[requesterUserID])
+    activityUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[activityUserID])
+
     def __init__(self, activityID, requesterUserID, activityUserID):
 
         self.activityID = activityID

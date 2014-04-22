@@ -28,6 +28,15 @@
                     {% endif %}
                 </div>
             </div>
+            <div class="container" >
+                <div class="row mt centered">
+                    <div class="col-lg-12">
+                        {% if user != gUser %}
+                            <a style="margin-bottom:20px;" class="btn btn-lg btn-danger" href="/invites/create?id={{user.id}}"><span class="glyphicon glyphicon-envelope"></span> Invite</a>
+                        {% endif %}
+                    </div>  
+                </div>
+            </div>
         </div>
     </div>
     <div class="container" id="about" >
