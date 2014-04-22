@@ -63,7 +63,10 @@ def listSkills():
 def searchSkills():
     query = request.values.get('query')
     if not query: return redirect(url_for('index.index'))
-    return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
+    # Original:
+    # return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
+    ## Project 4 - Steve/Nick - adding a check on the typeahead query to exclude skills from a deleted category.
+    return jsonify(skills=[skill.serialize for skill in Skill.query.join(Category).filter(Skill.deleted==False,Category.deleted==False,Skill.name.like("%" + query + "%")).all()])
 
 
 @app.route('/delete', methods=['GET', 'POST'])
