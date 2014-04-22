@@ -26,10 +26,10 @@
                         <th>Description</th>
                         <!-- <th>Users with Skill Count</th> -->
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Delete/Restore</th>
                     </thead>
                     <thead>
-                {% for skill in skillList if (user.is_admin or not skill.deleted) %}
+                {% for skill in skillList if (user.is_admin or not category.deleted) %}
                     <tr>
                         {% if categoryFirst %}
                             <td> <h5 class="h5"> {{ skill.categoryName }} </h5></td>
@@ -53,11 +53,13 @@
                         <!-- <td> <h5 class="h5"> {{ skill.userCount }} </h5></td> -->
                         <!-- <td> <h5 class="h5"> Edit this skill  </h5></td> -->
                         <td> <a class="btn btn-sm btn-success" href="/skills/edit?id={{skill.id}}">Edit</a> </td>
+                        
                         {% if skill.deleted %}
-                            <td> <a class="btn btn-sm btn-success" href="/skill/restore?id={{skill.id}}">Restore</a> </td>
+                            <td style="text-align:center;"> <a class="btn btn-md btn-success" href="/skills/restore?id={{skill.id}}">Restore</a> </td>
                         {% else %}
-                            <td> <a class="btn btn-sm btn-danger" href="/skill/delete?id={{skill.id}}">Delete</a> </td>
+                            <td style="text-align:center;"> <a class="btn btn-md btn-danger" href="/skills/delete?id={{skill.id}}">Delete</a> </td>
                         {% endif %}
+                    
                     </tr>
                 {% endfor %}
                 </table>

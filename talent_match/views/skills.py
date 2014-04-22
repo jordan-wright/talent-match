@@ -40,7 +40,7 @@ def listSkills():
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).\
             filter(Skill.categoryID == myCategoryID).all():
-                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet',id=skill.id)
+                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet',id=skill.id, deleted=skill.deleted)
                 skillList.append(newSkill)
 
     else:
@@ -48,7 +48,7 @@ def listSkills():
         categoryFirst = True    # for better viewing all skills, put the category column first, then the skill.
         for cat,skill in db.session.query(Category, Skill).\
             filter(Category.id == Skill.categoryID).all():
-                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet', id=skill.id)
+                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet', id=skill.id, deleted=skill.deleted)
                 skillList.append(newSkill)
 
     if (skillList != None):
@@ -65,6 +65,29 @@ def searchSkills():
     if not query: return redirect(url_for('index.index'))
     return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
 
+
+@app.route('/delete', methods=['GET', 'POST'])
+@admin_required
+def deleteSkill():
+    skillID = request.values.get('id')
+    if skillID:
+        skill = Skill.query.get(skillID)
+        if (skill):
+            skill.deleted = True
+            db.session.commit()
+    return redirect('/skills')
+
+
+@app.route('/restore', methods=['GET', 'POST'])
+@admin_required
+def restoreSkill():
+    skillID = request.values.get('id')
+    if skillID:
+        skill = Skill.query.get(skillID)
+        if (skill):
+            skill.deleted = False
+            db.session.commit()
+    return redirect('/skills')
 
 @app.route('/edit', methods=['GET', 'POST'])
 @admin_required

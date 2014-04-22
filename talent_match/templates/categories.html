@@ -18,14 +18,14 @@
         <div class="container" id="catlist" style="padding-left:20px">
             <div class="col-lg-8 col-lg-offset-2">
                 <table class="table table-bordered">
-                    <thead>
+                    <thead >
                         <th>Category</th>
                         <th>Description</th>
                         <th>Skill Count</th>
                     {%  if user.is_admin  %}
                         <!-- Project 4 - Steve/Nick - changing this to allow delete/undelete as well. -->
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th style="text-align:center;" >Delete/Restore</th>
                     {%  endif %}
 
                     </thead>
@@ -44,9 +44,9 @@
                                <!--  <td> <h5 class="h5"> Edit this category  </h5></td> -->
                                 <td> <a class="btn btn-sm btn-success" href="/categories/edit?id={{category.id}}">Edit</a> </td>
                                 {% if category.deleted %}
-                                    <td> <a class="btn btn-sm btn-success" href="/categories/restore?id={{category.id}}">Restore</a> </td>
+                                    <td style="text-align:center;"> <a class="btn btn-md btn-success" href="/categories/restore?id={{category.id}}">Restore</a> </td>
                                 {% else %}
-                                    <td> <a class="btn btn-sm btn-danger" href="/categories/delete?id={{category.id}}">Delete</a> </td>
+                                    <td style="text-align:center;"> <a class="btn btn-md btn-danger" href="/categories/delete?id={{category.id}}">Delete</a> </td>
                                 {% endif %}
 
                             {% endif %}
