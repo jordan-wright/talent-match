@@ -90,9 +90,7 @@ def viewInviteRequest():
     for request, active in db.session.query(InvitationRequest, Activity).\
         filter(InvitationRequest.activityID == Activity.id, InvitationRequest.activityUserID == g.user.id, InvitationRequest.accepted == None).all():
             newRequest=dict(activityName=active.name, description=active.description, user=request.requesterUser) 
-            requestList.append(newRequest)
-
-    print(requestList)        
+            requestList.append(newRequest)       
 
     ## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
     return render_template("invites.html", invitationList=requestList, isRequest=True)

@@ -81,7 +81,7 @@ def deleteSkill():
         if (skill):
             skill.deleted = True
             db.session.commit()
-    return redirect('/skills')
+    return redirect('/skills?categoryID=' + str(skill.categoryID))
 
 
 @app.route('/restore', methods=['GET', 'POST'])
@@ -93,7 +93,7 @@ def restoreSkill():
         if (skill):
             skill.deleted = False
             db.session.commit()
-    return redirect('/skills')
+    return redirect('/skills?categoryID=' + str(skill.categoryID))
 
 @app.route('/edit', methods=['GET', 'POST'])
 @admin_required
