@@ -83,11 +83,7 @@
                                         <td align="center"></td>
                                         <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
                                     {% else %}
-                                        {% if invite.requestSent  %}
-                                            <td align="center" colspan="2"> <h5 class="h5" style="color:Green"> Request Sent </h5> </td>
-                                        {% else %}
-                                            <td align="center" colspan="2"> <a class="btn btn-sm btn-action" href=" /invites/requests?inviteID={{invite.id}} "> Request Invitation </a> </td>
-                                        {% endif %}
+                                        <td align="center" colspan="2"> <a class="btn btn-sm btn-action" href=" /invites/requests?inviteID={{invite.id}} "> Request Invitation </a> </td>
                                     {% endif %}
                                 {% else %}
                                     <td align="center"></td>

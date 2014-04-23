@@ -19,7 +19,7 @@ def invites():
     for invite, active in db.session.query(Invitation, Activity).\
         filter(Invitation.activityID == Activity.id, Invitation.receivingUserID == g.user.id).all():
             newInvite=dict(activityName=active.name, description=active.description, accepted=invite.accepted, id=invite.id,
-                           user=invite.invitingUser, requestSent=invite.requestSent)  # adding for project 4 - Steve
+                           user=invite.invitingUser)  # adding for project 4 - Steve
             invitationList.append(newInvite)
 
     ## Project 4 - minor changes to allow the same template to display invitations sent and invitations received.
