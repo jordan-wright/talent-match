@@ -107,7 +107,7 @@ def inviteRequests():
     seeker = Seeker.query.filter_by(id=activity.seekerID).limit(1).first()
 
     if (activity.id and seeker.userID):
-        invition.requestSent = True
+        db.session.delete(Invitation.query.filter_by(id=invitationID).first())
         newRequest = InvitationRequest(activity.id, g.user.id, seeker.userID)
         db.session.add(newRequest)
         db.session.commit()
