@@ -94,8 +94,8 @@
                         Location (ZIP): {{ form.forZipCode(class="form-control", disabled="disabled", required=false, placeholder="79401",value=activity.forZipCode) }}
                     </div>
                     <div class="col-lg-1" style="width:50%">
-                        Begin Date: {{ form.beginDate(class="form-control", type="date", required=false, value=activity.beginDate) }}
-                        End Date: {{ form.endDate(class="form-control", type="date", required=false, value=activity.endDate) }}
+                        Begin Date: {{ form.beginDate(class="form-control", type="date", required=false) }}
+                        End Date: {{ form.endDate(class="form-control", type="date", required=false) }}
                         Distance (miles): {{ form.distance(class="form-control", disabled="disabled", required=false, placeholder="100",value=activity.distance) }}
                     </div>
                 </div>

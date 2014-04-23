@@ -93,8 +93,10 @@ def editActivity():
             form.name.data = activity.name
             form.id.data = activity.id
 
-            form.beginDate.data = activity.beginDate
-            form.endDate.data = activity.endDate
+            if (activity.beginDate):
+                form.beginDate.data = activity.beginDate.date()
+            if (activity.endDate):
+                form.endDate.data = activity.endDate.date()
             ## Future: forZipCode, distance
         else:
             isAddActivity = True
