@@ -76,6 +76,7 @@
                             <li><a href="/profile/settings">Settings</a>
                             </li>
                             <li class="divider"></li>
+                            <li><a href="/activity/list">Activity List</a></li>
                             <li><a href="/invites">Invites Received
                             {% if invite_count %}
                                 <span class="label label-primary" style="margin-left:15px; border-radius:50%">{{invite_count}}</span>
@@ -83,8 +84,7 @@
                             </a>
                             
                             <li><a href="/invites/sent">Invites Sent</a></li>
-                            <li><a href="/activity/list">Activity List</a></li>
-                            <li><a href="/invites/view/request">Invites Request</a></li>
+                            <li><a href="/invites/view/request">Invite Requests</a></li>
                             <!-- for admin users, show additional options -->
                             {% if g.user.is_admin %}
                             <li class="divider"></li>

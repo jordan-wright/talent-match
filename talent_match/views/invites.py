@@ -163,6 +163,17 @@ def createInvite():
 
     return render_template("invites_create.html", form=form, inviteUser=inviteUser, user=g.user)
 
-
-
-
+# Project 4 - Steve - Cancel an invitation (before it was accepted)
+@app.route('/cancel', methods=['GET', 'POST'])
+@login_required
+def cancelInvite():
+    invitationID = request.values.get('id')
+    if (invitationID == None):
+        invitationID = request.values.get('invitationID')
+    if (invitationID != None):
+        invitation = Invitation.query.get(invitationID)
+        if (invitation):
+            db.session.delete(invitation)
+            db.session.commit()
+    # This is the only location that can cancel an invitation.
+    return redirect("/invites/sent")
