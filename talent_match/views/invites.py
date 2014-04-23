@@ -148,8 +148,8 @@ def createInvite():
         skill = Skill.query.filter_by(name=form.skills.data).limit(1).first()
         inviteRequest = InvitationRequest.query.filter_by(activityID=activity.id, requesterUserID=receivingUser.id, activityUserID=g.user.id, accepted=None).limit(1).first()
 
-        if (receivingUser.id and activity.id and skill.id):
-            if (inviteRequest.id):
+        if (receivingUser and activity and skill):
+            if (inviteRequest):
                 inviteRequest.accepted = True
             invitation = Invitation(activity.id, skill.id, g.user.id, receivingUser.id)
             db.session.add(invitation)
