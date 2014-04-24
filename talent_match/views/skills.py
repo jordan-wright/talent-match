@@ -76,24 +76,29 @@ def searchSkills():
 @admin_required
 def deleteSkill():
     skillID = request.values.get('id')
+    skill = None
     if skillID:
         skill = Skill.query.get(skillID)
         if (skill):
             skill.deleted = True
             db.session.commit()
-    return redirect('/skills?categoryID=' + str(skill.categoryID))
+    # Steve - putting this back to the right filter.
+    # return redirect('/skills')
+    return redirect('/skills?categoryID=' + str(skill.categoryID))  # Steve - putting this back to the right filter.
 
 
 @app.route('/restore', methods=['GET', 'POST'])
 @admin_required
 def restoreSkill():
     skillID = request.values.get('id')
+    skill = None
     if skillID:
         skill = Skill.query.get(skillID)
         if (skill):
             skill.deleted = False
             db.session.commit()
-    return redirect('/skills?categoryID=' + str(skill.categoryID))
+    #return redirect('/skills')
+    return redirect('/skills?categoryID=' + str(skill.categoryID))  # Steve - putting this back to the right filter.
 
 @app.route('/edit', methods=['GET', 'POST'])
 @admin_required

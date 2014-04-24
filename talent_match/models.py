@@ -448,6 +448,12 @@ class Invitation(db.Model):
     accepted = db.Column(db.Boolean)
     canceled = db.Column(db.Boolean, default=False)
 
+    ## Project 4 - Steve - adding a completed column as well.
+    completed = db.Column(db.Boolean, default=False, nullable=False)
+
+    ## Project 4 - Steve for Nick, I think - adding a requestSent column as well.
+    requestSent = db.Column(db.Boolean, default=False, nullable=True)
+
     def __init__(self, activityID, skillID, invitingUserID, receivingUserID):
 
         self.activityID = activityID

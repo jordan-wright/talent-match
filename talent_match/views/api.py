@@ -32,7 +32,9 @@ app = Blueprint('api', __name__, template_folder="templates", url_prefix="/api")
 @app.route('/categories', methods=['GET'])
 @app.route('/categories.json', methods=['GET'])
 def categoriesAsJson():
-    categoryList = Category.query.all()
+    # Project 4 - Steve - adding the deleted filter to remove deleted categories and sort by name.
+    #categoryList = Category.query.filter_by(deleted=False).order_by(Category.name).all()
+    categoryList = Category.query.filter_by(deleted=False).order_by(Category.name).all()
     data = [category.serialize for category in categoryList]
     # Note: we can opt to switch to json.dumps to remove the key sorting if desired.
     result = jsonify(
@@ -41,8 +43,6 @@ def categoriesAsJson():
                 "message": "Loaded data",
                 "data" : data
             })
-
-    # return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
     return result
 
 # Project 3 - Steve
@@ -62,14 +62,15 @@ def categoriesAsJson():
 @app.route('/skills', methods=['GET', 'POST'])
 @app.route('/skills/skills.json', methods=['GET', 'POST'])
 def skillsAsJson():
-    # To get a list of skills, the caller must provide a
+    # To get a list of skills, the caller must provide a category id to filter the skills.
     categoryID = request.values.get('id')
     if ( categoryID == None):
         categoryID = request.values.get('categoryID')
     if (categoryID == None):
         return redirect(url_for('index.index'))
     else:
-        skillList = Skill.query.filter_by(categoryID=categoryID).all()
+        # Project 4 - Steve - adding the deleted filter to remove deleted categories and sort by name.
+        skillList = Skill.query.filter_by(categoryID=categoryID,deleted=False).order_by(Skill.name).all()
         # Coerce the result to return an empty array instead of a null.
         if (skillList == None):
             skillList = []
