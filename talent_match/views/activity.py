@@ -23,6 +23,21 @@ def listActivityRequests():
     form = None
     return render_template("activity_list.html", activities=activities, user=g.user)
 
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def viewActivityProfile():
+    activityID = request.values.get('id')
+    activity = None
+
+    if (activityID):
+        activity = Activity.query.get(activityID)
+
+    return render_template("activity_profile.html", activity=activity)
+
+
+
 # Project 3 - Steve
 # Either create a new activity for the current user or edit an existing activity.
 #
@@ -94,9 +109,9 @@ def editActivity():
             form.id.data = activity.id
 
             if (activity.beginDate):
-                form.beginDate.data = activity.beginDate.date()
+                form.beginDate.data = activity.beginDate
             if (activity.endDate):
-                form.endDate.data = activity.endDate.date()
+                form.endDate.data = activity.endDate
             ## Future: forZipCode, distance
         else:
             isAddActivity = True

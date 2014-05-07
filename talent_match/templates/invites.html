@@ -40,24 +40,25 @@
                         <th><h3><b>Activity</b></h3></th>
                         <th><h3><b>Description</b></h3></th>
                         {%  if isRequest %}
-                            <th><h3><b>From User</b></h3></th> 
+                            <th><h3 align="center"><b>From User</b></h3></th> 
                         {% else %}
                             {%  if isRecepientRole %}
-                                <th><h3><b>From User</b></h3></th>
-                                <th><h3><b>Status</b></h3></th>
-                                <th><h3><b>Accept</b></h3></th>
-                                <th><h3><b>Reject</b></h3></th>
+                                <th><h3 align="center"><b>From User</b></h3></th>
+                                <th><h3 align="center"><b>Status</b></h3></th>
+                                <th><h3 align="center"><b>Accept</b></h3></th>
+                                <th><h3 align="center"><b>Reject</b></h3></th>
                             {% else %}
-                                <th><h3><b>To User</b></h3></th>
-                                <th><h3><b>Status</b></h3></th>
-                                <th><h3><b>Cancel</b></h3></th>
+                                <th><h3 align="center"><b>To User</b></h3></th>
+                                <th><h3 align="center"><b>Status</b></h3></th>
+                                <th><h3 align="center"><b>Cancel</b></h3></th>
                             {%  endif %}
                         {%  endif %}
                     </thead>
                     <thead>
                 {% for invite in invitationList %}
                     <tr>
-                        <td> <h5 class="h5" style="color:black"> {{ invite.activityName }} </h5> </td>
+                        <td> <h5 class="h5" style="color:black"> 
+                            <a href="/activity/profile?id={{invite.activityID}}">{{ invite.activityName }} </a> </h5> </td>
                         <td> <h5 class="h5" style="color:black"> {{ invite.description }} </h5> </td>
                         <td align="center"> <h5 class="h5" style="color:black"> <a href="/profile/{{invite.user.username}}">{{ invite.user.firstName }} {{ invite.user.lastName }}</a></h5> </td>
                         {%  if not isRequest %}

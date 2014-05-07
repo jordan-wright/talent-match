@@ -34,7 +34,11 @@
                     <thead>
                 {% for activity in activities %}
                     <tr>
-                        <td> <h5 class="h5" style="color:black"> {{ activity.name }} </h5> </td>
+                        <td> 
+                            <h5 class="h5" style="color:black"> 
+                                <a href="/activity/profile?id={{activity.id}}">{{ activity.name }} </a>
+                            </h5> 
+                        </td>
                         <td> <h5 class="h5" style="color:black"> {{ activity.description }} </h5> </td>
                         <td> <h5 class="h5"> <a class="btn btn-sm btn-success" href="/activity/edit?id={{activity.id}}">Edit</a> </h5> </td>
                         <!-- Project 4 - Steve - Added activity completion status -->
