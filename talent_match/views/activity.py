@@ -1,10 +1,14 @@
+import logging
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation, InvitationRequest
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
+
+# Project 5 - Steve - adjusting imports to minimal set after model changes.
 from talent_match import db
-import json
-import logging
+from ..models.userProfile import Seeker
+from ..models.activity import  Activity
+from ..forms import ActivityForm
+
 
 logger = logging.getLogger(__name__)
 

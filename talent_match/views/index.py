@@ -1,11 +1,16 @@
+import logging
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
-from flask.ext.login import login_user, login_required, logout_user
-from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation, InvitationRequest
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
-import json
+from flask.ext.login import login_required
+
+from ..models.talentInfo import Category, Skill
+from ..models.userProfile import  ProviderSkill
+from ..models.invitation import Invitation
+
+from ..forms import SearchForm
+
 from talent_match import db
 from config import POSTS_PER_PAGE
-import logging
+from talent_match.models.userProfile import User, Provider
 
 logger = logging.getLogger(__name__)
 

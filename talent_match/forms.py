@@ -4,7 +4,6 @@ from wtforms import TextField, PasswordField, TextAreaField, IntegerField, Selec
 from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, FormField, FieldList, SubmitField
 from wtforms_html5 import DateField #as Html5DateField, DateRange
 from wtforms.validators import Required, EqualTo, Length
-from talent_match.models import Activity, ActivitySkill, User, Seeker, Skill, Category
 
 class LoginForm(Form):
 	email = TextField('email', validators=[Required()])

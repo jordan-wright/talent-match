@@ -1,9 +1,17 @@
 
-from talent_match.models import User,Skill,Category,Seeker,Provider,ProviderSkill,Invitation,Activity,ActivitySkill,ActivityFeedback,USZipCodeToLatitudeLongitude
-from talent_match import db
 import re
 import time
 import logging
+
+from talent_match import db
+
+from ..models.talentInfo import Category, Skill
+from ..models.userProfile import  Seeker
+from ..models.activity import  Activity, ActivityFeedback
+from ..models.invitation import Invitation
+from ..models.zipCode import USZipCodeToLatitudeLongitude
+
+from talent_match.models.userProfile import User, Provider
 
 logger = logging.getLogger(__name__)
 

@@ -1,15 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
-from flask.ext.login import login_user, login_required, logout_user
-from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation, InvitationRequest
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
 from functools import wraps
-from sqlalchemy.sql import func
-from talent_match import db
-import json
 import logging
 
-logger = logging.getLogger(__name__)
+from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
+from flask.ext.login import login_required
 
+# Project 5: adjusted imports to the minimal subset after model separation.
+from talent_match import db
+from ..models.talentInfo import Category
+from ..forms import EditCategoryForm
+
+logger = logging.getLogger(__name__)
 app = Blueprint('categories', __name__, template_folder="templates", url_prefix="/categories")
 
 def admin_required(f):

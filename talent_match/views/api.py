@@ -1,13 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
-from flask.ext.login import login_user, login_required, logout_user
-from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation, InvitationRequest
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm
-from talent_match import db
 import json
 import logging
 
-logger = logging.getLogger(__name__)
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask.ext.login import login_required
 
+# Project 5 - Steve - adjusting imports to minimal set after model changes.
+from talent_match import db
+from ..models.talentInfo import Category, Skill
+from ..models.userProfile import  User, ProviderSkill
+from ..models.activity import  Activity, ActivitySkill
+
+
+logger = logging.getLogger(__name__)
 app = Blueprint('api', __name__, template_folder="templates", url_prefix="/api")
 
 # Project 3 - Steve

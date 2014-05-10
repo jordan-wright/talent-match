@@ -4,10 +4,19 @@ from flaskext.bcrypt import Bcrypt
 from flask.ext.login import LoginManager, current_user
 from flask.ext.gravatar import Gravatar
 
+# Create the basic Flask application
 app = Flask(__name__)
 app.config.from_object('config')
 
+
+# Create the object-to-relational mapping engine for the application
 db = SQLAlchemy(app)
+
+## Project 5 - moved this until after the db object was created.
+## Note: this should occur here.
+from talent_match.models.userProfile import User
+
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
@@ -39,7 +48,7 @@ app.register_blueprint(api.app)
 # Provide the user loader to the login manager
 @login_manager.user_loader
 def user_loader(user_id):
-    return models.User.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 # Preprocessing
 @app.before_request

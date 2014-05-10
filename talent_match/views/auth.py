@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_user, login_required, logout_user
-from ..models import User, Category, Skill, Seeker, Provider, ProviderSkill, Activity, ActivitySkill, Invitation, InvitationRequest
-from ..forms import LoginForm, RegisterForm, EditProfileForm, EditCategoryForm, EditSkillForm, SearchForm, CreateInviteForm, ActivityForm, DeleteProfileForm, PasswordResetForm
+
+# Project 5 - Steve - Adjusted imports to minimal subset
+from ..models.userProfile import  User, Seeker, Provider
+from ..forms import LoginForm, RegisterForm, DeleteProfileForm, PasswordResetForm
+
 from talent_match import bcrypt, db
-import json
 import logging
 
 logger = logging.getLogger(__name__)
