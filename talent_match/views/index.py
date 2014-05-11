@@ -81,7 +81,15 @@ def advancedSearchPrep():
         logger.info(form.data)
         return render_template('advanced_search2.html', search=None, users=None, gUser=g.user, form=form, advancedSearch=True)
 
-# Project 5 - Steve - adding support for a more advanced search; reusing existing search result template if possible.
+##
+## Project 5 - Steve - adding support for a more advanced search.
+##
+## This method uses information collected by  advancedSearchPrep(), above, to perform an advanced search.
+## With time and technology restrictions, the advanced search is being performed in memory.
+##
+## Assistance on the Haversine algorithm in Python was obtained from:
+##
+##
 @app.route('/search/advanced/query', methods=['GET', 'POST'])
 @app.route('/search/advanced/query/<int:page>', methods = ['GET', 'POST'])
 def makeAdvancedSearch(page = 1):
