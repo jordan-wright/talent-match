@@ -82,3 +82,7 @@ class PasswordResetForm(Form):
 	current_password = PasswordField('current_password', validators=[Required()])
 	new_password = PasswordField('new_password', validators=[Required(), EqualTo('confirm_password', message='Passwords must match')])
 	confirm_password = PasswordField('confirm_password', validators=[Required()])
+
+class FeedbackForm(Form):
+	rating = SelectField(u'Rating', validators=[Required()])
+	feedback = TextAreaField('Feedback', validators=[Required()])

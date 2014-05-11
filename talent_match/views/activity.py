@@ -5,9 +5,10 @@ from flask.ext.login import login_user, login_required, logout_user
 
 # Project 5 - Steve - adjusting imports to minimal set after model changes.
 from talent_match import db
-from ..models.userProfile import Seeker
-from ..models.activity import  Activity
-from ..forms import ActivityForm
+from ..models.userProfile import Seeker, User
+from ..models.invitation import Invitation
+from ..models.activity import  Activity, ActivityFeedback
+from ..forms import ActivityForm, FeedbackForm
 
 
 logger = logging.getLogger(__name__)
@@ -34,11 +35,43 @@ def listActivityRequests():
 def viewActivityProfile():
     activityID = request.values.get('id')
     activity = None
+    oldFeedback = None
+    isPartOfActivity = False
+    sum = 0
+    form = FeedbackForm()
 
+    if (form.rating.choices == None):
+        form.rating.choices = [('5', '5'), ('4', '4'), ('3', '3'), ('2', '2'), ('1', '1')]
+
+    if form.validate_on_submit():
+        activity = Activity.query.get(activityID)
+        oldFeedback = ActivityFeedback.query.filter_by(activityID=activity.id, feedbackUserID=g.user.id).limit(1).first()
+        if (oldFeedback != None):
+            db.session.delete(oldFeedback)
+            db.session.commit()
+        
+        seeker = Seeker.query.get(activity.seekerID)
+        newFeedback = ActivityFeedback(activity.id, seeker.userID , g.user.id, form.feedback.data, form.rating.data)
+        db.session.add(newFeedback)
+        db.session.commit()
+        form.feedback.data = ''
+        flash('Feedback has been posted!', 'success')
+    
     if (activityID):
         activity = Activity.query.get(activityID)
+        PartOfActivity = Invitation.query.filter_by(activityID = activity.id, receivingUserID = g.user.id, accepted=True).limit(1).first()
+        if (PartOfActivity != None):
+            isPartOfActivity = True
+        feedback = ActivityFeedback.query.filter_by(activityID = activity.id).all()
+        feedbackCount = ActivityFeedback.query.filter_by(activityID = activity.id).count()
+        for feed in feedback:
+            sum += feed.rating
+        if (feedbackCount > 0):
+            avg = sum/feedbackCount
+        else:
+            avg = 'N/A'
 
-    return render_template("activity_profile.html", activity=activity)
+    return render_template("activity_profile.html", activity=activity, feedback=feedback, form=form, canLeaveFeedback=isPartOfActivity, avgRating=avg)
 
 
 

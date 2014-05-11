@@ -576,26 +576,16 @@ def addInternalTestData() :
         ##
         logger.info("Testing feedback creation - reusing last used activity users" )
         logger.info("Trying to create a feedback item - reviewing a talent provider" )
-        feedback = ActivityFeedback()
-        feedback.activityID = activity.id
-        feedback.reviewedUserID = invitedUser.id
-        feedback.feedbackUserID = invitingUser.id
+        feedback = ActivityFeedback( activity.id, invitingUser.id, invitedUser.id, "Steve did a great job! We were paid for our work.", 5)
         feedback.reviewedUserRole = "seeker"
         feedback.feedbackUserRole = "provider"
-        feedback.rating = 5
-        feedback.review_comments = "Sally did a great job!"
         db.session.add(feedback)
         db.session.commit()
 
         logger.info("Trying to create a feedback item - reviewing a talent seeker")
-        feedback = ActivityFeedback()
-        feedback.activityID = activity.id
-        feedback.reviewedUserID = invitingUser.id
-        feedback.feedbackUserID = invitedUser.id
+        feedback = ActivityFeedback( activity.id, invitedUser.id, invitingUser.id, "Steve did an okay job! We were paid a little late for our work.", 3)
         feedback.feedbackUserRole = "seeker"
         feedback.reviewedUserRole = "provider"
-        feedback.rating = 3
-        feedback.review_comments = "Steve did an okay job; we were paid a little late for our work."
         db.session.add(feedback)
         db.session.commit()
 
