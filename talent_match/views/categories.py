@@ -10,7 +10,9 @@ from ..models.talentInfo import Category
 from ..forms import EditCategoryForm
 
 logger = logging.getLogger(__name__)
-app = Blueprint('categories', __name__, template_folder="templates", url_prefix="/categories")
+app = Blueprint(
+    'categories', __name__, template_folder="templates", url_prefix="/categories")
+
 
 def admin_required(f):
     @wraps(f)
@@ -20,6 +22,7 @@ def admin_required(f):
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
     return decorated
+
 
 @app.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -46,8 +49,9 @@ def listCategories():
         myCount = 0
         if (cat.skillList):
             myCount = len(cat.skillList)
-        categories.append(dict(id=cat.id, name=cat.name, description=cat.description, count=myCount, deleted=cat.deleted))
-    categories.sort(key= lambda category: category['name'])
+        categories.append(
+            dict(id=cat.id, name=cat.name, description=cat.description, count=myCount, deleted=cat.deleted))
+    categories.sort(key=lambda category: category['name'])
 
     return render_template("categories.html", form=form, categories=categories, user=g.user)
 
@@ -79,7 +83,7 @@ def restoreCategory():
 @app.route('/edit', methods=['GET', 'POST'])
 @admin_required
 def editCategory():
-    isAddTalent = True # assume add to start
+    isAddTalent = True  # assume add to start
     form = EditCategoryForm()
     # Validate the submitted data
     if form.validate_on_submit():
@@ -90,7 +94,8 @@ def editCategory():
         if (form.id.data == ''):
             isCreate = True
         if (isCreate):
-            category = Category.query.filter_by(name=form.name.data).limit(1).first()
+            category = Category.query.filter_by(
+                name=form.name.data).limit(1).first()
             if (category != None):
                 logger.info('existing category error')
                 flash('Category already exists', 'error')
