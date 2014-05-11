@@ -6,8 +6,8 @@ import logging
 from talent_match import db
 
 from ..models.talentInfo import Category, Skill
-from ..models.userProfile import  Seeker
-from ..models.activity import  Activity, ActivityFeedback
+from ..models.userProfile import Seeker
+from ..models.activity import Activity, ActivityFeedback
 from ..models.invitation import Invitation
 from ..models.zipCode import USZipCodeToLatitudeLongitude
 
@@ -19,9 +19,11 @@ __author__ = 'Steve'
 
 initialized = False
 
+
 def testLoadFunction():
     addZipCodeData('zipCodeData.txt')
     addInternalTestData()
+
 
 def addZipCodeData(fileName):
     testZip = USZipCodeToLatitudeLongitude.query.limit(1).all()
@@ -39,14 +41,15 @@ def addZipCodeData(fileName):
 
                 # create the new Zip code entry.
                 zip = USZipCodeToLatitudeLongitude()
-                zip.zipCode= int(zipCodeEntry[0])
+                zip.zipCode = int(zipCodeEntry[0])
 
                 latitude = float(zipCodeEntry[1])
                 longitude = float(zipCodeEntry[2])
 
                 # As a reminder, the sql lite database does not natively support numeric SQL data types
                 # So, we're using a fixed exponent integer approach to avoid SQL Alchemy complaints.
-                # As a side note, it looks like SQL Alchemy will convert values to
+                # As a side note, it looks like SQL Alchemy will convert values
+                # to
                 zip.latitudeTimes1000 = (latitude * 1000)
                 zip.longitudeTimes1000 = (longitude * 1000)
 
@@ -58,18 +61,19 @@ def addZipCodeData(fileName):
                 db.session.add(zip)
 
                 # Only commit once every commit interval
-                #if ((count > 0) and (count % commitInterval == 0)):
+                # if ((count > 0) and (count % commitInterval == 0)):
                 #    db.session.commit()
                 #count += 1
 
+            db.session.commit()  # last save
+            logger.info(time.strftime("%H:%M:%S"))
 
-            db.session.commit() # last save
-            logger.info (time.strftime("%H:%M:%S"))
 
-def addTestData() :
+def addTestData():
     logger.info('This should not be called anymore.')
 
-def addInternalTestData() :
+
+def addInternalTestData():
     userList = None
     userList = User.query.filter_by(is_admin=True)
 
@@ -81,8 +85,11 @@ def addInternalTestData() :
 
         logger.info("Adding user='admin'")
         admin = User()
-        admin.is_admin = True; admin.username = 'admin'; admin.email = 'admin@talent-match.us'
-        admin.pwd_hash ='$2a$12$5XpK1rXasJv1Zdz7ABxMN.EyHERZ7WqMUjmRQeFALP7LEbrNB8tb2' # admin!
+        admin.is_admin = True
+        admin.username = 'admin'
+        admin.email = 'admin@talent-match.us'
+        # admin!
+        admin.pwd_hash = '$2a$12$5XpK1rXasJv1Zdz7ABxMN.EyHERZ7WqMUjmRQeFALP7LEbrNB8tb2'
         db.session.add(admin)
         db.session.commit()
         seeker = Seeker(admin.id)
@@ -93,8 +100,11 @@ def addInternalTestData() :
 
         logger.info("Adding user='sally'")
         sally = User()
-        sally.is_admin = True; sally.username = 'sally'; sally.email = 'sally@talent-match.us'
-        sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' # sally!
+        sally.is_admin = True
+        sally.username = 'sally'
+        sally.email = 'sally@talent-match.us'
+        # sally!
+        sally.pwd_hash = '$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sally.firstName = 'Sally'
         sally.lastName = 'Struthers'
         sally.phoneNumber = '806-555-1212'
@@ -109,8 +119,11 @@ def addInternalTestData() :
 
         logger.info("Adding user='sally.smith'")
         sally = User()
-        sally.is_admin = False; sally.username = 'sally.smith'; sally.email = 'sally.smith@talent-match.us'
-        sally.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' # sally!
+        sally.is_admin = False
+        sally.username = 'sally.smith'
+        sally.email = 'sally.smith@talent-match.us'
+        # sally!
+        sally.pwd_hash = '$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sally.firstName = 'Sally'
         sally.lastName = 'Smith'
         sally.phoneNumber = '806-555-1212'
@@ -129,7 +142,8 @@ def addInternalTestData() :
         steve.is_admin = True
         steve.username = 'steve'
         steve.email = 'steve@talent-match.us'
-        steve.pwd_hash ='$2a$12$5XpK1rXasJv1Zdz7ABxMN.EyHERZ7WqMUjmRQeFALP7LEbrNB8tb2'  # admin!
+        # admin!
+        steve.pwd_hash = '$2a$12$5XpK1rXasJv1Zdz7ABxMN.EyHERZ7WqMUjmRQeFALP7LEbrNB8tb2'
         steve.firstName = 'Steve'
         steve.lastName = 'Smith'
         steve.phoneNumber = '806-555-1212'
@@ -142,11 +156,12 @@ def addInternalTestData() :
         db.session.add(steveProvider)
         db.session.commit()
 
-
         logger.info("Adding user='sam.smith'")
         sam = User()
-        sam.is_admin = False; sam.username = 'sam.smith'; sam.email = 'sam.smith@talent-match.us'
-        sam.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        sam.is_admin = False
+        sam.username = 'sam.smith'
+        sam.email = 'sam.smith@talent-match.us'
+        sam.pwd_hash = '$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sam.firstName = 'Sam'
         sam.lastName = 'Smith'
         sam.phoneNumber = '806-555-1212'
@@ -161,8 +176,10 @@ def addInternalTestData() :
 
         logger.info("Adding user='sammy.smith'")
         sammy = User()
-        sammy.is_admin = False; sammy.username = 'sammy.smith'; sammy.email = 'sammy.smith@talent-match.us'
-        sammy.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        sammy.is_admin = False
+        sammy.username = 'sammy.smith'
+        sammy.email = 'sammy.smith@talent-match.us'
+        sammy.pwd_hash = '$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         sammy.firstName = 'Sammy'
         sammy.lastName = 'Smith'
         sammy.phoneNumber = '806-555-1212'
@@ -175,11 +192,12 @@ def addInternalTestData() :
         db.session.add(sammyProvider)
         db.session.commit()
 
-
         logger.info("Adding user='mike.smith'")
         mike = User()
-        mike.is_admin = False; mike.username = 'mike.smith'; mike.email = 'mike.smith@talent-match.us'
-        mike.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        mike.is_admin = False
+        mike.username = 'mike.smith'
+        mike.email = 'mike.smith@talent-match.us'
+        mike.pwd_hash = '$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         mike.firstName = 'Mike'
         mike.lastName = 'Smith'
         mike.phoneNumber = '806-555-1212'
@@ -194,8 +212,10 @@ def addInternalTestData() :
 
         logger.info("Adding user='mikey.smith'")
         mikey = User()
-        mikey.is_admin = False; mikey.username = 'mikey.smith'; mikey.email = 'mikey.smith@talent-match.us'
-        mikey.pwd_hash ='$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa' 
+        mikey.is_admin = False
+        mikey.username = 'mikey.smith'
+        mikey.email = 'mikey.smith@talent-match.us'
+        mikey.pwd_hash = '$2a$12$onbU2C6cjWs16m1RLDOjrObCpP8tLb28RAQeiYAbqE/JjPsGJiDOa'
         mikey.firstName = 'Mikey'
         mikey.lastName = 'Smith'
         mikey.phoneNumber = '806-555-1212'
@@ -207,26 +227,30 @@ def addInternalTestData() :
         db.session.add(mikeySeeker)
         db.session.add(mikeyProvider)
         db.session.commit()
-        
+
     else:
         pass
 
     if (categoryList == None) or (categoryList.count() < 1):
         categoryList = \
             {
-              'Music' :
-                  ['Harp', 'Flute', 'Violin', 'Viola', 'Cello', 'Bass', 'Conductor', 'Arranger', 'Composer'],
-              'Software' :
-                  ['C#', 'F#', 'C++', 'Java', 'User Interface', 'HTML5', 'CSS3', 'Node.js', 'Python', 'Django',
-                   'JavaScript', 'ASP.NET', 'SQL'],
-              'Graphic Design' :
-                  ['Drawing', 'Painting', 'Mixed Media', 'Illustration', 'Adobe Illustrator', 'Typography', 'Adobe Photoshop'],
-              'Planning' : # need more details here
-                  ['PMP'],
-              # partially per wikipedia: http://en.wikipedia.org/wiki/List_of_engineering_branches#Mechanical_engineering
-              'Mechanical Engineering' :
-                  ['Acoustical', 'Manufacturing', 'Thermal', 'Vehicle', 'Oil/Petroleum', 'Fluid dynamics'],
-              'EmptyCategoryTest' : [],
+                'Music':
+                ['Harp', 'Flute', 'Violin', 'Viola', 'Cello',
+                    'Bass', 'Conductor', 'Arranger', 'Composer'],
+                'Software':
+                ['C#', 'F#', 'C++', 'Java', 'User Interface', 'HTML5', 'CSS3', 'Node.js', 'Python', 'Django',
+                 'JavaScript', 'ASP.NET', 'SQL'],
+                'Graphic Design':
+                ['Drawing', 'Painting', 'Mixed Media', 'Illustration',
+                 'Adobe Illustrator', 'Typography', 'Adobe Photoshop'],
+                'Planning':  # need more details here
+                ['PMP'],
+                # partially per wikipedia:
+                # http://en.wikipedia.org/wiki/List_of_engineering_branches#Mechanical_engineering
+                'Mechanical Engineering':
+                ['Acoustical', 'Manufacturing', 'Thermal',
+                 'Vehicle', 'Oil/Petroleum', 'Fluid dynamics'],
+                'EmptyCategoryTest': [],
             }
         logger.info("Adding default categories")
         for categoryName in categoryList:
@@ -235,36 +259,39 @@ def addInternalTestData() :
             db.session.add(category)
             db.session.commit()
             for skillName in skillList:
-                skill = Skill(category.id, skillName, 'no skill description available')
+                skill = Skill(
+                    category.id, skillName, 'no skill description available')
                 db.session.add(skill)
             # at the end of the skills ... one last commit
             db.session.commit()
 
-        logger.info("Adding a couple of existing skills to our sample users ... ")
+        logger.info(
+            "Adding a couple of existing skills to our sample users ... ")
 
         mechEngrCategory = None
         mechSkill = None
-        mechEngrCategory = Category.query.filter_by(name = 'Mechanical Engineering').first()
+        mechEngrCategory = Category.query.filter_by(
+            name='Mechanical Engineering').first()
         if (mechEngrCategory != None):
-            mechSkill = Skill.query.filter_by(name = 'Thermal').first()
+            mechSkill = Skill.query.filter_by(name='Thermal').first()
 
         softwareCategory = None
         softwareSkillHtml5 = None
         softwareSkillCSharp = None
         softwareSkillJava = None
         softwareSkillPython = None
-        softwareCategory = Category.query.filter_by(name = 'Software').first()
+        softwareCategory = Category.query.filter_by(name='Software').first()
         if (softwareCategory != None):
-            softwareSkillHtml5 = Skill.query.filter_by(name = 'HTML5').first()
-            softwareSkillCSharp = Skill.query.filter_by(name = 'C#').first()
-            softwareSkillJava = Skill.query.filter_by(name = 'Java').first()
-            softwareSkillPython = Skill.query.filter_by(name = 'Python').first()
+            softwareSkillHtml5 = Skill.query.filter_by(name='HTML5').first()
+            softwareSkillCSharp = Skill.query.filter_by(name='C#').first()
+            softwareSkillJava = Skill.query.filter_by(name='Java').first()
+            softwareSkillPython = Skill.query.filter_by(name='Python').first()
 
         logger.info("Checking the new category -> skill relationship ... ")
         if (softwareCategory != None):
             mySkillList = softwareCategory.skillList
             for skill in mySkillList:
-                logger.info( skill )
+                logger.info(skill)
         logger.info("Checking the new skill -> category relationship ... ")
         if (softwareSkillCSharp != None):
             myCategory = softwareSkillCSharp.category
@@ -286,11 +313,14 @@ def addInternalTestData() :
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
-                # Let's add this skill to our user again.   The second time should fail
+                # Let's add this skill to our user again.   The second time
+                # should fail
                 if (user.addSkill(mechSkill)):
-                    logger.info("Fail - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Fail - cannot add a skill to the same user twice.")
                 else:
-                    logger.info("Success - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
@@ -312,11 +342,14 @@ def addInternalTestData() :
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
-                # Let's add this skill to our user again.   The second time should fail
+                # Let's add this skill to our user again.   The second time
+                # should fail
                 if (user.addSkill(mechSkill)):
-                    logger.info("Fail - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Fail - cannot add a skill to the same user twice.")
                 else:
-                    logger.info("Success - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
@@ -338,16 +371,18 @@ def addInternalTestData() :
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
-                # Let's add this skill to our user again.   The second time should fail
+                # Let's add this skill to our user again.   The second time
+                # should fail
                 if (user.addSkill(mechSkill)):
-                    logger.info("Fail - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Fail - cannot add a skill to the same user twice.")
                 else:
-                    logger.info("Success - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
-
 
         logger.info("Checking out the mike user ... ")
         user = User.query.filter_by(username='mike.smith').first()
@@ -365,16 +400,18 @@ def addInternalTestData() :
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
-                # Let's add this skill to our user again.   The second time should fail
+                # Let's add this skill to our user again.   The second time
+                # should fail
                 if (user.addSkill(mechSkill)):
-                    logger.info("Fail - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Fail - cannot add a skill to the same user twice.")
                 else:
-                    logger.info("Success - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
-
 
         logger.info("Checking out the mikey user ... ")
         user = User.query.filter_by(username='mikey.smith').first()
@@ -392,16 +429,18 @@ def addInternalTestData() :
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
-                # Let's add this skill to our user again.   The second time should fail
+                # Let's add this skill to our user again.   The second time
+                # should fail
                 if (user.addSkill(mechSkill)):
-                    logger.info("Fail - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Fail - cannot add a skill to the same user twice.")
                 else:
-                    logger.info("Success - cannot add a skill to the same user twice.")
+                    logger.info(
+                        "Success - cannot add a skill to the same user twice.")
 
             if (softwareSkillHtml5 != None):
                 # Let's add this skill to our user.
                 user.addSkill(softwareSkillHtml5)
-
 
         logger.info("Checking out the sally user skill navigation ... ")
 
@@ -414,7 +453,6 @@ def addInternalTestData() :
                 skill = sallySkill.skill
                 # This is the common/shared skill object.
                 logger.info(skill)
-
 
         logger.info("Checking out the steve user ... ")
         user = User.query.filter_by(username='steve').first()
@@ -438,80 +476,81 @@ def addInternalTestData() :
         logger.info("Creating an activity for user='steve'")
 
         user = User.query.filter_by(username='steve').first()
-        activity = user.addActivity('Flask-based Coding Activity', "Need some help for Project 4 in Dr. Mengel's class!")
+        activity = user.addActivity(
+            'Flask-based Coding Activity', "Need some help for Project 4 in Dr. Mengel's class!")
         if (activity):
             activity.hourDuration = 20
             # activity.beginDate =
             # activity.endDate =
             db.session.commit()
 
-            ## Important Note: we need to look at overlapping skills
-            ## so that we can differentiate between 1 person with Python, HTML5 and
-            ## 2 people (one with Python, one with HTML5).
+            # Important Note: we need to look at overlapping skills
+            # so that we can differentiate between 1 person with Python, HTML5 and
+            # 2 people (one with Python, one with HTML5).
             activity.addSkill(softwareSkillPython, 1)
             activity.addSkill(softwareSkillHtml5, 1)
 
         user = User.query.filter_by(username='steve').first()
-        activity = user.addActivity('Flask-based Coding Activity 2', "Need some help for Project 5")
+        activity = user.addActivity(
+            'Flask-based Coding Activity 2', "Need some help for Project 5")
         if (activity):
             activity.hourDuration = 20
             # activity.beginDate =
             # activity.endDate =
             db.session.commit()
 
-            ## Important Note: we need to look at overlapping skills
-            ## so that we can differentiate between 1 person with Python, HTML5 and
-            ## 2 people (one with Python, one with HTML5).
+            # Important Note: we need to look at overlapping skills
+            # so that we can differentiate between 1 person with Python, HTML5 and
+            # 2 people (one with Python, one with HTML5).
             activity.addSkill(softwareSkillPython, 1)
             activity.addSkill(softwareSkillHtml5, 1)
-
 
         logger.info("Creating an activity for user='sally.smith'")
 
         user = User.query.filter_by(username='sally.smith').first()
-        activity = user.addActivity('Advance Coding Activity', "Need some help for a Coding Project")
+        activity = user.addActivity(
+            'Advance Coding Activity', "Need some help for a Coding Project")
         if (activity):
             activity.hourDuration = 20
             # activity.beginDate =
             # activity.endDate =
             db.session.commit()
 
-            ## Important Note: we need to look at overlapping skills
-            ## so that we can differentiate between 1 person with Python, HTML5 and
-            ## 2 people (one with Python, one with HTML5).
+            # Important Note: we need to look at overlapping skills
+            # so that we can differentiate between 1 person with Python, HTML5 and
+            # 2 people (one with Python, one with HTML5).
             activity.addSkill(softwareSkillPython, 1)
             activity.addSkill(softwareSkillHtml5, 1)
-
 
         user = User.query.filter_by(username='sally.smith').first()
-        activity = user.addActivity('Website Coding Activity', "Need some help for coding a website")
+        activity = user.addActivity(
+            'Website Coding Activity', "Need some help for coding a website")
         if (activity):
             activity.hourDuration = 20
             # activity.beginDate =
             # activity.endDate =
             db.session.commit()
 
-            ## Important Note: we need to look at overlapping skills
-            ## so that we can differentiate between 1 person with Python, HTML5 and
-            ## 2 people (one with Python, one with HTML5).
+            # Important Note: we need to look at overlapping skills
+            # so that we can differentiate between 1 person with Python, HTML5 and
+            # 2 people (one with Python, one with HTML5).
             activity.addSkill(softwareSkillPython, 1)
             activity.addSkill(softwareSkillHtml5, 1)
-
 
         user = User.query.filter_by(username='sally.smith').first()
-        activity = user.addActivity('Web Page Maintenance', "Need some help for maintaining and updating a web page")
+        activity = user.addActivity(
+            'Web Page Maintenance', "Need some help for maintaining and updating a web page")
         if (activity):
             activity.hourDuration = 20
             # activity.beginDate =
             # activity.endDate =
             db.session.commit()
 
-            ## Important Note: we need to look at overlapping skills
-            ## so that we can differentiate between 1 person with Python, HTML5 and
-            ## 2 people (one with Python, one with HTML5).
+            # Important Note: we need to look at overlapping skills
+            # so that we can differentiate between 1 person with Python, HTML5 and
+            # 2 people (one with Python, one with HTML5).
             activity.addSkill(softwareSkillPython, 1)
             activity.addSkill(softwareSkillHtml5, 1)
-
 
         logger.info("Checking the activity navigation ... ")
 
@@ -530,12 +569,13 @@ def addInternalTestData() :
                     logger.info("Error - activity skill list is empty.")
 
         # create a test invitation
-        #softwareSkillHtml5
+        # softwareSkillHtml5
         logger.info('Creating a sample invitation')
-        invitedUser = User.query.filter_by(username = 'mike.smith').first()
+        invitedUser = User.query.filter_by(username='mike.smith').first()
         invitingUser = User.query.filter_by(username='steve').first()
         activity = Activity.query.filter_by(seekerID='4').first()
-        invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
+        invitation = Invitation(
+            activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
         db.session.add(invitation)
         db.session.commit()
         invitationID = invitation.id
@@ -546,11 +586,11 @@ def addInternalTestData() :
         invitedUser = invitation.receivingUser
         invitingUser = invitation.invitingUser
 
-
-        invitedUser = User.query.filter_by(username = 'sally.smith').first()
+        invitedUser = User.query.filter_by(username='sally.smith').first()
         invitingUser = User.query.filter_by(username='steve').first()
         activity = Activity.query.filter_by(seekerID='4').first()
-        invitation = Invitation(activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
+        invitation = Invitation(
+            activity.id, softwareSkillHtml5.id, invitingUser.id, invitedUser.id)
         db.session.add(invitation)
         db.session.commit()
         invitationID = invitation.id
@@ -572,18 +612,23 @@ def addInternalTestData() :
             logger.info("Invitation navigation failed.")
 
         ##
-        ## Project 4: Adding some test loading for the ActivityFeedback
+        # Project 4: Adding some test loading for the ActivityFeedback
         ##
-        logger.info("Testing feedback creation - reusing last used activity users" )
-        logger.info("Trying to create a feedback item - reviewing a talent provider" )
-        feedback = ActivityFeedback( activity.id, invitingUser.id, invitedUser.id, "Steve did a great job! We were paid for our work.", 5)
+        logger.info(
+            "Testing feedback creation - reusing last used activity users")
+        logger.info(
+            "Trying to create a feedback item - reviewing a talent provider")
+        feedback = ActivityFeedback(
+            activity.id, invitingUser.id, invitedUser.id, "Steve did a great job! We were paid for our work.", 5)
         feedback.reviewedUserRole = "seeker"
         feedback.feedbackUserRole = "provider"
         db.session.add(feedback)
         db.session.commit()
 
-        logger.info("Trying to create a feedback item - reviewing a talent seeker")
-        feedback = ActivityFeedback( activity.id, invitedUser.id, invitingUser.id, "Steve did an okay job! We were paid a little late for our work.", 3)
+        logger.info(
+            "Trying to create a feedback item - reviewing a talent seeker")
+        feedback = ActivityFeedback(activity.id, invitedUser.id, invitingUser.id,
+                                    "Steve did an okay job! We were paid a little late for our work.", 3)
         feedback.feedbackUserRole = "seeker"
         feedback.reviewedUserRole = "provider"
         db.session.add(feedback)
@@ -600,13 +645,3 @@ def addInternalTestData() :
         if (feedbackList):
             for feedback in feedbackList:
                 logger.info(feedback)
-
-
-
-
-
-
-
-
-
-

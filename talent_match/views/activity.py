@@ -7,19 +7,22 @@ from flask.ext.login import login_user, login_required, logout_user
 from talent_match import db
 from ..models.userProfile import Seeker, User
 from ..models.invitation import Invitation
-from ..models.activity import  Activity, ActivityFeedback
+from ..models.activity import Activity, ActivityFeedback
 from ..forms import ActivityForm, FeedbackForm
 
 
 logger = logging.getLogger(__name__)
 
-app = Blueprint('activity', __name__, template_folder="templates", url_prefix="/activity")
+app = Blueprint(
+    'activity', __name__, template_folder="templates", url_prefix="/activity")
+
 
 @app.route('/list', methods=['GET', 'POST'])
 @login_required
 def listActivityRequests():
     activities = db.session.query(Activity).join(Seeker).\
-        filter(Activity.seekerID == Seeker.id, Seeker.userID == g.user.id).all()
+        filter(Activity.seekerID == Seeker.id,
+               Seeker.userID == g.user.id).all()
 
     for activity in activities:
         invitationCount = 0
@@ -27,7 +30,6 @@ def listActivityRequests():
 
     form = None
     return render_template("activity_list.html", activities=activities, user=g.user)
-
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -41,38 +43,43 @@ def viewActivityProfile():
     form = FeedbackForm()
 
     if (form.rating.choices == None):
-        form.rating.choices = [('5', '5'), ('4', '4'), ('3', '3'), ('2', '2'), ('1', '1')]
+        form.rating.choices = [
+            ('5', '5'), ('4', '4'), ('3', '3'), ('2', '2'), ('1', '1')]
 
     if form.validate_on_submit():
         activity = Activity.query.get(activityID)
-        oldFeedback = ActivityFeedback.query.filter_by(activityID=activity.id, feedbackUserID=g.user.id).limit(1).first()
+        oldFeedback = ActivityFeedback.query.filter_by(
+            activityID=activity.id, feedbackUserID=g.user.id).limit(1).first()
         if (oldFeedback != None):
             db.session.delete(oldFeedback)
             db.session.commit()
-        
+
         seeker = Seeker.query.get(activity.seekerID)
-        newFeedback = ActivityFeedback(activity.id, seeker.userID , g.user.id, form.feedback.data, form.rating.data)
+        newFeedback = ActivityFeedback(
+            activity.id, seeker.userID, g.user.id, form.feedback.data, form.rating.data)
         db.session.add(newFeedback)
         db.session.commit()
         form.feedback.data = ''
         flash('Feedback has been posted!', 'success')
-    
+
     if (activityID):
         activity = Activity.query.get(activityID)
-        PartOfActivity = Invitation.query.filter_by(activityID = activity.id, receivingUserID = g.user.id, accepted=True).limit(1).first()
+        PartOfActivity = Invitation.query.filter_by(
+            activityID=activity.id, receivingUserID=g.user.id, accepted=True).limit(1).first()
         if (PartOfActivity != None):
             isPartOfActivity = True
-        feedback = ActivityFeedback.query.filter_by(activityID = activity.id).all()
-        feedbackCount = ActivityFeedback.query.filter_by(activityID = activity.id).count()
+        feedback = ActivityFeedback.query.filter_by(
+            activityID=activity.id).all()
+        feedbackCount = ActivityFeedback.query.filter_by(
+            activityID=activity.id).count()
         for feed in feedback:
             sum += feed.rating
         if (feedbackCount > 0):
-            avg = sum/feedbackCount
+            avg = sum / feedbackCount
         else:
             avg = 'N/A'
 
     return render_template("activity_profile.html", activity=activity, feedback=feedback, form=form, canLeaveFeedback=isPartOfActivity, avgRating=avg)
-
 
 
 # Project 3 - Steve
@@ -85,7 +92,7 @@ def viewActivityProfile():
 @app.route('/edit', methods=['GET', 'POST'])
 def editActivity():
     logging.info(request)
-    isAddActivity = True # assume add to start
+    isAddActivity = True  # assume add to start
     activityID = None
     form = ActivityForm()
 
@@ -93,7 +100,7 @@ def editActivity():
     if form.validate_on_submit():
         logging.info(form.data)
 
-        isCreate = False # initialization
+        isCreate = False  # initialization
         name = form.name.data
         description = form.description.data
         beginDate = form.beginDate.data
@@ -104,7 +111,7 @@ def editActivity():
         if (form.id.data == ''):
             isCreate = True
         if (isCreate):
-            activity = Activity(name,description,user)
+            activity = Activity(name, description, user)
             db.session.add(activity)
         else:
             activity = Activity.query.get(form.id.data)
@@ -118,7 +125,7 @@ def editActivity():
             activity.endDate = endDate
             form.endDate.data = activity.endDate
         ##
-        ## Future: include location, distance
+        # Future: include location, distance
         ##
 
         # one save for add/update
@@ -130,12 +137,12 @@ def editActivity():
         form.endDate.data = activity.endDate
 
         # transition from (or back to) the edit skill view:
-        # bug fix: must redirect here to get the appropriate edit/value set in place.
+        # bug fix: must redirect here to get the appropriate edit/value set in
+        # place.
         return redirect('/activity/edit?id=' + str(activity.id))
     else:
         activityID = request.values.get('id')
         activity = None
-
 
         if (activityID):
             isAddActivity = False
@@ -149,7 +156,7 @@ def editActivity():
                 form.beginDate.data = activity.beginDate
             if (activity.endDate):
                 form.endDate.data = activity.endDate
-            ## Future: forZipCode, distance
+            # Future: forZipCode, distance
         else:
             isAddActivity = True
             form.id.data = None
@@ -157,7 +164,7 @@ def editActivity():
     return render_template("edit_activity.html", activity=activity, form=form, activityID=activityID, isAddActivity=isAddActivity)
 
 
-## Project 4 - Steve - Mark activity as complete
+# Project 4 - Steve - Mark activity as complete
 #
 # Mark an existing activity created by the user as complete.
 #
@@ -168,7 +175,7 @@ def editActivity():
 def markActivityAsComplete():
 
     activityID = request.values.get('id')
-    if ( activityID == None):
+    if (activityID == None):
         activityID = request.values.get('activityID')
     if (activityID):
         activity = Activity.query.get(activityID)

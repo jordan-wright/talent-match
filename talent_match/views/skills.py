@@ -12,7 +12,9 @@ from functools import wraps
 from talent_match import db
 
 logger = logging.getLogger(__name__)
-app = Blueprint('skills', __name__, template_folder="templates", url_prefix="/skills")
+app = Blueprint(
+    'skills', __name__, template_folder="templates", url_prefix="/skills")
+
 
 def admin_required(f):
     @wraps(f)
@@ -22,6 +24,7 @@ def admin_required(f):
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
     return decorated
+
 
 @app.route('/', methods=['GET', 'POST'])
 @admin_required
@@ -41,21 +44,26 @@ def listSkills():
         category = Category.query.get(categoryID)
     if category:
         # show skills for a specific category
-        categoryFirst = False   # since the category is fixes, list the skill column first
+        # since the category is fixes, list the skill column first
+        categoryFirst = False
         myCategoryID = categoryID
-        for cat,skill in db.session.query(Category, Skill).\
-            filter(Category.id == Skill.categoryID).\
-            filter(Skill.categoryID == myCategoryID).all():
-                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet',id=skill.id, deleted=skill.deleted)
-                skillList.append(newSkill)
+        for cat, skill in db.session.query(Category, Skill).\
+                filter(Category.id == Skill.categoryID).\
+                filter(Skill.categoryID == myCategoryID).all():
+            newSkill = dict(name=skill.name, categoryName=cat.name, description=skill.description,
+                            count='Not available yet', id=skill.id, deleted=skill.deleted)
+            skillList.append(newSkill)
 
     else:
         # show all skills for all categories
-        categoryFirst = True    # for better viewing all skills, put the category column first, then the skill.
-        for cat,skill in db.session.query(Category, Skill).\
-            filter(Category.id == Skill.categoryID).all():
-                newSkill=dict(name=skill.name, categoryName=cat.name, description=skill.description, count='Not available yet', id=skill.id, deleted=skill.deleted)
-                skillList.append(newSkill)
+        # for better viewing all skills, put the category column first, then
+        # the skill.
+        categoryFirst = True
+        for cat, skill in db.session.query(Category, Skill).\
+                filter(Category.id == Skill.categoryID).all():
+            newSkill = dict(name=skill.name, categoryName=cat.name, description=skill.description,
+                            count='Not available yet', id=skill.id, deleted=skill.deleted)
+            skillList.append(newSkill)
 
     if (skillList != None):
         skillList.sort(key=lambda test: (test['categoryName'], test['name']))
@@ -68,11 +76,13 @@ def listSkills():
 @login_required
 def searchSkills():
     query = request.values.get('query')
-    if not query: return redirect(url_for('index.index'))
+    if not query:
+        return redirect(url_for('index.index'))
     # Original:
     # return jsonify(skills=[skill.serialize for skill in Skill.query.filter(Skill.name.like("%" + query + "%")).all()])
-    ## Project 4 - Steve/Nick - adding a check on the typeahead query to exclude skills from a deleted category.
-    return jsonify(skills=[skill.serialize for skill in Skill.query.join(Category).filter(Skill.deleted==False,Category.deleted==False,Skill.name.like("%" + query + "%")).all()])
+    # Project 4 - Steve/Nick - adding a check on the typeahead query to
+    # exclude skills from a deleted category.
+    return jsonify(skills=[skill.serialize for skill in Skill.query.join(Category).filter(Skill.deleted == False, Category.deleted == False, Skill.name.like("%" + query + "%")).all()])
 
 
 @app.route('/delete', methods=['GET', 'POST'])
@@ -87,7 +97,8 @@ def deleteSkill():
             db.session.commit()
     # Steve - putting this back to the right filter.
     # return redirect('/skills')
-    return redirect('/skills?categoryID=' + str(skill.categoryID))  # Steve - putting this back to the right filter.
+    # Steve - putting this back to the right filter.
+    return redirect('/skills?categoryID=' + str(skill.categoryID))
 
 
 @app.route('/restore', methods=['GET', 'POST'])
@@ -100,34 +111,37 @@ def restoreSkill():
         if (skill):
             skill.deleted = False
             db.session.commit()
-    #return redirect('/skills')
-    return redirect('/skills?categoryID=' + str(skill.categoryID))  # Steve - putting this back to the right filter.
+    # return redirect('/skills')
+    # Steve - putting this back to the right filter.
+    return redirect('/skills?categoryID=' + str(skill.categoryID))
+
 
 @app.route('/edit', methods=['GET', 'POST'])
 @admin_required
 def editSkill():
     print(request)
     dir(request)
-    isAddSkill = True # assume add to start
+    isAddSkill = True  # assume add to start
     form = EditSkillForm()
 
     # There is a better way to do this, but this will work for today.
     if (form.category.choices == None):
         categoryChoices = []
         categoryList = Category.query.all()
-        categoryList.sort(key= lambda category: category.name)
+        categoryList.sort(key=lambda category: category.name)
         for category in categoryList:
-            categoryChoices.append( (category.name, category.name) )
+            categoryChoices.append((category.name, category.name))
         form.category.choices = categoryChoices
 
     print('About to check the validation status of the form ...')
     if form.validate_on_submit():
-        isCreate = False # initialization
+        isCreate = False  # initialization
         if (form.id.data == ''):
             isCreate = True
         if (isCreate):
             print(form.category.data)
-            category = Category.query.filter_by(name=form.category.data).limit(1).first()
+            category = Category.query.filter_by(
+                name=form.category.data).limit(1).first()
             print(category)
             testSkillName = form.name.data
             print(testSkillName)
@@ -141,7 +155,8 @@ def editSkill():
                 return render_template("edit_skill.html", editSkill=None, form=form, isAddSkill=True)
             else:
                 print('trying to add the skill ... ')
-                skill = Skill(category.id,testSkillName, form.description.data)
+                skill = Skill(
+                    category.id, testSkillName, form.description.data)
                 skill.categoryID = category.id
                 db.session.add(skill)
                 db.session.commit()
@@ -149,16 +164,17 @@ def editSkill():
             testSkillName = form.name.data
             skill = Skill.query.get(form.id.data)
             category = Category.query.get(skill.categoryID)
-            ## check to make sure that no other existing skills for this category have the same name as the new name.
-            ##otherSkill = Skill.query.\
-            ##    filter_by(categoryID=category.id).\
-            ##    filter_by(name=testSkillName).\
-            ##    filter_by(id!=skill.id).\
-            ##    first()
-            ##if (skill != None):
+            # check to make sure that no other existing skills for this category have the same name as the new name.
+            # otherSkill = Skill.query.\
+            # filter_by(categoryID=category.id).\
+            # filter_by(name=testSkillName).\
+            # filter_by(id!=skill.id).\
+            # first()
+            # if (skill != None):
             ##    print('existing skill error - name already exists')
             ##    flash('Skill already exists', 'error')
-            ##    return render_template("edit_skill.html", editSkill=skill, form=form, isAddSkill=False)
+            # return render_template("edit_skill.html", editSkill=skill,
+            # form=form, isAddSkill=False)
             if (skill) and (category):
                 skill.categoryID = category.id
                 skill.description = form.description.data

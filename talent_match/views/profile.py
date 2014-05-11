@@ -6,14 +6,16 @@ from flask.ext.login import login_required
 # Project 5 - Steve - adjusting imports to minimal set after model changes.
 from talent_match import db
 from ..models.talentInfo import Category, Skill
-from ..models.userProfile import  User, Provider, Seeker, ProviderSkill
-from ..models.activity import  Activity, ActivitySkill
+from ..models.userProfile import User, Provider, Seeker, ProviderSkill
+from ..models.activity import Activity, ActivitySkill
 from ..models.invitation import Invitation, InvitationRequest
 
 from ..forms import EditProfileForm, DeleteProfileForm, PasswordResetForm
 
 logger = logging.getLogger(__name__)
-app = Blueprint('profile', __name__, template_folder="templates", url_prefix="/profile")
+app = Blueprint(
+    'profile', __name__, template_folder="templates", url_prefix="/profile")
+
 
 @app.route('/', defaults={'username': None}, methods=['GET', 'POST'])
 @app.route('/<username>', methods=['GET', 'POST'])
@@ -27,8 +29,10 @@ def profile(username):
     # skills = Skill.query.join(ProviderSkill).join(Provider).join(User).filter(User.id == user.id).all()
     #
     # Project 4 - minor change to display the volunteer flag.
-    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(User.id == user.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
-    return render_template("profile.html", user=user, skills=skills, gUser=g.user, canEditSkills=(user.id==g.user.id), editProfile=False)
+    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(
+        User.id == user.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
+    return render_template("profile.html", user=user, skills=skills, gUser=g.user, canEditSkills=(user.id == g.user.id), editProfile=False)
+
 
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
@@ -46,16 +50,19 @@ def editProfile():
         flash('Profile Update Successful!', 'success')
         return redirect(url_for('.profile'))
     form.quickIntro.data = g.user.quickIntro
-    #return render_template("profile_edit.html", form=form)
+    # return render_template("profile_edit.html", form=form)
     form.background.data = g.user.background
     # Project 4 - minor change to display the volunteer flag.
-    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(g.user.id == User.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
+    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(
+        g.user.id == User.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
     return render_template("profile_edit.html", form=form,  user=g.user, skills=skills, editProfile=True)
+
 
 @app.route('/settings', methods=['GET'])
 @login_required
 def settingsProfile():
     return render_template('settings.html', delete_form=DeleteProfileForm(), password_form=PasswordResetForm())
+
 
 @app.route('/delete', methods=['POST'])
 @login_required
@@ -80,10 +87,12 @@ def deleteProfile():
         db.session.commit()
         flash('Profile deleted successfully', 'success')
         return redirect(url_for('index.index'))
-		
+
+
 @login_required
 @app.route('/edit/skill/', methods=['GET', 'POST'])
 def editProviderSkills():
     form = None
-    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(g.user.id == User.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
+    skills = ProviderSkill.query.join(Provider).join(User).join(Skill).filter(
+        g.user.id == User.id, Skill.deleted != True, ProviderSkill.skillID == Skill.id).all()
     return render_template("edit_provider_skill.html", form=form,  user=g.user, skills=skills, userID=g.user.id)
