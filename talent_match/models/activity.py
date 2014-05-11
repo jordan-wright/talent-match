@@ -73,8 +73,13 @@ class ActivityFeedback(db.Model):
     feedbackUser = db.relationship('User', uselist=False, lazy='joined', foreign_keys=[feedbackUserID])
     activity = db.relationship('Activity', uselist=False, lazy='joined')
 
-    def __init__(self):
-        pass
+    def __init__(self, activityID, reviewedUserID, feedbackUserID, review_comments, rating):
+        self.activityID = activityID
+        self.reviewedUserID = reviewedUserID
+        self.feedbackUserID = feedbackUserID
+        self.review_comments = review_comments
+        self.rating = rating
+
     def __repr__(self):
         return modelToString(self)
 

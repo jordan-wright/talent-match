@@ -6,6 +6,13 @@
 {% endblock %}
 {% block content %}
 <div class="container" style="margin-top:80px;">
+    {% with flashes = get_flashed_messages(with_categories=true) %}
+        {% if flashes %}
+            {% for category, message in flashes %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <br />
         <div class="row mt centered" style="margin-top:30px;">
             <h1> <b>Activity Details </b></h1>
@@ -13,7 +20,8 @@
             <div class="col-lg-3" style="margin-top:20px">
                 <h2 style="color:black">{{activity.name}}</h2>
                 <h1><span class="glyphicon glyphicon-calendar"></span></h1>
-                <h2 class="h5"> <a class="btn btn-m btn-success" href=""> Review </a> </h2>
+                <br />
+                <h3>Avg. Rating:</h3> <h2>{{avgRating}}</h2>
             </div> 
             <div class="col-lg-3" style="margin-top:30px">
                 <h3>Decription:</h3>
@@ -41,6 +49,76 @@
             </div> 
         </div>
     <br />
+    <div class="row mt centered" style="margin:100px">
+        {% if  activity.completionStatus %}  
+            <section id="comments">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="comments">
+                            <div class="panel panel-default">
+                            
+                                <div class="panel-heading">
+                                    <b>Feedback</b>
+                                </div>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        {% if not feedback %}
+                                            <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> No comments at this time.</div>   
+                                        {% else %}
+                                            {% for comment in feedback %}
+                                            <li class="list-group-item">
+                                                <div class="comment">
+                                                    <div class="media">
+                                                        <a class="pull-left" href="/profile/{{comment.feedbackUser.username}}">
+                                                            <img class="img-circle" src="{{comment.feedbackUser.email | gravatar(size=100)}}"/>
+                                                            <h3>{{comment.feedbackUser.firstName}} {{comment.feedbackUser.lastName}}</h3>
+                                                            <br>
+                                                        </a>
+                                                        <h2>{{comment.rating}}</h2>
+                                                        <div class="media-body">
+                                                            <div class="text" >
+                                                                <p>{{comment.review_comments}}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% if canLeaveFeedback %} 
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <b>Leave Some Feedback</b>
+                                </div>
+                                <div class="panel-body">
+                                    <form class="form-feedback" method="POST">
+                                        <div class="form-group">
+                                            <label class="sr-only" for="id_feedback">Feedback</label>
+                                                {{ form.feedback(class="form-control", placeholder="Feedback") }}
+                                        </div>
+                                        <div>
+                                            <div style="float:left;">
+                                                {{ form.rating(class="form-control", required=true) }}
+                                            </div>
+                                            <div style="float:right;">
+                                                <button type="submit" class="btn btn-lg btn-success">Leave Feedback</button>
+                                            </div>
+                                        </div>
+                                        {{ form.hidden_tag() }}
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                        </div>
+                    </div>
+            </section>
+        {% endif %}
+    </div>
+
 </div>
 
 {% endblock %}
