@@ -15,7 +15,10 @@
                 <h2 class="form-signin-heading" style="color:#FFFFFF;margin-bottom:20px">Advanced Search</h2>
                 <div class="row" style="margin-top:5px">
                     <div class="col-lg-1" style="width:40%"> Skill </div>
+                    <div class="col-lg-1" style="width:60%"> {{ form.query(class="form-control-other", autocomplete="off", id='query', required=true, placeholder="select a skill",value=search.query ) }} </div>
+                    <!--
                     <div class="col-lg-1" style="width:60%"> <input type="text" style="" class="form-control-other" id="query" name="query2" placeholder="Search for talent" autocomplete="off" required> </div>
+                    -->
                     <!--
                     <div class="col-lg-1" style="width:60%"> {{ form.query(class="form-control-other", autocomplete="off", required=true, placeholder="select a skill",value=search.query ) }} </div>
                     -->

@@ -52,24 +52,25 @@ def advancedSearchPrep():
 
         # Decode the supplied search parameters.
         query = form.query.data
+
         originZip = form.originZip.data
         distanceFrom = form.distanceFrom.data
         volunteerOnly = form.volunteerOnly.data
-        filterOutPastRejections = form.filterOutPastRejections.data
-        sortByDistance = form.sortByDistance.data
-        sortByProviderRating = form.sortByProviderRating.data
+        filterOutPastRejections = form.filterOutPastRejections._formfield
+        sortByDistance = form.sortByDistance._formfield
+        sortByProviderRating = form.sortByProviderRating._formfield
 
         # Assemble the query string to pass it into the real advanced search.
         # This is by-hand process today.
         # Note that, for our input set, we may not have to URL escape anything.  However, this is
         # something that may need to be added.
         queryString = '?query=' + query
-        queryString += '&originZip=' + originZip
-        queryString += '&distanceFrom=' + distanceFrom
-        queryString += '&volunterOnly=' + volunteerOnly
-        queryString += '&filterOutPastRejections=' + filterOutPastRejections  ## this may not be supported initially
-        queryString += 'sortByDistance=' + sortByDistance
-        queryString += 'sortByProviderRating=' + sortByProviderRating
+        queryString += '&originZip=' + str(originZip)
+        queryString += '&distanceFrom=' + str(distanceFrom)
+        queryString += '&volunterOnly=' + str(volunteerOnly)
+        queryString += '&filterOutPastRejections=' + str(False)  ## this may not be supported initially
+        queryString += '&sortByDistance=' + str(sortByDistance)
+        queryString += '&sortByProviderRating=' + str(sortByProviderRating)
 
         ## Now that we have collected the user advanced search parameters, redirect them to actually have the
         ## search performed:
@@ -86,25 +87,34 @@ def advancedSearchPrep():
 def makeAdvancedSearch(page = 1):
     query = request.values.get('query')
     originZip = request.values.get('originZip')
+    if (originZip and len(originZip) > 0):
+        originZip = int(originZip)
+    else:
+        originZip = '75252'     # Dallas
     distanceFrom = request.values.get('distanceFrom')
-    volunteerOnly = request.values.get('volunteerOnly')
-    filterOutPastRejections = request.values.get('filterOutPastRejections')
-    sortByDistance = request.values.get('sortByDistance')
-    sortByProviderRating = request.values.get('sortByProviderRating')
+    if (distanceFrom and len(distanceFrom) > 0):
+        distanceFrom = int(distanceFrom)
+    else:
+        distanceFrom = 300      # 300 mile default
+    # All boolean values will default to False unless provided.
+    volunteerOnly = request.values.get('volunteerOnly') == 'True'
+    filterOutPastRejections = request.values.get('filterOutPastRejections') == 'True'
+    sortByDistance = request.values.get('sortByDistance') == 'True'
+    sortByProviderRating = request.values.get('sortByProviderRating') == 'True'
 
     queryString = '?query=' + query
-    queryString += '&originZip=' + originZip
-    queryString += '&distanceFrom=' + distanceFrom
-    queryString += '&volunterOnly=' + volunteerOnly
-    queryString += '&filterOutPastRejections=' + filterOutPastRejections  ## this may not be supported initially
-    queryString += 'sortByDistance=' + sortByDistance
-    queryString += 'sortByProviderRating=' + sortByProviderRating
+    queryString += '&originZip=' + str(originZip)
+    queryString += '&distanceFrom=' + str(distanceFrom)
+    queryString += '&volunterOnly=' + str(volunteerOnly)
+    queryString += '&filterOutPastRejections=' + str(filterOutPastRejections)  ## this may not be supported initially
+    queryString += '&sortByDistance=' + str(sortByDistance)
+    queryString += '&sortByProviderRating=' + str(sortByProviderRating)
 
     if (not query):
         query = 'HTML5'
 
-    advancedSearch =  dict(url='/search/advanced/query', queryString=queryString)
+    advancedSearchData =  dict(url='/search/advanced/query', queryString=queryString)
 
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
-    return render_template('search.html', query=query, users=users, gUser=g.user, advancedSearch=advancedSearch)
+    return render_template('search.html', query=query, users=users, gUser=g.user, advancedSearchData=advancedSearchData)
 

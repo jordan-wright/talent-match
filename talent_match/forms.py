@@ -47,7 +47,7 @@ class SearchForm(Form):
 ## Project 5 - Steve - adding support for advanced searching.
 class AdvancedSearchForm(Form):
 	#query is being handled separately and has been removed from this.
-	#query = TextField('query', validators=[Required()])
+	query = TextField('query', validators=[Required()])
 	originZip = IntegerField('originZip', validators=[Required(),NumberRange(1,99999)])
 	distanceFrom = IntegerField('distanceFrom', validators=[Required(),NumberRange(1,5000)])
 	volunteerOnly = BooleanField('volunteerOnly')
