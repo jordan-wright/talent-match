@@ -3,6 +3,17 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flaskext.bcrypt import Bcrypt
 from flask.ext.login import LoginManager, current_user
 from flask.ext.gravatar import Gravatar
+import logging
+
+# Setup logging for the application
+logging.basicConfig(
+    format='%(asctime)s %(name)s [%(levelname)s] %(message)s', level=logging.INFO,
+    filename='talent-match.log', filemode='a')
+# Setup the console logging
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(logging.Formatter('%(asctime)s %(name)s [%(levelname)s] %(message)s'))
+console_handler.setLevel = logging.INFO
+logging.getLogger('').addHandler(console_handler)
 
 # Create the basic Flask application
 app = Flask(__name__)
