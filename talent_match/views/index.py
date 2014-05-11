@@ -6,7 +6,7 @@ from ..models.talentInfo import Category, Skill
 from ..models.userProfile import  ProviderSkill
 from ..models.invitation import Invitation
 
-from ..forms import SearchForm
+from ..forms import SearchForm, AdvancedSearchForm
 
 from talent_match import db
 from config import POSTS_PER_PAGE
@@ -33,3 +33,14 @@ def search(page = 1): #, setquery = ''):
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
 
     return render_template('search.html', query=query, users=users, gUser=g.user)
+
+@app.route('/search/advanced', methods=['GET', 'POST'])
+@login_required
+def advancedSearchPrep(page = 1): #, setquery = ''):
+    form = AdvancedSearchForm(csrf_enabled=False)
+
+    #query = form.query.data or request.values.get('query')
+    #users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
+
+    return render_template('advanced_search.html', search=None, users=None, gUser=g.user, form=form, advancedSearch=True)
+

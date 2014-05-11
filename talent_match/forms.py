@@ -1,7 +1,7 @@
 from datetime import date
 from flask_wtf import Form
 from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField
-from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, FormField, FieldList, SubmitField
+from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, BooleanField, FormField, FieldList, SubmitField
 from wtforms_html5 import DateField #as Html5DateField, DateRange
 from wtforms.validators import Required, EqualTo, Length
 
@@ -40,6 +40,16 @@ class EditProfileForm(Form):
 
 class SearchForm(Form):
 	query = TextField('query', validators=[Required()])
+
+
+class AdvancedSearchForm(Form):
+	query = TextField('query', validators=[Required()])
+	originZip = IntegerField('originZip')
+	distanceFrom = IntegerField('distanceFrom')
+	volunteerOnly = BooleanField('volunteerOnly')
+	filterOutPastRejections = BooleanField('filterOutPastRejections')
+	sortByDistance = BooleanField('sortByDistance')
+	sortByProviderRating = BooleanField('sortByProviderRating')
 
 class CreateInviteForm(Form):
 	activities = SelectField(u'Activities', validators=[Required()])

@@ -104,6 +104,25 @@ a:after {
 	color: white;
 }
 
+.searchbar-advanced {
+	color: white;
+    font: bold;
+}
+
+
+.searchbar-advanced:hover,
+.searchbar-advanced:focus,
+.searchbar-advanced:visited {
+  color: white;
+  text-decoration: underline;
+}
+
+
+
+.searchbar-href {
+  outline: red;
+}
+
 .navbar-default .navbar-nav > li > a {
 	color: white;
 }
@@ -130,11 +149,29 @@ a:after {
 	margin-bottom: 40px;
 }
 
+.form-control-row {
+    margin-top: 5px;
+    margin-bottom : 5px
+}
+
 .form-control {
 	height: 42px;
 	font-size: 18px;
 	min-width: 280px;
 }
+
+.form-control-other {
+	height: 38px;
+	font-size: 18px;
+	min-width: 150px;
+}
+
+.form-control-input {
+	height: 25px;
+	font-size: 18px;
+    min-width: 25px;
+}
+
 
 .form-control-disabled {
 	height: 42px;
@@ -379,6 +416,7 @@ a.otherHref.hover-text {
 }
 
 .tt-suggestion {
+  color: black;
   padding: 3px 20px;
   font-size: 18px;
   line-height: 24px;

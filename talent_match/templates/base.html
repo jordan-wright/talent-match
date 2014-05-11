@@ -48,13 +48,20 @@
                     <li>
                         <form style="margin-top:15px;" class="form-inline" method="post" action="/search" role="form">
                             <div class="form-group">
+                            {%  if not advancedSearch %}
                                 {% if query %}
                                 <input type="text" class="form-control" id="query" name="query" placeholder="{{query}}" required autocomplete="off">
                                 {% else %}
                                 <input type="text" class="form-control" id="query" name="query" placeholder="Search for talent" autocomplete="off" required>
                                 {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-search"></span></button>
+                                <button type="submit" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-search"></span></button>
+                            {%  endif %}
+                            {%  if not advancedSearch %}
+                                <div><a class="searchbar-advanced" href="/search/advanced">advanced search</a></div>
+                            {%  endif %}
+
+
                         </form>
                     </li>
                     <li>
