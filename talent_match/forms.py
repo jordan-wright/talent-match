@@ -1,7 +1,10 @@
 from datetime import date
 from flask_wtf import Form
 from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField
-from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, BooleanField, FormField, FieldList, SubmitField
+from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, BooleanField
+# Project 5 - Steve - added one new validator for the advanced search.
+from wtforms.validators import NumberRange
+
 from wtforms_html5 import DateField #as Html5DateField, DateRange
 from wtforms.validators import Required, EqualTo, Length
 
@@ -41,12 +44,15 @@ class EditProfileForm(Form):
 class SearchForm(Form):
 	query = TextField('query', validators=[Required()])
 
-
+## Project 5 - Steve - adding support for advanced searching.
 class AdvancedSearchForm(Form):
-	query = TextField('query', validators=[Required()])
-	originZip = IntegerField('originZip')
-	distanceFrom = IntegerField('distanceFrom')
+	#query is being handled separately and has been removed from this.
+	#query = TextField('query', validators=[Required()])
+	originZip = IntegerField('originZip', validators=[Required(),NumberRange(1,99999)])
+	distanceFrom = IntegerField('distanceFrom', validators=[Required(),NumberRange(1,5000)])
 	volunteerOnly = BooleanField('volunteerOnly')
+	## This is a placeholder based on peer feedback in class during the Project 4 review.
+	## It may not make it into the project 5 release.
 	filterOutPastRejections = BooleanField('filterOutPastRejections')
 	sortByDistance = BooleanField('sortByDistance')
 	sortByProviderRating = BooleanField('sortByProviderRating')

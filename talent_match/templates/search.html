@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Search - {{query}}{% endblock %}
+{% block title %}Advanced Search - {{query}}{% endblock %}
 {% block head %}
     {{ super() }}
 
@@ -29,12 +29,20 @@
     <div class="row centered col-lg-offset-3">
         <div class="col-lg-4">
             {% if users.has_prev %}
-                <a href=" /search/{{users.prev_num}}?query={{query}} "><h2 style="color:blue"> &lt;&lt; Back |</h2></a>
+                {% if advancedSearch %}
+                    <a href="{{advancedSearch.url}}/{{users.prev_num}}?{{advancedSearch.queryString}}"><h2 style="color:blue"> &lt;&lt; Back (adv) |</h2></a>
+                {% else %}
+                    <a href="/search/{{users.prev_num}}?query={{query}} "><h2 style="color:blue"> &lt;&lt; Back |</h2></a>
+                {% endif %}
             {% endif %}
         </div>
         <div class="col-lg-4">
             {% if users.has_next %}
-                <a href=" /search/{{users.next_num}}?query={{query}} "><h2 style="color:blue">| Next &gt;&gt; </h2></a>
+                {% if advancedSearch %}
+                    <a href="{{advancedSearch.url}}/{{users.next_num}}?{{advancedSearch.queryString}}"><h2 style="color:blue"> &lt;&lt; Next (adv) |</h2></a>
+                {% else %}
+                    <a href="/search/{{users.next_num}}?query={{query}} "><h2 style="color:blue">| Next &gt;&gt; </h2></a>
+                {% endif %}
             {% endif %}
         </div>
     </div>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+    body {
+        background-color:#3498db;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+    <div style="padding-top:90px;">
+        <div class="row">
+            <form class="form-activity " method="POST">
+                <h2 class="form-signin-heading" style="color:#FFFFFF;margin-bottom:20px">Advanced Search</h2>
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:40%"> Skill </div>
+                    <div class="col-lg-1" style="width:60%"> <input type="text" style="" class="form-control-other" id="query" name="query2" placeholder="Search for talent" autocomplete="off" required> </div>
+                    <!--
+                    <div class="col-lg-1" style="width:60%"> {{ form.query(class="form-control-other", autocomplete="off", required=true, placeholder="select a skill",value=search.query ) }} </div>
+                    -->
+                 </div>
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:40%"> Point of Origin </div>
+                    <div class="col-lg-1" style="width:60%"> {{ form.originZip(class="form-control-other", placeholder="starting zip code",value=search.originZip ) }} </div>
+                 </div>
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:40%"> Distance From Origin </div>
+                    <div class="col-lg-1" style="width:40%"> {{ form.distanceFrom(class="form-control-other", placeholder="distance",value=search.distanceFrom ) }} </div>
+                </div>
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:40%"> Only volunteers? </div>
+                    <div class="col-lg-1" style="width:60%"> {{ form.volunteerOnly(class="form-control-input", value=search.volunteerOnly ) }} </div>
+                 </div>
+                <!-- {{ form.filterOutPastRejections(class="form-control-input", required=false, value=search.filterOutPastRejections ) }} -->
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:40%"> Sort by distance? </div>
+                    <div class="col-lg-1" style="width:60%"> {{ form.sortByDistance(class="form-control-input", value=search.sortByDistance ) }} </div>
+                </div>
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:40%"> Sort by rating? </div>
+                    <div class="col-lg-1" style="width:60%"> {{ form.sortByProviderRating(class="form-control-input", value=search.sortByProviderRating ) }} </div>
+                 </div>
+                <div class="row" style="margin-top:5px">
+                    <div class="col-lg-1" style="width:100%">
+                    <P>Note: If both distance and rating are selected as sort criteria, rating will take priority. </P>
+                    </div>
+                 </div>
+                <button class="btn btn-lg btn-success btn-block" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}
