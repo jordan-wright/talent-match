@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask.ext.login import login_user, login_required, logout_user
 
 # Project 5 - Steve - Adjusted imports to minimal subset
-from ..models.userProfile import  User, Seeker, Provider
+from ..models.userProfile import User, Seeker, Provider
 from ..forms import LoginForm, RegisterForm, DeleteProfileForm, PasswordResetForm
 
 from talent_match import bcrypt, db
@@ -11,6 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 app = Blueprint('auth', __name__, template_folder="templates")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -32,6 +33,7 @@ def login():
             flash('Invalid Username/Password', 'danger')
     return render_template('login.html', form=form)
 
+
 @login_required
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -39,15 +41,18 @@ def logout():
     flash('Successfully logged out', 'success')
     return redirect(url_for('.login'))
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(form.firstName.data, form.lastName.data, form.username.data, form.email.data, bcrypt.generate_password_hash(form.password.data))
+        user = User(form.firstName.data, form.lastName.data, form.username.data,
+                    form.email.data, bcrypt.generate_password_hash(form.password.data))
         db.session.add(user)
         db.session.commit()
 
-        ## Project 3: Steve - adding the automatic creation of the seeker, provider objects associated with a user.
+        # Project 3: Steve - adding the automatic creation of the seeker,
+        # provider objects associated with a user.
         seeker = Seeker(user.id)
         provider = Provider(user.id)
         db.session.add(seeker)
@@ -58,6 +63,7 @@ def register():
         return redirect(url_for('.login'))
     return render_template('register.html', form=form)
 
+
 @app.route('/password_reset', methods=['POST'])
 @login_required
 def change_password():
@@ -65,7 +71,8 @@ def change_password():
     if form.validate_on_submit():
         # Check that the user exists, and that the password is correct
         if bcrypt.check_password_hash(g.user.pwd_hash, form.current_password.data):
-            g.user.pwd_hash = bcrypt.generate_password_hash(form.new_password.data)
+            g.user.pwd_hash = bcrypt.generate_password_hash(
+                form.new_password.data)
             db.session.commit()
             # Redirect to the URL for the profile page
             flash('Password updated successfully!', 'success')

@@ -64,30 +64,32 @@
                         {%  if not isRequest %}
                             {% if invite.accepted == True  %}
                                 <td align="center"> <h5 class="h5" style="color:black"> Accepted </h5> </td>
-                            {% else %}
+                            {% else %}                                
                                 {% if invite.accepted == False  %}
                                     <td align="center"> <h5 class="h5" style="color:black"> Rejected </h5> </td>
                                 {% else %}
                                     <td align="center"> <h5 class="h5" style="color:black"> Unknown </h5> </td>
                                 {% endif %}
                             {% endif %}
-                            {% if invite.accepted == None  %}
-                                {%  if isRecepientRole %}
-                                    <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=1 "> Accept </a> </td>
-                                    <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
-                                {% else %}
-                                    <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/cancel?id={{invite.id}}&cancel=1 "> Cancel </a> </td>
-                                {% endif %}
-                            {% else %}
-                                {%  if isRecepientRole %}
-                                    {% if  invite.accepted == True %}
-                                        <td align="center"></td>
+                            {% if not invite.activityCompleted %}
+                                {% if invite.accepted == None  %}
+                                    {%  if isRecepientRole %}
+                                        <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=1 "> Accept </a> </td>
                                         <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
                                     {% else %}
-                                        <td align="center" colspan="2"> <a class="btn btn-sm btn-action" href=" /invites/requests?inviteID={{invite.id}} "> Request Invitation </a> </td>
+                                        <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/cancel?id={{invite.id}}&cancel=1 "> Cancel </a> </td>
                                     {% endif %}
                                 {% else %}
-                                    <td align="center"></td>
+                                    {%  if isRecepientRole %}
+                                        {% if  invite.accepted == True %}
+                                            <td align="center"></td>
+                                            <td align="center"> <a class="btn btn-sm btn-action" href=" /invites/submit?id={{invite.id}}&status=0 "> Reject </a> </td>
+                                        {% else %}
+                                            <td align="center" colspan="2"> <a class="btn btn-sm btn-action" href=" /invites/requests?inviteID={{invite.id}} "> Request Invitation </a> </td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td align="center"></td>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                         {% endif %}
