@@ -30,6 +30,16 @@ class User(db.Model):
     phoneNumber = db.Column(db.String(10), nullable=True)
     website = db.Column(db.String(120), nullable=True)
 
+    # Project 5 - Steve - this is placeholder to store feedback summary information.
+    # This information is not persisted directly in this model class; however, it may be
+    # calculated and passed thru this data member for convenience to help display this information.
+    feedbackSummary = dict()
+
+    # Project 5 - Steve - this is placeholder to store distance information.
+    # This information is not persisted directly in this model class; however, it may be
+    # calculated and passed via this data member for convenience to help display this information.
+    distance = 0
+
     # Project 3:  Steve - adding relationships and navigation
     seekerProfile = db.relationship('Seeker', uselist=False, backref='user')
     # Project 3:  Steve - adding relationships and navigation
@@ -95,12 +105,29 @@ class User(db.Model):
 
         return result
 
-    ##db.relationship('ActivityFeedback', uselist=True, backref='user', foreign_keys=[id])
     # Project 4: Steve - providing direct access from the user to feedback on
     # this user.
     def getFeedbackReceived(self):
         temp = ActivityFeedback.query.filter_by(reviewedUserID=self.id).all()
         return temp
+
+    # Project 5 - Steve - providing convenience function to tabulate user's overall rating.
+    #
+    # Returns a dictionary object as a result with 'rating' and 'reviewCount' properties.
+    # By default, rating = 0, and reviewCount=0 if no feedback has been provided.
+    #
+    def getFeedbackSummary(self):
+        temp = self.getFeedbackReceived()
+        result = dict(rating=0, reviewCount=0)
+        if (temp):
+            result['reviewCount'] = len(temp)
+            if (result['reviewCount'] > 0):
+                userRatingsList = [ x.rating for x in temp ]
+                result['rating'] = reduce ( lambda x, y : x + y, userRatingsList ) / len (userRatingsList)
+                logger.info('User ' + str(self) + ' feedback rating= ' + str(result['rating']))
+
+        return result
+
 
     def __repr__(self):
         return '<User %r>' % (self.username)

@@ -94,6 +94,7 @@ def addInternalTestData():
         db.session.commit()
         seeker = Seeker(admin.id)
         provider = Provider(admin.id)
+        admin.zipCode = 79401   # Steve - Project 5 - Adding ZIP Code
         db.session.add(seeker)
         db.session.add(provider)
         db.session.commit()
@@ -109,6 +110,7 @@ def addInternalTestData():
         sally.lastName = 'Struthers'
         sally.phoneNumber = '806-555-1212'
         sally.website = 'sallystruthers.com'
+        sally.zipCode = 79401   # Steve - Project 5 - Adding ZIP Code
         db.session.add(sally)
         db.session.commit()
         sallySeeker = Seeker(sally.id)
@@ -128,6 +130,7 @@ def addInternalTestData():
         sally.lastName = 'Smith'
         sally.phoneNumber = '806-555-1212'
         sally.website = 'sally-smith-realty.com'
+        sally.zipCode = 79401   # Steve - Project 5 - Adding ZIP Code
         db.session.add(sally)
         db.session.commit()
 
@@ -184,6 +187,7 @@ def addInternalTestData():
         sammy.lastName = 'Smith'
         sammy.phoneNumber = '806-555-1212'
         sammy.website = 'sammy-smith-realty.com'
+        sammy.zipCode = '75252'  # Project 5 - Steve - adding zip code (Dallas)
         db.session.add(sammy)
         db.session.commit()
         sammySeeker = Seeker(sammy.id)
@@ -202,6 +206,7 @@ def addInternalTestData():
         mike.lastName = 'Smith'
         mike.phoneNumber = '806-555-1212'
         mike.website = 'mike-smith-realty.com'
+        mike.zipCode = 14850 # Project 5 - Steve - adding zip code (Ithaca, NY)
         db.session.add(mike)
         db.session.commit()
         mikeSeeker = Seeker(mike.id)
@@ -220,6 +225,7 @@ def addInternalTestData():
         mikey.lastName = 'Smith'
         mikey.phoneNumber = '806-555-1212'
         mikey.website = 'mikey-smith-realty.com'
+        mikey.zipCode = '75075'  # Project 5 - Steve - adding ZIP code (Plano, TX).
         db.session.add(mikey)
         db.session.commit()
         mikeySeeker = Seeker(mikey.id)
@@ -342,6 +348,12 @@ def addInternalTestData():
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
+                # Project 5 - Steve - Adding some more volunteer data
+                user.addSkill(softwareSkillCSharp, True)
+                user.addSkill(softwareSkillPython, False)
+                user.addSkill(softwareSkillJava, False)
+
+
                 # Let's add this skill to our user again.   The second time
                 # should fail
                 if (user.addSkill(mechSkill)):
@@ -371,6 +383,11 @@ def addInternalTestData():
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
 
+                # Project 5 - Steve - Adding some more volunteer data
+                user.addSkill(softwareSkillCSharp, False)
+                user.addSkill(softwareSkillPython, True)
+                user.addSkill(softwareSkillJava, False)
+
                 # Let's add this skill to our user again.   The second time
                 # should fail
                 if (user.addSkill(mechSkill)):
@@ -399,6 +416,11 @@ def addInternalTestData():
             if (mechSkill != None):
                 # Let's add this skill to our user.
                 user.addSkill(mechSkill)
+
+                # Project 5 - Steve - Adding some more volunteer data
+                user.addSkill(softwareSkillCSharp, False)
+                user.addSkill(softwareSkillPython, False)
+                user.addSkill(softwareSkillJava, True)
 
                 # Let's add this skill to our user again.   The second time
                 # should fail
@@ -628,7 +650,7 @@ def addInternalTestData():
         logger.info(
             "Trying to create a feedback item - reviewing a talent seeker")
         feedback = ActivityFeedback(activity.id, invitedUser.id, invitingUser.id,
-                                    "Steve did an okay job! We were paid a little late for our work.", 3)
+                                    "Sally did an okay job! She was a little late to work.", 3)
         feedback.feedbackUserRole = "seeker"
         feedback.reviewedUserRole = "provider"
         db.session.add(feedback)
@@ -640,8 +662,25 @@ def addInternalTestData():
             for feedback in feedbackList:
                 logger.info(feedback)
 
+        feedbackSummary = invitingUser.getFeedbackSummary()
+        logger.info(feedbackSummary)
+
+
         logger.info("Checking feedback lookup(s) for each user ... ")
         feedbackList = invitedUser.getFeedbackReceived()
         if (feedbackList):
             for feedback in feedbackList:
                 logger.info(feedback)
+
+        feedbackSummary = invitedUser.getFeedbackSummary()
+        logger.info(feedbackSummary)
+
+    logger.info("Checking feedback summary")
+    invitedUser = User.query.filter_by(username='sally.smith').first()
+    feedbackList = invitedUser.getFeedbackReceived()
+    feedbackSummary = invitedUser.getFeedbackSummary()
+
+    logger.info("Checking feedback summary")
+    invitingUser = User.query.filter_by(username='steve').first()
+    feedbackList = invitingUser.getFeedbackReceived()
+    feedbackSummary = invitingUser.getFeedbackSummary()

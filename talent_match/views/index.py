@@ -1,10 +1,20 @@
 import logging
+
+# Project 5 - Steve - added math imports for Haversine distance calculation
+from math import radians, cos, sin, asin, sqrt
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from flask.ext.login import login_required
 
+# Project 5 - Steve - adding this directly so we can reuse it for the advanced search (manual, in-memory pagination.
+from flask.ext.sqlalchemy import Pagination
+
+# Project 5 - Steve - fixed imports based on model restructuring.
 from ..models.talentInfo import Category, Skill
 from ..models.userProfile import  ProviderSkill
 from ..models.invitation import Invitation
+# Project 5 - Steve adding use of ZipCode to latitude/longitude lookup.
+from ..models.zipCode import USZipCodeToLatitudeLongitude
 
 from ..forms import SearchForm, AdvancedSearchForm
 
@@ -32,6 +42,13 @@ def search(page = 1): #, setquery = ''):
 
     query = form.query.data or request.values.get('query')
     users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
+
+    ##
+    ## Project 5 - Steve - Populating user feedback information.
+    ##
+    if (users and users.total > 0):
+        for x in users.items:
+            x.feedbackSummary = x.getFeedbackSummary()
 
     return render_template('search.html', query=query, users=users, gUser=g.user, mainUrl='/search')
 
@@ -123,6 +140,62 @@ def makeAdvancedSearch(page = 1):
 
     advancedSearchData =  dict(url='/search/advanced/query', queryString=queryString)
 
-    users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).paginate(page, POSTS_PER_PAGE, False)
+    users = None
+    if (volunteerOnly) :
+        # We can at least filter down to just volunteers via SQL
+        users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%"), ProviderSkill.will_volunteer==True).all()
+    else:
+        # Everything else is complex enough that we will calculate it manually.
+        # We have to do most of this anyway in memory since SQLite does not easily support mathematical calculations.
+        users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).all()
+
+    # Step 1: build the complete list.
+    completeAndFilteredList = []
+    if (users and users.total > 0):
+        # Calculate feedback
+        for x in users:
+            # Construct the feedback information.
+            x.feedbackSummary = x.getFeedbackSummary()
+
+            # Calculate distance
+            if (sortByDistance):
+                usZipCodeOrigin = USZipCodeToLatitudeLongitude.query(zipCode=originZip).first()
+                usZipCodeUserLocation = USZipCodeToLatitudeLongitude.query(zipCode=x.zipCode).first()
+                if (usZipCodeOrigin) and (usZipCodeUserLocation):
+                    x.distance = haversine(usZipCodeOrigin.latitude, usZipCodeOrigin.longitude,
+                                         usZipCodeUserLocation.latitude, usZipCodeUserLocation.longitude)
+                    if (x.distance) <= (distanceFrom * 1.15):   # including a fudge factor on the distance marker
+                        completeAndFilteredList.append(x)
+
+    # Step 2: sort the list.
+
+    # Step 3: paginate the list.
+    # Basically, we have to replace this:
+    #   .paginate(page, POSTS_PER_PAGE, False)
+    # since we are unable to perform the calculations directly in our database.
+
+
     return render_template('search.html', query=query, users=users, gUser=g.user, advancedSearchData=advancedSearchData)
 
+
+## Assistance on the Haversine algorithm in Python was obtained from:
+## http://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+
+    # 6367 km is the radius of the Earth
+    # km = 6371 * c
+    mi = 3956 * c
+    return mi
