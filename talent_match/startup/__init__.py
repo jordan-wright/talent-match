@@ -151,6 +151,7 @@ def addInternalTestData():
         steve.lastName = 'Smith'
         steve.phoneNumber = '806-555-1212'
         steve.website = 'steves-world.com'
+        steve.zipCode = 79401   # Project 5 - Steve - adding zip code
         db.session.add(steve)
         db.session.commit()
         steveSeeker = Seeker(steve.id)
@@ -169,6 +170,7 @@ def addInternalTestData():
         sam.lastName = 'Smith'
         sam.phoneNumber = '806-555-1212'
         sam.website = 'sam-smith-realty.com'
+        sam.zipCode = 79401 # Project 5 - Steve - adding zip code
         db.session.add(sam)
         db.session.commit()
         samSeeker = Seeker(sam.id)
@@ -675,12 +677,12 @@ def addInternalTestData():
         feedbackSummary = invitedUser.getFeedbackSummary()
         logger.info(feedbackSummary)
 
-    logger.info("Checking feedback summary")
-    invitedUser = User.query.filter_by(username='sally.smith').first()
-    feedbackList = invitedUser.getFeedbackReceived()
-    feedbackSummary = invitedUser.getFeedbackSummary()
+        logger.info("Checking feedback summary")
+        invitedUser = User.query.filter_by(username='sally.smith').first()
+        feedbackList = invitedUser.getFeedbackReceived()
+        feedbackSummary = invitedUser.getFeedbackSummary()
 
-    logger.info("Checking feedback summary")
-    invitingUser = User.query.filter_by(username='steve').first()
-    feedbackList = invitingUser.getFeedbackReceived()
-    feedbackSummary = invitingUser.getFeedbackSummary()
+        logger.info("Checking feedback summary")
+        invitingUser = User.query.filter_by(username='steve').first()
+        feedbackList = invitingUser.getFeedbackReceived()
+        feedbackSummary = invitingUser.getFeedbackSummary()

@@ -73,9 +73,9 @@ def advancedSearchPrep():
         originZip = form.originZip.data
         distanceFrom = form.distanceFrom.data
         volunteerOnly = form.volunteerOnly.data
-        filterOutPastRejections = form.filterOutPastRejections._formfield
-        sortByDistance = form.sortByDistance._formfield
-        sortByProviderRating = form.sortByProviderRating._formfield
+        filterOutPastRejections = form.filterOutPastRejections.data
+        sortByDistance = form.sortByDistance.data
+        sortByProviderRating = form.sortByProviderRating.data
 
         # Assemble the query string to pass it into the real advanced search.
         # This is by-hand process today.
@@ -84,7 +84,7 @@ def advancedSearchPrep():
         queryString = '?query=' + query
         queryString += '&originZip=' + str(originZip)
         queryString += '&distanceFrom=' + str(distanceFrom)
-        queryString += '&volunterOnly=' + str(volunteerOnly)
+        queryString += '&volunteerOnly=' + str(volunteerOnly)
         queryString += '&filterOutPastRejections=' + str(False)  ## this may not be supported initially
         queryString += '&sortByDistance=' + str(sortByDistance)
         queryString += '&sortByProviderRating=' + str(sortByProviderRating)
@@ -149,33 +149,74 @@ def makeAdvancedSearch(page = 1):
         # We have to do most of this anyway in memory since SQLite does not easily support mathematical calculations.
         users = User.query.join(Provider).join(ProviderSkill).join(Skill).join(Category).filter(Skill.categoryID == Category.id, Category.deleted != True, Skill.deleted != True, Skill.name.like("%" + query + "%")).all()
 
-    # Step 1: build the complete list.
+    # Step 1: build the complete list; filter by distance if needed.
     completeAndFilteredList = []
-    if (users and users.total > 0):
+    if (users and len(users) > 0):
         # Calculate feedback
         for x in users:
+            includeRecord = True
+
             # Construct the feedback information.
             x.feedbackSummary = x.getFeedbackSummary()
 
+            logger.info(x.zipCode)
+
             # Calculate distance
             if (sortByDistance):
-                usZipCodeOrigin = USZipCodeToLatitudeLongitude.query(zipCode=originZip).first()
-                usZipCodeUserLocation = USZipCodeToLatitudeLongitude.query(zipCode=x.zipCode).first()
+                includeRecord = True # default if no location information; may change this in the future.
+                usZipCodeOrigin = USZipCodeToLatitudeLongitude.query.filter_by(zipCode=originZip).first()
+                usZipCodeUserLocation = USZipCodeToLatitudeLongitude.query.filter_by(zipCode=x.zipCode).first()
                 if (usZipCodeOrigin) and (usZipCodeUserLocation):
                     x.distance = haversine(usZipCodeOrigin.latitude, usZipCodeOrigin.longitude,
                                          usZipCodeUserLocation.latitude, usZipCodeUserLocation.longitude)
                     if (x.distance) <= (distanceFrom * 1.15):   # including a fudge factor on the distance marker
-                        completeAndFilteredList.append(x)
+                        includeRecord = True
+                    else:
+                        includeRecord = False
 
-    # Step 2: sort the list.
+            if (includeRecord):
+                completeAndFilteredList.append(x)
+
+
+    # Step 2: sort the complete list.
+    sortedList = None
+    if (sortByProviderRating):
+        sortedList = sorted(completeAndFilteredList, key=lambda user: user.feedbackSummary['rating'], reverse=True) # highest first
+    if (sortByDistance):
+        if (sortedList == None):
+            sortedList = completeAndFilteredList
+        temp = sorted(sortedList, key=lambda user: user.distance)
+        sortedList = temp
 
     # Step 3: paginate the list.
     # Basically, we have to replace this:
     #   .paginate(page, POSTS_PER_PAGE, False)
     # since we are unable to perform the calculations directly in our database.
+    actualUsers = buildPaginationList(sortedList, page, POSTS_PER_PAGE)
 
+    # This will look just like the previous search result (with the addition of the 'advancedSearchData' helper that
+    # facilities passing the additional information necessary to paginate this list (query, url).
+    return render_template('search.html', query=query, users=actualUsers, gUser=g.user, advancedSearchData=advancedSearchData)
 
-    return render_template('search.html', query=query, users=users, gUser=g.user, advancedSearchData=advancedSearchData)
+##
+## Project 5 - Steve - adding support for advanced searching.
+## To make the search page happy, we are returning a similar-looking result as the original search querry
+##
+def buildPaginationList(sortedList, pageNumber, postsPerPage):
+    total = 0
+    if (sortedList) and (len(sortedList) > 0):
+        total = len(sortedList)
+
+    sliceStart = (pageNumber - 1) * postsPerPage
+    sliceFinish = (pageNumber - 1) * postsPerPage + postsPerPage
+    pagedItems = sortedList[sliceStart:sliceFinish]
+
+    result = Pagination(page=pageNumber, items=pagedItems,per_page=postsPerPage, total=total, query=None)
+
+    ## Note: need to check the pages, prev_num, next_num, and has_next, has_prev values.
+
+    return result
+
 
 
 ## Assistance on the Haversine algorithm in Python was obtained from:

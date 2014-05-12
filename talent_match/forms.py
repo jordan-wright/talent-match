@@ -1,6 +1,5 @@
 from datetime import date
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField
 from wtforms import TextField, PasswordField, TextAreaField, IntegerField, SelectField, HiddenField, BooleanField
 # Project 5 - Steve - added one new validator for the advanced search.
 from wtforms.validators import NumberRange
