@@ -34,6 +34,8 @@ class EditSkillForm(Form):
 class EditProfileForm(Form):
 	firstName = TextField('firstName')
 	lastName = TextField('lastName')
+	# Project 5 - added ZIP code editing
+	zipCode = IntegerField('zipCode',validators=[Required(),NumberRange(1,99999)])
 	quickIntro = TextAreaField('quickIntro')
 	background = TextAreaField('background')
 	email = TextField('email')

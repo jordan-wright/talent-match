@@ -46,6 +46,7 @@ def editProfile():
         g.user.email = form.email.data
         g.user.phoneNumber = form.phoneNumber.data
         g.user.website = form.website.data
+        g.user.zipCode = form.zipCode.data   # Project 5 - added ZIP code editing
         db.session.commit()
         flash('Profile Update Successful!', 'success')
         return redirect(url_for('.profile'))

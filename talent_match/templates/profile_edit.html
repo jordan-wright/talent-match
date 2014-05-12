@@ -19,7 +19,15 @@
                                 {{ form.lastName(class="form-control", required=true, value=g.user.lastName, placeholder="Last Name") }}
                             </div>
                         </div>
+
                         {{ form.quickIntro(class="form-control-profile", placeholder="Create a Quick Intro") }}
+
+                        <div class="row mt centered">
+                            <div class="row" style="margin-top:0px">
+                                <div class="col-lg-1" style="width:20%"> ZIP Code: </div>
+                                <div class="col-lg-1" style="width:60%"> {{ form.zipCode(class="form-control", required=true, value=g.user.zipCode, placeholder="ZIP code") }} </div>
+                             </div>
+                        </div>
                     </div>
                 </div>
             </div>

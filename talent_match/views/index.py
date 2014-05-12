@@ -169,6 +169,10 @@ def makeAdvancedSearch(page = 1):
                 if (usZipCodeOrigin) and (usZipCodeUserLocation):
                     x.distance = haversine(usZipCodeOrigin.latitude, usZipCodeOrigin.longitude,
                                          usZipCodeUserLocation.latitude, usZipCodeUserLocation.longitude)
+
+                    x.distance = round(x.distance, 1)   # add rounding
+                    if (x.distance == 0.0):
+                        x.distance = 0.1     # this is display-related assist to make sure same locations show up.
                     if (x.distance) <= (distanceFrom * 1.15):   # including a fudge factor on the distance marker
                         includeRecord = True
                     else:
